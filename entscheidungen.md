@@ -42,3 +42,13 @@ Die drei statischen Seiten (Startseite, Impressum, Datenschutz) geben die View d
 
 **21.04.2026 – Lila als Hauptfarbe**
 Lila/Violett wurde als Hauptfarbe für CultPlanet gewählt, weil es auffällig und für einen Spielzeug-Shop ungewöhnlich ist – damit hebt sich der Shop von typischen Blau/Grün-Designs ab. Die Farbe kann in Phase 2 noch angepasst werden, wenn das vollständige Design besprochen wird.
+
+---
+
+### Phase 1 – Umgesetzte Entscheidungen
+
+**21.04.2026 – Laravel Breeze als Auth-Lösung**
+Breeze wurde gewählt weil es eine einfache, offizielle Auth-Lösung von Laravel ist. Es liefert fertige Login-, Registrierungs- und Passwort-Reset-Seiten mit Blade-Templates. Alternativ hätte man Auth komplett selbst bauen können, aber das wäre für ein Schulprojekt unnötig aufwändig.
+
+**21.04.2026 – Tailwind v3/v4 Konflikt durch Breeze – postcss.config.js und tailwind.config.js entfernt**
+Breeze hat beim Installieren `postcss.config.js` und `tailwind.config.js` angelegt, die für Tailwind v3 ausgelegt sind. Da das Projekt Tailwind v4 mit dem `@tailwindcss/vite` Plugin nutzt, entstanden Konflikte. Beide Dateien wurden entfernt und `vite.config.js` wurde wiederhergestellt, damit das v4 Plugin korrekt greift.

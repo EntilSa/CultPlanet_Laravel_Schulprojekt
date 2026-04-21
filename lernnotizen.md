@@ -28,6 +28,9 @@ Vite ist ein Programm das CSS und JavaScript für den Browser aufbereitet. Es b�
 ### Tailwind CSS – CSS ohne eigene CSS-Datei schreiben
 Tailwind ist ein CSS-Framework bei dem man fertige Klassen direkt im HTML verwendet, statt selbst CSS zu schreiben. Zum Beispiel bedeutet `text-purple-700` lila Textfarbe, `flex` macht ein Flex-Layout, `py-4` fügt oben und unten Abstand hinzu. Im Projekt: Die gesamte Navigation, der Footer und die Seiteninhalte sind mit Tailwind-Klassen gestylt.
 
+### Laravel Breeze – Fertige Anmeldung in Minuten
+Breeze ist ein offizielles Laravel-Paket das automatisch alles für Login und Registrierung anlegt. Mit einem einzigen Befehl (`php artisan breeze:install blade`) bekommt man fertige Seiten für Registrierung, Login, Passwort vergessen und Profil. Man spart sich Stunden Arbeit und kann sich auf die eigentliche Shop-Logik konzentrieren. Im Projekt: Breeze liefert die Dateien in `resources/views/auth/` und die Controller in `app/Http/Controllers/Auth/`.
+
 ### Routen – Welche URL zeigt welche Seite
 Eine Route verbindet eine URL mit einer Aktion. In Laravel steht das in `routes/web.php`. Wenn jemand `/impressum` aufruft, schaut Laravel in dieser Datei nach was es zurückgeben soll. Im Projekt: `Route::get('/impressum', ...)` zeigt die Impressum-Seite wenn jemand die URL aufruft.
 
@@ -56,3 +59,7 @@ Alle Begriffe die im Projekt vorkommen, kurz und einfach erklärt.
 | PK | Primary Key – die eindeutige ID einer Tabellenzeile |
 | Composer | Paketverwaltung für PHP – installiert Laravel und andere Pakete |
 | npm | Paketverwaltung für JavaScript – installiert Vite, Tailwind usw. |
+| Breeze | Offizielles Laravel-Paket das fertige Login/Registrierungs-Seiten liefert |
+| Auth | Kurzform für Authentifizierung – wer darf sich einloggen und mit welchen Rechten |
+| Scaffolding | Automatisch generierter Grundcode als Startpunkt (z.B. durch Breeze) |
+| PostCSS | Werkzeug das CSS transformiert – wird von Tailwind v3 genutzt, nicht von v4 |
