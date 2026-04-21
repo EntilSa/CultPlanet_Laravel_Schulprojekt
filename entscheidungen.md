@@ -52,3 +52,9 @@ Breeze wurde gewählt weil es eine einfache, offizielle Auth-Lösung von Laravel
 
 **21.04.2026 – Tailwind v3/v4 Konflikt durch Breeze – postcss.config.js und tailwind.config.js entfernt**
 Breeze hat beim Installieren `postcss.config.js` und `tailwind.config.js` angelegt, die für Tailwind v3 ausgelegt sind. Da das Projekt Tailwind v4 mit dem `@tailwindcss/vite` Plugin nutzt, entstanden Konflikte. Beide Dateien wurden entfernt und `vite.config.js` wurde wiederhergestellt, damit das v4 Plugin korrekt greift.
+
+**21.04.2026 – Spatie Laravel-Permission für Rollenverwaltung**
+Statt einer einfachen role-Spalte in der users-Tabelle wird Spatie Laravel-Permission genutzt. Das Paket ist weit verbreitet und ermöglicht flexible Rollen-Zuweisung über eine eigene Tabelle. Die 3 Rollen (admin, mitarbeiter, kunde) werden per Seeder angelegt und neue Nutzer bekommen bei der Registrierung automatisch die Rolle "kunde".
+
+**21.04.2026 – Neue Nutzer bekommen automatisch Rolle "kunde"**
+Im RegisteredUserController wird nach dem Erstellen des Users direkt `$user->assignRole('kunde')` aufgerufen. So hat jeder Nutzer sofort eine Rolle und es gibt keinen Nutzer ohne Rolle im System. Admin und Mitarbeiter-Rollen werden manuell über den späteren Adminbereich vergeben.

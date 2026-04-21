@@ -28,6 +28,12 @@ Vite ist ein Programm das CSS und JavaScript für den Browser aufbereitet. Es b�
 ### Tailwind CSS – CSS ohne eigene CSS-Datei schreiben
 Tailwind ist ein CSS-Framework bei dem man fertige Klassen direkt im HTML verwendet, statt selbst CSS zu schreiben. Zum Beispiel bedeutet `text-purple-700` lila Textfarbe, `flex` macht ein Flex-Layout, `py-4` fügt oben und unten Abstand hinzu. Im Projekt: Die gesamte Navigation, der Footer und die Seiteninhalte sind mit Tailwind-Klassen gestylt.
 
+### Spatie Laravel-Permission – Rollen für Nutzer
+Spatie ist ein externes Paket das man zu Laravel dazuinstalliert. Es ermöglicht es Nutzern Rollen zuzuweisen wie "admin", "mitarbeiter" oder "kunde". Rollen werden in einer eigenen Datenbanktabelle gespeichert und über einen Seeder angelegt. Im Code kann man dann prüfen ob ein Nutzer eine bestimmte Rolle hat mit `$user->hasRole('admin')`. Im Projekt: Jeder neue Nutzer bekommt bei der Registrierung automatisch die Rolle "kunde" zugewiesen.
+
+### Seeder – Testdaten und Grunddaten in die Datenbank eintragen
+Ein Seeder ist eine PHP-Datei die beim Ausführen Daten in die Datenbank einträgt. Man startet ihn mit `php artisan db:seed --class=RolesSeeder`. Das ist praktisch um zum Beispiel die 3 Rollen automatisch anzulegen, ohne sie manuell in phpMyAdmin einzutragen. Im Projekt: Der `RolesSeeder` legt die Rollen admin, mitarbeiter und kunde an.
+
 ### Laravel Breeze – Fertige Anmeldung in Minuten
 Breeze ist ein offizielles Laravel-Paket das automatisch alles für Login und Registrierung anlegt. Mit einem einzigen Befehl (`php artisan breeze:install blade`) bekommt man fertige Seiten für Registrierung, Login, Passwort vergessen und Profil. Man spart sich Stunden Arbeit und kann sich auf die eigentliche Shop-Logik konzentrieren. Im Projekt: Breeze liefert die Dateien in `resources/views/auth/` und die Controller in `app/Http/Controllers/Auth/`.
 
@@ -63,3 +69,7 @@ Alle Begriffe die im Projekt vorkommen, kurz und einfach erklärt.
 | Auth | Kurzform für Authentifizierung – wer darf sich einloggen und mit welchen Rechten |
 | Scaffolding | Automatisch generierter Grundcode als Startpunkt (z.B. durch Breeze) |
 | PostCSS | Werkzeug das CSS transformiert – wird von Tailwind v3 genutzt, nicht von v4 |
+| Spatie | Externes Laravel-Paket für Rollenverwaltung |
+| Rolle | Eine Bezeichnung für die Rechte eines Nutzers (z.B. admin, kunde) |
+| Seeder | PHP-Datei die Grunddaten in die Datenbank einträgt |
+| assignRole | Spatie-Funktion um einem Nutzer eine Rolle zuzuweisen |
