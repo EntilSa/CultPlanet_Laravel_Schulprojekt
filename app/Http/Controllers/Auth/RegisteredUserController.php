@@ -42,8 +42,9 @@ class RegisteredUserController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        // Jeder neue Nutzer bekommt automatisch die Rolle "kunde"
-        $user->assignRole('kunde');
+        // Rolle "kunde" holen oder anlegen falls noch nicht vorhanden (wichtig für Tests)
+        $rolle = \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'kunde', 'guard_name' => 'web']);
+        $user->assignRole($rolle);
 
         event(new Registered($user));
 

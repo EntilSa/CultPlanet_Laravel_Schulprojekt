@@ -7,7 +7,11 @@ use Tests\TestCase;
 
 class RegistrationTest extends TestCase
 {
+    // RefreshDatabase setzt die DB vor jedem Test zurück
+    // WithSeeder sorgt dafür dass der DatabaseSeeder (inkl. Rollen) vorher läuft
     use RefreshDatabase;
+
+    protected bool $seed = true;
 
     public function test_registration_screen_can_be_rendered(): void
     {
