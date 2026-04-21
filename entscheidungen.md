@@ -58,3 +58,6 @@ Statt einer einfachen role-Spalte in der users-Tabelle wird Spatie Laravel-Permi
 
 **21.04.2026 – Neue Nutzer bekommen automatisch Rolle "kunde"**
 Im RegisteredUserController wird nach dem Erstellen des Users direkt `$user->assignRole('kunde')` aufgerufen. So hat jeder Nutzer sofort eine Rolle und es gibt keinen Nutzer ohne Rolle im System. Admin und Mitarbeiter-Rollen werden manuell über den späteren Adminbereich vergeben.
+
+**21.04.2026 – firstOrCreate statt assignRole direkt für Test-Kompatibilität**
+In Tests wird die Datenbank vor jedem Test zurückgesetzt – dadurch fehlen die Rollen. Statt `assignRole('kunde')` direkt aufzurufen, wird die Rolle per `Role::firstOrCreate()` geholt oder angelegt. So funktioniert die Registrierung auch ohne vorher den Seeder laufen zu lassen, was Tests stabiler macht.

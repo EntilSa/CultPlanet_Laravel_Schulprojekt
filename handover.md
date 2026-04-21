@@ -1,25 +1,30 @@
 # CultPlanet – Handover
 
 ## Aktueller Stand
-**Phase 0 – Foundation & Setup** ist abgeschlossen.
+**Phase 0 und Phase 1 sind vollständig abgeschlossen.**
 
-Erledigt:
-- Laravel 13 installiert
-- MySQL konfiguriert (.env: DB cultplanet, root, Passwort gesetzt)
-- Git-Repository initialisiert (2 Commits)
-- Vite + Tailwind CSS eingerichtet (war bereits in Laravel 13 enthalten)
+### Phase 0 – Erledigt:
+- Laravel 13 installiert, MySQL konfiguriert, Git-Repository initialisiert
+- Vite + Tailwind CSS v4 eingerichtet
 - Blade-Layout erstellt (Navigation, Footer, Lila als Hauptfarbe)
 - Statische Seiten: Startseite, Impressum, Datenschutz
 - Fehlerseiten: 404 und 500
 - ER-Diagramm erstellt (er-diagramm.drawio)
 
+### Phase 1 – Erledigt:
+- Laravel Breeze installiert (Login, Registrierung, Passwort-Reset, Profil)
+- Tailwind v3/v4 Konflikt durch Breeze behoben (postcss.config.js + tailwind.config.js entfernt)
+- Spatie Laravel-Permission installiert, 3 Rollen angelegt (admin, mitarbeiter, kunde)
+- Neue Nutzer bekommen automatisch die Rolle "kunde" bei der Registrierung
+- 28 PHPUnit Tests – alle grün (inkl. eigene Rollen-Tests)
+
 ## Letzte bearbeitete Datei
-`resources/views/errors/500.blade.php`
+`tests/Feature/RoleTest.php`
 
 ## Was als nächstes ansteht
-**Vor Phase 1:** Layout-Besprechung mit dem Nutzer (Farben, Design, Aufbau).
-**Phase 1:** Laravel Breeze installieren (Auth: Registrierung, Login, Passwort-Reset), 3 Rollen einrichten (Admin, Mitarbeiter, Kunde), PHPUnit Tests für Auth.
+**Vor Phase 2:** Layout-Besprechung (Farben, Design) – wurde bewusst verschoben.
+**Phase 2:** Produkte CRUD, Bildupload, Produktliste, Bewertungen, Warenkorb, Bestellprozess, Zahlung (Attrappe), PHPUnit Tests.
 
 ## Offene Punkte
-- Layout-Besprechung steht noch aus (bewusst auf nach Phase 0 verschoben)
-- ER-Diagramm liegt als .drawio Datei im Projektordner
+- Layout-Besprechung steht noch aus (vor Phase 2 einplanen)
+- MySQL Passwort ist in .env gesetzt (Henry+007)

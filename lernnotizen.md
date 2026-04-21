@@ -73,3 +73,7 @@ Alle Begriffe die im Projekt vorkommen, kurz und einfach erklärt.
 | Rolle | Eine Bezeichnung für die Rechte eines Nutzers (z.B. admin, kunde) |
 | Seeder | PHP-Datei die Grunddaten in die Datenbank einträgt |
 | assignRole | Spatie-Funktion um einem Nutzer eine Rolle zuzuweisen |
+| RefreshDatabase | PHPUnit-Trait der die Datenbank vor jedem Test zurücksetzt |
+| firstOrCreate | Laravel-Funktion: hol den Eintrag, oder leg ihn an falls er nicht existiert |
+| assertAuthenticated | PHPUnit-Prüfung: ist der Nutzer nach der Aktion eingeloggt? |
+| hasRole | Spatie-Funktion: hat dieser Nutzer die angegebene Rolle? |
