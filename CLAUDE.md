@@ -89,14 +89,16 @@ Wird laufend während des Projekts geschrieben und angepasst.
 - Ablaufdiagramm Tagesauktion
 - Entscheidungsfindung, Fazit, Umsetzungsauszug
 
-## Entscheidungslog (PFLICHT)
-Bei jeder technischen Entscheidung im Code kurz in entscheidungen.md festhalten:
+## Entscheidungslog (PFLICHT – SOFORT, NICHT AM ENDE)
+WICHTIG: Jede technische Entscheidung wird DIREKT nach dem Treffen eingetragen – nicht erst am Ende der Session.
+Wenn Code geschrieben wird der eine Wahl trifft (z.B. Session statt DB für Warenkorb, Spatie statt Enum, etc.) → SOFORT in entscheidungen.md eintragen, bevor weitergemacht wird.
 - Was wurde entschieden?
 - Warum diese Lösung und nicht eine andere?
 - Format: Datum + Thema + Begründung (2-3 Sätze reichen)
 
-## Lernnotizen (PFLICHT)
-Nach jedem neuen Konzept einen Eintrag in lernnotizen.md schreiben:
+## Lernnotizen (PFLICHT – SOFORT, NICHT AM ENDE)
+WICHTIG: Nach jedem neuen Konzept wird DIREKT ein Eintrag in lernnotizen.md geschrieben – nicht erst am Ende der Session.
+Wenn ein neues Laravel/PHP/Konzept zum ersten Mal verwendet wird → SOFORT eintragen, bevor weitergemacht wird.
 - Einfache, anfängerfreundliche Erklärung (max. 5-6 Sätze)
 - Konkretes Beispiel aus dem Projekt
 - Neuen Begriff ins Vokabular am Ende der Datei eintragen
@@ -135,5 +137,4 @@ Tabellen die wir brauchen werden:
 - reviews (id, user_id, product_id, rating, text, timestamps)
 - auctions (id, product_id, start_price, end_time, winner_id, timestamps)
 - bids (id, auction_id, user_id, amount, timestamps)
-- departments (id, name, timestamps)
-- department_user (department_id, user_id) -- Pivot-Tabelle Many-to-Many
+- departments (id, 
