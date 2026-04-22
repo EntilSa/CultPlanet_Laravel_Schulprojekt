@@ -55,6 +55,9 @@ HTTP ist zustandslos – jede Anfrage vergisst alles vom letzten Mal. Die Sessio
 ### @stack und @push – JavaScript pro Seite einbinden
 Mit `@stack('scripts')` im Layout reserviert man einen Platz für seitenspezifisches JavaScript. Einzelne Views können dann mit `@push('scripts')` Code in diesen Platz einfügen. Vorteil: Das `<script>`-Tag landet trotzdem am Ende des Body im Layout, nicht mitten im HTML. Im Projekt: Der Mengenwahl-Button auf der Produktseite nutzt `@push('scripts')` für die `changeQty()`-Funktion.
 
+### datetime-local – Datum und Uhrzeit in HTML-Formularen
+Das HTML-Inputfeld `type="datetime-local"` zeigt einen Datums- und Uhrzeitpicker direkt im Browser. Der Wert wird als String im Format `2026-04-22T15:30` übertragen. Laravel versteht dieses Format direkt bei der Validierung mit `'date'` und `'after:now'`. Im Projekt: Das Auktions-Planungsformular nutzt `datetime-local` für Start- und Endzeitpunkt der Auktion.
+
 ### selectRaw und groupBy – SQL-Aggregation direkt in Eloquent
 Manchmal braucht man keine einzelnen Datensätze, sondern Zusammenfassungen: Wie viele Bestellungen gab es pro Tag? Wie viel Umsatz pro Tag? Das macht man mit `selectRaw()` in Laravel – damit kann man SQL direkt schreiben, aber trotzdem das Eloquent-Model nutzen. `groupBy()` gruppiert die Ergebnisse nach einem Feld. Das ist viel effizienter als alle Datensätze zu laden und in PHP zu summieren. Im Projekt: `Order::selectRaw('DATE(created_at) as tag, COUNT(*) as anzahl, SUM(total) as umsatz')->groupBy('tag')` – so bekommt die Verkaufsübersicht direkt die fertigen Tages-Summen aus MySQL.
 
@@ -130,3 +133,5 @@ Alle Begriffe die im Projekt vorkommen, kurz und einfach erklärt.
 | match() | PHP-Kurzform für if-else: vergleicht einen Wert und gibt das passende Ergebnis zurück |
 | Partial | Kleines wiederverwendbares Blade-Template, eingebunden per @include() |
 | syncRoles | Spatie-Funktion: alle alten Rollen entfernen und neue Rolle(n) setzen |
+| datetime-local | HTML-Input-Typ für Datum + Uhrzeit kombiniert – wird von Laravel-Validierung direkt verstanden |
+| kundennummer | Automatisch vergebene Kundennummer (20000 + id) – per booted()-Event wie artikel_nr |

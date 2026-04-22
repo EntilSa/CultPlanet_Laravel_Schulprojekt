@@ -149,6 +149,7 @@ Am Ende jeder Arbeits-Session folgende Schritte ausführen:
 - Phase 1 – abgeschlossen
 - Phase 2 – abgeschlossen (inkl. Artikelnummer)
 - Phase 3 – abgeschlossen
+- Spezialisierung – in Arbeit (Schritte 1–4 erledigt, 5–12 offen)
 
 ### Was bisher fertig ist
 - Laravel 13, MySQL, Git, Vite + Tailwind v4

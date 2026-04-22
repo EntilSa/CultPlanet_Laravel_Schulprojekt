@@ -54,7 +54,7 @@
 - 9 neue PHPUnit-Tests – 60 Tests insgesamt, alle grün
 
 ## Letzte bearbeitete Datei
-`tests/Feature/AdminTest.php` (22.04.2026)
+`resources/views/products/edit.blade.php` (22.04.2026) – Auktions-Planungsformular ergänzt
 
 ## Bugfixes dieser Session (22.04.2026)
 - `tests/Feature/Auth/AuthenticationTest.php`: `route('dashboard')` → `route('home')` gefixt
@@ -72,26 +72,30 @@
 - Tailwind v4 @theme korrekt in app.css ✓
 - @tailwindcss/vite korrekt in vite.config.js ✓
 
-## Spezialisierung – Vollständige Arbeitsanweisung (abgestimmt, noch nicht gestartet)
+## Spezialisierung – Vollständige Arbeitsanweisung (Schritte 1–4 erledigt, 5–12 offen)
 
-### A) Vorarbeiten (vor der Auktion)
+### A) Vorarbeiten – ERLEDIGT (22.04.2026)
 
-**1. Kundennummer für alle User**
-- Migration: `kundennummer` (unsignedInteger, nullable, unique) zur users-Tabelle hinzufügen
-- Gleiche Logik wie artikel_nr: Eloquent-Model-Event `booted()` + `created()` → `kundennummer = 20000 + id`
-- In `User.php`: `kundennummer` zu `$fillable` hinzufügen
-- Bestehende User per Tinker aktualisieren: `User::all()->each(fn($u) => $u->update(['kundennummer' => 20000 + $u->id]))`
+**1. Kundennummer ✓**
+- Migration `kundennummer` (nullable, unique) in users-Tabelle
+- User-Model: `booted()` + `created()` → `kundennummer = 20000 + id`
+- Bestehende User per Tinker nachgezogen
 
-**2. Dummy-Kunden anlegen (Seeder)**
-- 5 Dummy-Kunden per Seeder anlegen (Name, E-Mail, Passwort, Rolle "kunde")
-- Kundennummer wird automatisch per Model-Event vergeben
-- Seeder: `DummyCustomersSeeder` – in `DatabaseSeeder` einbinden
+**2. Dummy-Kunden ✓**
+- `DummyCustomersSeeder`: 5 Kunden (Anna Müller, Ben Schmidt, Clara Weber, David Fischer, Eva Becker)
+- Passwort: "password", Rolle: "kunde", Kundennummer: automatisch
 
-**3. Produkt-CRUD im Admin-Panel ausbauen**
-- Bestehende Routen `products.create/store/edit/update/destroy` existieren bereits
-- Im Admin-Dashboard verlinken: "Produkte verwalten" → Übersichtsseite `admin/products/index.blade.php` mit allen Produkten als Tabelle
-- Auf dieser Seite: Button "Neues Produkt" + Button "Artikel importieren" (Attrappe – disabled, Tooltip: "API-Import aus Warenwirtschaftssystem – in Entwicklung")
-- Routen: `admin.products.index` neu anlegen (GET `/admin/produkte`)
+**3. Admin-Produkt-Übersicht ✓**
+- Route: `admin.products` (GET `/admin/produkte`) → `AdminController::products()`
+- View: `admin/products/index.blade.php` – Tabelle mit Lagerbestand + verfügbar im Shop
+- "Artikel importieren"-Attrappe (disabled Button mit Tooltip)
+
+**4. Auktion planen (Admin) ✓**
+- `AuctionController::store()` – vollständige Validierung + Lagerbestand-Check
+- `AuctionController::destroy()` – nur geplante Auktionen löschbar
+- Auktions-Planungsformular in `products/edit.blade.php` (eigener Abschnitt)
+- Tabelle der geplanten/laufenden Auktionen direkt im Edit-Formular
+- Status-Badge erweitert um: geplant, aktiv, beendet
 
 ---
 
@@ -155,20 +159,20 @@
 
 ---
 
-### Umsetzungsreihenfolge (empfohlen)
+### Umsetzungsreihenfolge
 
-1. Migration `kundennummer` zu users + User-Model-Event + Seeder Dummy-Kunden
-2. Migration `auctions` + `bids` + Models (Auction, Bid) + Beziehungen
-3. Admin: Produkt-Übersichtsseite (`admin.products.index`) + Import-Attrappe
-4. Admin: Auktion-Planungsformular im Produkt-Edit (Validation + Lagerbestand-Check)
-5. Lagerbestand-Logik in CartController + Shop-Views (Badge "In Auktion", gesperrter Button)
-6. AuctionController: index(), show(), bid(), close()
-7. Auktions-Views: Übersicht (Grid), Detailseite (Countdown + Bietformular + Verlauf)
-8. Auktions-Banner auf Startseite
-9. Navigation: `auction.index` Route aktivieren
-10. Artisan-Command `auctions:close` + Scheduler-Registrierung
-11. Gewinner-Bestellung automatisch anlegen bei Auktionsende
-12. PHPUnit Tests
+1. ✓ Migration `kundennummer` zu users + User-Model-Event + Seeder Dummy-Kunden
+2. ✓ Migration `auctions` + `bids` + Models (Auction, Bid) + Beziehungen
+3. ✓ Admin: Produkt-Übersichtsseite (`admin.products`) + Import-Attrappe
+4. ✓ Admin: Auktion-Planungsformular im Produkt-Edit (Validation + Lagerbestand-Check)
+5. → Lagerbestand-Logik in CartController + Shop-Views (Badge "In Auktion", gesperrter Button)
+6. → AuctionController: index(), show(), bid(), close()
+7. → Auktions-Views: Übersicht (Grid), Detailseite (Countdown + Bietformular + Verlauf)
+8. → Auktions-Banner auf Startseite
+9. → Navigation: `auction.index` Route aktivieren
+10. → Artisan-Command `auctions:close` + Scheduler-Registrierung
+11. → Gewinner-Bestellung automatisch anlegen bei Auktionsende
+12. → PHPUnit Tests
 
 ## Wichtig für den Start von Phase 2 (ABGESCHLOSSEN)
 

@@ -103,5 +103,18 @@ Das farbige Status-Badge (offen/bezahlt/versendet/storniert) wurde als eigenes P
 
 ---
 
+### Spezialisierung (22.04.2026)
+
+**22.04.2026 – Kundennummer nach gleichem Muster wie Artikelnummer (booted-Event)**
+Die Kundennummer (`kundennummer = 20000 + id`) folgt exakt dem gleichen Muster wie `artikel_nr`. Das ist konsistent und einfach zu verstehen: beide Nummern werden automatisch per Eloquent-Model-Event gesetzt, nachdem der Datensatz in der DB angelegt wurde und die `id` bekannt ist. Präfix 20000 um Verwechslung mit Artikelnummern (10000+) zu vermeiden.
+
+**22.04.2026 – Auktions-Lagerbestand-Check im Controller statt Datenbankconstraint**
+Ob ein Produkt noch eine weitere Auktion aufnehmen kann (`anzahl_geplanter_auktionen < stock`), wird im `AuctionController::store()` geprüft – nicht per DB-Constraint. Ein DB-Constraint könnte das nicht ausdrücken, weil es einen Vergleich zwischen zwei Tabellen erfordert. Die Controller-Prüfung gibt außerdem eine klare Fehlermeldung mit Zahlen ("Maximal X Auktionen möglich, aktuell Y geplant").
+
+**22.04.2026 – Auktions-Planungsformular direkt im Produkt-Edit statt separater Seite**
+Das Formular zum Planen einer Auktion wurde als zusätzlicher Abschnitt in `products/edit.blade.php` eingebaut, nicht als eigene Seite. So hat der Admin alles auf einen Blick: Produktdaten bearbeiten und Auktionen planen in einer Ansicht. Weniger Klicks, weniger Routen.
+
+---
+
 **22.04.2026 – Artikelnummer als echte DB-Spalte mit Model-Event statt Controller-Logik**
 Die Artikelnummer (10001, 10002, ...) wird als eigene Spalte `artikel_nr` in der Datenbank gespeichert, nicht nur zur Anzeige berechnet. Vorteil: Die Nummer bleibt stabil, auch wenn das Produkt bearbeitet wird, und lässt sich filtern oder sortieren. Die automatische Vergabe passiert im `Product`-Model über ein Eloquent-Model-Event (`booted()` + `static::created()`): nach jedem `Product::create()` wird sofort `artikel_nr = id + 10000` gesetzt. So ist der Controller frei davon und die Logik sitzt an einer einzigen Stelle. Zwei Migrationen waren nötig: erst die Spalte als NOT NULL + unique anlegen, dann in einer zweiten Migration nullable machen – damit das booted()-Event nach dem create() mit update() schreiben kann ohne einen NOT-NULL-Fehler zu werfen.
