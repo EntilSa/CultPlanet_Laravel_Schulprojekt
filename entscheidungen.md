@@ -61,3 +61,13 @@ Im RegisteredUserController wird nach dem Erstellen des Users direkt `$user->ass
 
 **21.04.2026 – firstOrCreate statt assignRole direkt für Test-Kompatibilität**
 In Tests wird die Datenbank vor jedem Test zurückgesetzt – dadurch fehlen die Rollen. Statt `assignRole('kunde')` direkt aufzurufen, wird die Rolle per `Role::firstOrCreate()` geholt oder angelegt. So funktioniert die Registrierung auch ohne vorher den Seeder laufen zu lassen, was Tests stabiler macht.
+
+---
+
+### Bugfix-Session (22.04.2026)
+
+**22.04.2026 – Test-Erwartungen von route('dashboard') auf route('home') umgestellt**
+Breeze legt standardmäßig Tests an die nach dem Login auf `/dashboard` weiterleiten. Da CultPlanet kein Dashboard hat und stattdessen zur Startseite weiterleitet, mussten 3 Test-Dateien angepasst werden: `AuthenticationTest`, `EmailVerificationTest`, `RegistrationTest`. Die Tests prüfen jetzt korrekt `route('home')` statt `route('dashboard')`.
+
+**22.04.2026 – Blade-Kommentar statt HTML-Kommentar für Code-Hinweise die x-Komponenten erwähnen**
+In `app.blade.php` stand ein HTML-Kommentar `<!-- ... <x-app-layout> ... -->` der erklärte wie das Layout zwei Blade-Stile unterstützt. Blade versucht jeden `<x-...>`-Tag im Template zu verarbeiten – auch innerhalb von HTML-Kommentaren. Das erzeugte ungültigen PHP-Code und schlug mit "ParseError: unexpected end of file" fehl. Lösung: HTML-Kommentar durch Blade-Kommentar `{{-- ... --}}` ersetzen, der beim Kompilieren vollständig entfernt wird.

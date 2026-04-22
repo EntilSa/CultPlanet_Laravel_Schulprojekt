@@ -77,3 +77,5 @@ Alle Begriffe die im Projekt vorkommen, kurz und einfach erklärt.
 | firstOrCreate | Laravel-Funktion: hol den Eintrag, oder leg ihn an falls er nicht existiert |
 | assertAuthenticated | PHPUnit-Prüfung: ist der Nutzer nach der Aktion eingeloggt? |
 | hasRole | Spatie-Funktion: hat dieser Nutzer die angegebene Rolle? |
+| ParseError | PHP-Fehler: der Code hat einen Syntaxfehler – z.B. eine nicht geschlossene if-Anweisung |
+| Blade-Kommentar | `{{-- ... --}}` wird beim Kompilieren komplett entfernt; HTML-Kommentare `<!-- -->` werden von Blade verarbeitet |

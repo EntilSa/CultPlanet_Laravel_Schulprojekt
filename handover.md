@@ -1,30 +1,81 @@
 # CultPlanet – Handover
 
 ## Aktueller Stand
-**Phase 0 und Phase 1 sind vollständig abgeschlossen.**
+**Phase 0 und Phase 1 abgeschlossen. 28 Tests alle grün. Phase 2 kann gestartet werden.**
+Vollständige Konsistenzprüfung durchgeführt – keine Fehler vorhanden.
 
-### Phase 0 – Erledigt:
-- Laravel 13 installiert, MySQL konfiguriert, Git-Repository initialisiert
-- Vite + Tailwind CSS v4 eingerichtet
-- Blade-Layout erstellt (Navigation, Footer, Lila als Hauptfarbe)
+### Phase 0 – Erledigt
+- Laravel 13 installiert, MySQL konfiguriert, Git initialisiert
+- Vite + Tailwind v4 eingerichtet (kein tailwind.config.js – Inter via @theme in app.css)
+- Blade-Layout erstellt (app.blade.php, navigation.blade.php, footer.blade.php)
+- CultPlanet-Design aktiv: Dunkelblau (#1a2e4a), Inter-Schriftart, Favicon + Logo (SVG)
 - Statische Seiten: Startseite, Impressum, Datenschutz
 - Fehlerseiten: 404 und 500
 - ER-Diagramm erstellt (er-diagramm.drawio)
 
-### Phase 1 – Erledigt:
+### Phase 1 – Erledigt
 - Laravel Breeze installiert (Login, Registrierung, Passwort-Reset, Profil)
-- Tailwind v3/v4 Konflikt durch Breeze behoben (postcss.config.js + tailwind.config.js entfernt)
-- Spatie Laravel-Permission installiert, 3 Rollen angelegt (admin, mitarbeiter, kunde)
-- Neue Nutzer bekommen automatisch die Rolle "kunde" bei der Registrierung
+- Tailwind v3/v4 Konflikt gelöst (postcss.config.js + tailwind.config.js entfernt)
+- Spatie Laravel-Permission: 3 Rollen (admin, mitarbeiter, kunde)
+- Neue Nutzer bekommen automatisch die Rolle "kunde" bei Registrierung
 - 28 PHPUnit Tests – alle grün (inkl. eigene Rollen-Tests)
 
+### Design & Layout – Erledigt
+- Logo: public/images/logo.svg (Planet mit Ring, blau/schwarz)
+- Favicon: public/images/favicon.svg (nur Planet, kein Text)
+- Mockups: mockup-startseite.html + mockup-produktseite.html (abgenommen)
+- design.md: vollständige Design-Referenz mit fertigem Blade-Code
+- app.blade.php: CultPlanet-Design, unterstützt beide Blade-Stile ($slot für Breeze + @yield für Phase 2)
+- navigation.blade.php, footer.blade.php, guest.blade.php: CultPlanet-Design aktiv
+- web.php: Startseite → pages.startseite, benannte Routen für impressum + datenschutz
+- startseite.blade.php: neues Design, TODO-Hinweis für Phase 2
+- Alle 6 Auth-Controller: Redirect von route('dashboard') → route('home')
+- Phase-2-Routen in web.php als auskommentierte TODOs vorbereitet
+
 ## Letzte bearbeitete Datei
-`tests/Feature/RoleTest.php`
+`resources/views/layouts/app.blade.php` (Blade-Kommentar-Bug behoben, 22.04.2026)
 
-## Was als nächstes ansteht
-**Vor Phase 2:** Layout-Besprechung (Farben, Design) – wurde bewusst verschoben.
-**Phase 2:** Produkte CRUD, Bildupload, Produktliste, Bewertungen, Warenkorb, Bestellprozess, Zahlung (Attrappe), PHPUnit Tests.
+## Bugfixes dieser Session (22.04.2026)
+- `tests/Feature/Auth/AuthenticationTest.php`: `route('dashboard')` → `route('home')` gefixt
+- `tests/Feature/Auth/EmailVerificationTest.php`: `route('dashboard')` → `route('home')` gefixt
+- `tests/Feature/Auth/RegistrationTest.php`: `route('dashboard')` → `route('home')` gefixt
+- `resources/views/layouts/app.blade.php`: HTML-Kommentar mit `<x-app-layout>` durch Blade-Kommentar `{{-- --}}` ersetzt (Blade versuchte die Komponente zu kompilieren → ParseError)
 
-## Offene Punkte
-- Layout-Besprechung steht noch aus (vor Phase 2 einplanen)
-- MySQL Passwort ist in .env gesetzt (Henry+007)
+## Geprüfte Konsistenz (alles grün)
+- Alle route()-Aufrufe in Views zeigen auf existierende Routen ✓
+- Fehlende Phase-2-Routen (shop.index, cart.index, auction.index) sind mit # gesichert ✓
+- Alle @extends/@include referenzieren existierende Dateien ✓
+- app.blade.php unterstützt $slot (Breeze) und @yield (Phase 2) ✓
+- logo.svg und favicon.svg existieren in public/images/ ✓
+- Kein route('dashboard') mehr in Auth-Controllern ✓
+- Tailwind v4 @theme korrekt in app.css ✓
+- @tailwindcss/vite korrekt in vite.config.js ✓
+
+## Wichtig für den Start von Phase 2
+
+Das Layout ist fertig aufgebaut und entspricht den Mockups.
+In navigation.blade.php sind drei Stellen mit "TODO Phase 2" markiert:
+- Logo + Shop-Link → `route('shop.index')` ersetzen (nach ProductController)
+- Auktion-Link     → `route('auction.index')` ersetzen (nach AuctionController)
+- Warenkorb-Link   → `route('cart.index')` ersetzen (nach CartController)
+In web.php sind diese Routen als auskommentierte TODOs vorbereitet.
+
+## Phase 2 – Reihenfolge
+1. `php artisan storage:link` ausführen (einmalig, für Bildupload)
+2. Migration: products-Tabelle anlegen + `php artisan migrate`
+3. Product-Model + ProductController (CRUD)
+4. Routen in web.php aktivieren (shop.index, shop.show)
+5. Navigation TODO-Kommentare ersetzen (# → echte Routen)
+6. Produktliste (shop/index.blade.php) + Produktseite (shop/show.blade.php)
+7. Bildupload für Produkte
+8. Session-Warenkorb (CartController + cart.index, cart.add)
+9. Checkout + Bestellung speichern (OrderController)
+10. Attrappen-Zahlung (PayPal/Sofortüberweisung – nur Buttons)
+11. Reviews (Sternebewertung 1–5 + Text)
+12. PHPUnit Tests für alle neuen Features
+
+## Wichtige Hinweise
+- Tailwind v4: kein tailwind.config.js – Inter-Font über @theme in app.css
+- MySQL Passwort: Henry+007 (in .env)
+- storage:link vor erstem Bildupload ausführen: `php artisan storage:link`
+- Vorlage für alle Views: design.md + mockup-startseite.html + mockup-produktseite.html
