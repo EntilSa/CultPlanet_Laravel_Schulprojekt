@@ -76,11 +76,19 @@ WICHTIG: Vor dem Erstellen oder Bearbeiten von Blade-Templates IMMER zuerst `des
 - Verkaufsübersicht: Mitarbeiter → verkaufte Produkte pro Tag
 - PHPUnit Tests für Admin-Logik
 
-### Spezialisierung – Tagesauktion
-- Täglich ein Artikel zur Versteigerung
-- Eingeloggte Nutzer können Gebote abgeben
-- Countdown per Vanilla JS (kein WebSocket, keine Echtzeit)
-- Höchstes Gebot gewinnt – Auktionsende via Laravel Scheduler
+### Spezialisierung – Tagesauktion (VOLLSTÄNDIG ABGESTIMMT – handover.md lesen!)
+- Mehrere Auktionen parallel oder sequenziell möglich (flexible start_time/end_time)
+- Ein Produkt max. eine gleichzeitig laufende Auktion; mehrere sequenzielle erlaubt
+- Lagerbestand-Logik: verfügbar_im_shop = stock - anzahl_aktiver_oder_geplanter_auktionen
+- Mindestgebot: aktuelles Höchstgebot + min. 1,00 €
+- Vollständige Validierung aller Eingaben (Gebot + Auktion anlegen)
+- Auktionsende: end_time-Prüfung beim Seitenaufruf + Artisan-Command auctions:close
+- Gewinner bekommt automatisch eine Bestellung in der DB
+- Kundennummer (kundennummer) für alle User: 20000 + id, per booted()-Event
+- 5 Dummy-Kunden per Seeder
+- Admin: Produkt-Übersichtsseite + "Artikel importieren"-Attrappe
+- Countdown per Vanilla JS, kein WebSocket
+- Alle Details + Umsetzungsreihenfolge in handover.md
 
 ### Individualprojekt – Mitarbeiterverwaltung
 - Bereiche anlegen: z.B. Lager, Verkauf, Kasse

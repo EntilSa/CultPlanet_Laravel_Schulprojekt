@@ -72,13 +72,103 @@
 - Tailwind v4 @theme korrekt in app.css ✓
 - @tailwindcss/vite korrekt in vite.config.js ✓
 
-## Wichtig für den Start der Spezialisierung – Tagesauktion
+## Spezialisierung – Vollständige Arbeitsanweisung (abgestimmt, noch nicht gestartet)
 
-- Täglich ein Artikel zur Versteigerung (auction-Tabelle + bid-Tabelle anlegen)
-- Gebote: eingeloggte Nutzer, Mindestgebot = aktuelles Höchstgebot + 1
-- Countdown per Vanilla JS (kein WebSocket) – Auktionsende via Laravel Scheduler
-- Auktions-Banner auf Startseite (design.md enthält fertige Vorlage)
-- Route: `auction.index` – Platzhalter schon in navigation.blade.php
+### A) Vorarbeiten (vor der Auktion)
+
+**1. Kundennummer für alle User**
+- Migration: `kundennummer` (unsignedInteger, nullable, unique) zur users-Tabelle hinzufügen
+- Gleiche Logik wie artikel_nr: Eloquent-Model-Event `booted()` + `created()` → `kundennummer = 20000 + id`
+- In `User.php`: `kundennummer` zu `$fillable` hinzufügen
+- Bestehende User per Tinker aktualisieren: `User::all()->each(fn($u) => $u->update(['kundennummer' => 20000 + $u->id]))`
+
+**2. Dummy-Kunden anlegen (Seeder)**
+- 5 Dummy-Kunden per Seeder anlegen (Name, E-Mail, Passwort, Rolle "kunde")
+- Kundennummer wird automatisch per Model-Event vergeben
+- Seeder: `DummyCustomersSeeder` – in `DatabaseSeeder` einbinden
+
+**3. Produkt-CRUD im Admin-Panel ausbauen**
+- Bestehende Routen `products.create/store/edit/update/destroy` existieren bereits
+- Im Admin-Dashboard verlinken: "Produkte verwalten" → Übersichtsseite `admin/products/index.blade.php` mit allen Produkten als Tabelle
+- Auf dieser Seite: Button "Neues Produkt" + Button "Artikel importieren" (Attrappe – disabled, Tooltip: "API-Import aus Warenwirtschaftssystem – in Entwicklung")
+- Routen: `admin.products.index` neu anlegen (GET `/admin/produkte`)
+
+---
+
+### B) Spezialisierung – Tagesauktion
+
+**Datenbankstruktur**
+
+`auctions`-Tabelle:
+- `id`, `product_id` (FK), `start_price` (decimal 8,2), `start_time` (datetime), `end_time` (datetime), `winner_id` (FK users, nullable), `winning_bid` (decimal 8,2, nullable), `status` (enum: geplant, aktiv, beendet), `timestamps`
+
+`bids`-Tabelle:
+- `id`, `auction_id` (FK), `user_id` (FK), `amount` (decimal 8,2), `timestamps`
+
+**Auktion anlegen (Admin)**
+- Im Produkt-Edit-Formular (`products/edit.blade.php`): neuer Abschnitt "Auktion planen"
+- Felder: Startpreis, Startdatum + Uhrzeit, Enddatum + Uhrzeit
+- Validation (vollständig – KEIN Feld darf fehlen oder falsch sein):
+  - `start_price`: required, numeric, min:0.01
+  - `start_time`: required, date, after:now
+  - `end_time`: required, date, after:start_time
+  - Lagerbestand-Check: Anzahl geplanter/aktiver Auktionen für dieses Produkt darf nicht >= stock sein → Fehlermeldung: "Nicht genug Lagerbestand für eine weitere Auktion (max. X Auktionen möglich)"
+  - Ein Produkt kann nur EINE gleichzeitig laufende Auktion haben; mehrere sequenzielle sind erlaubt
+
+**Lagerbestand-Logik**
+- `verfügbar_im_shop(product)` = `stock` - `anzahl_aktiver_oder_geplanter_auktionen_dieses_produkts`
+- Im Shop (CartController `add()`): `quantity` darf `verfügbar_im_shop` nicht überschreiten → Fehlermeldung: "Nur X Stück verfügbar (1 Stück ist für eine laufende Auktion reserviert)"
+- In `shop/index.blade.php` + `shop/show.blade.php`: wenn `verfügbar_im_shop = 0` → Button gesperrt, Badge "In Auktion"
+
+**Bieten (eingeloggte Nutzer)**
+- Validation Gebot (vollständig):
+  - `amount`: required, numeric – Fehlermeldung bei Buchstaben/leer: "Bitte gib einen gültigen Betrag ein"
+  - `amount` muss >= `höchstes_gebot + 1.00` sein – Fehlermeldung: "Dein Gebot muss mindestens €X,XX betragen (aktuelles Höchstgebot + 1,00 €)"
+  - Auktion muss `status = aktiv` sein und `end_time > now()` – Fehlermeldung: "Diese Auktion ist bereits beendet"
+  - Eingeloggt-Check via `middleware('auth')`
+  - Nutzer darf nicht auf eigenes Höchstgebot bieten (wenn er bereits Höchstbietender ist) – Fehlermeldung: "Du bist bereits der Höchstbietende"
+
+**Auktionsende**
+- Beim Aufruf der Auktionsseite: wenn `end_time < now()` und `status != beendet` → Auktion automatisch schließen (winner_id = höchster Bieter, winning_bid setzen, status = "beendet", Bestellung für Gewinner anlegen)
+- Artisan-Command `php artisan auctions:close` – schließt alle abgelaufenen Auktionen (gleiche Logik)
+- Im Laravel Scheduler registrieren (zeigt Konzept, läuft lokal manuell)
+- Bestellung für Gewinner: wie normaler Checkout, aber `zahlungsmethode = 'auktion'`, `status = 'bezahlt'`, Lieferadresse leer (Gewinner muss noch eintragen – oder Dummy-Adresse)
+
+**Frontend – Auktionsübersicht (`auction.index`)**
+- Grid-Ansatz wie Shop: alle aktiven Auktionen als Karten (Produktbild, Name, aktuelles Höchstgebot, Countdown, Button "Jetzt bieten")
+- Darunter: "Demnächst" – geplante aber noch nicht gestartete Auktionen (ohne Biet-Button)
+- Auktions-Banner auf Startseite: design.md enthält fertige Vorlage – zeigt die nächste/aktive Auktion
+- Auktion-Link in Navigation: `route('auction.index')` – Platzhalter `#` ist bereits in `navigation.blade.php`
+
+**Auktions-Detailseite (`auction.show`)**
+- Produktbild, Name, Beschreibung
+- Aktuelles Höchstgebot + Name des Höchstbietenden
+- Countdown (Vanilla JS, kein WebSocket)
+- Biet-Formular mit Betrag-Feld + vollständiger Validierung + Fehlermeldungen
+- Gebotsverlauf: Tabelle mit allen Geboten (Nutzer anonymisiert z.B. "Ma***", Betrag, Zeitpunkt)
+
+**PHPUnit Tests**
+- Auktion anlegen (Admin): Validation-Fehler, Lagerbestand-Check, Erfolg
+- Bieten: zu niedriges Gebot, Buchstaben, nicht eingeloggt, auf beendete Auktion, bereits Höchstbietender
+- Auktionsende: winner wird gesetzt, Bestellung wird angelegt
+- Lagerbestand-Sperre im Shop bei aktiver Auktion
+
+---
+
+### Umsetzungsreihenfolge (empfohlen)
+
+1. Migration `kundennummer` zu users + User-Model-Event + Seeder Dummy-Kunden
+2. Migration `auctions` + `bids` + Models (Auction, Bid) + Beziehungen
+3. Admin: Produkt-Übersichtsseite (`admin.products.index`) + Import-Attrappe
+4. Admin: Auktion-Planungsformular im Produkt-Edit (Validation + Lagerbestand-Check)
+5. Lagerbestand-Logik in CartController + Shop-Views (Badge "In Auktion", gesperrter Button)
+6. AuctionController: index(), show(), bid(), close()
+7. Auktions-Views: Übersicht (Grid), Detailseite (Countdown + Bietformular + Verlauf)
+8. Auktions-Banner auf Startseite
+9. Navigation: `auction.index` Route aktivieren
+10. Artisan-Command `auctions:close` + Scheduler-Registrierung
+11. Gewinner-Bestellung automatisch anlegen bei Auktionsende
+12. PHPUnit Tests
 
 ## Wichtig für den Start von Phase 2 (ABGESCHLOSSEN)
 
