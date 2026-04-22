@@ -140,6 +140,7 @@ Am Ende jeder Arbeits-Session folgende Schritte ausführen:
 - Phase 0 – abgeschlossen
 - Phase 1 – abgeschlossen
 - Phase 2 – abgeschlossen (inkl. Artikelnummer)
+- Phase 3 – abgeschlossen
 
 ### Was bisher fertig ist
 - Laravel 13, MySQL, Git, Vite + Tailwind v4
@@ -153,7 +154,8 @@ Am Ende jeder Arbeits-Session folgende Schritte ausführen:
 - Neue Nutzer bekommen automatisch Rolle "kunde"
 - Produkte CRUD (Admin), Bildupload, Session-Warenkorb, Checkout, Attrappen-Zahlung, Reviews
 - Artikelnummer (artikel_nr): echte DB-Spalte, automatisch gesetzt per Eloquent-Model-Event
-- 51 PHPUnit Tests – alle grün
+- Admin-Bereich: Dashboard, Bestellungsverwaltung, Nutzerverwaltung, Verkaufsübersicht
+- 60 PHPUnit Tests – alle grün
 - Logo (logo.svg), Favicon (favicon.svg) in public/images/
 - Design-Referenz (design.md) + Mockups erstellt
 

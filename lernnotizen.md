@@ -55,6 +55,18 @@ HTTP ist zustandslos – jede Anfrage vergisst alles vom letzten Mal. Die Sessio
 ### @stack und @push – JavaScript pro Seite einbinden
 Mit `@stack('scripts')` im Layout reserviert man einen Platz für seitenspezifisches JavaScript. Einzelne Views können dann mit `@push('scripts')` Code in diesen Platz einfügen. Vorteil: Das `<script>`-Tag landet trotzdem am Ende des Body im Layout, nicht mitten im HTML. Im Projekt: Der Mengenwahl-Button auf der Produktseite nutzt `@push('scripts')` für die `changeQty()`-Funktion.
 
+### selectRaw und groupBy – SQL-Aggregation direkt in Eloquent
+Manchmal braucht man keine einzelnen Datensätze, sondern Zusammenfassungen: Wie viele Bestellungen gab es pro Tag? Wie viel Umsatz pro Tag? Das macht man mit `selectRaw()` in Laravel – damit kann man SQL direkt schreiben, aber trotzdem das Eloquent-Model nutzen. `groupBy()` gruppiert die Ergebnisse nach einem Feld. Das ist viel effizienter als alle Datensätze zu laden und in PHP zu summieren. Im Projekt: `Order::selectRaw('DATE(created_at) as tag, COUNT(*) as anzahl, SUM(total) as umsatz')->groupBy('tag')` – so bekommt die Verkaufsübersicht direkt die fertigen Tages-Summen aus MySQL.
+
+### match() – kurze Alternative zum langen if-else
+`match()` ist eine PHP-Funktion die einen Wert mit mehreren Möglichkeiten vergleicht und das passende Ergebnis zurückgibt. Es ist wie ein if-else, aber kürzer und übersichtlicher. Im Projekt: Im Status-Badge-Partial wird `match($status)` genutzt um je nach Bestellstatus eine andere Farbe (Tailwind-Klassen) zurückzugeben – "offen" = gelb, "bezahlt" = blau, "versendet" = grün, "storniert" = rot.
+
+### Blade Partials – wiederverwendbare HTML-Bausteine
+Ein Partial ist ein kleines Blade-Template das an mehreren Stellen eingebunden werden kann. Man ruft es mit `@include('pfad.zum.partial', ['variable' => $wert])` auf und kann Daten mitgeben. So schreibt man denselben Code nur einmal. Im Projekt: Das Status-Badge ist ein Partial unter `admin/partials/status-badge.blade.php` und wird sowohl im Dashboard als auch in der Bestellliste eingebunden.
+
+### syncRoles() – Rollen eines Nutzers komplett ersetzen
+`syncRoles()` von Spatie setzt die Rollen eines Nutzers neu – erst werden alle alten Rollen entfernt, dann die neue Rolle gesetzt. Das ist einfacher als erst `removeRole()` und dann `assignRole()` aufzurufen. Im Projekt: Wenn ein Admin die Rolle eines Nutzers ändert, wird `$user->syncRoles(['mitarbeiter'])` aufgerufen – so hat der Nutzer danach genau eine Rolle.
+
 ### Eloquent Model Events – automatisch etwas tun wenn ein Datensatz erstellt wird
 Laravel-Models können auf bestimmte Ereignisse reagieren: erstellt, aktualisiert, gelöscht usw. Das nennt sich Model Event. Man registriert diese Reaktionen in der `booted()`-Methode des Models. `static::created()` wird jedes Mal ausgelöst, nachdem ein neuer Datensatz in die Datenbank geschrieben wurde – dann hat der Datensatz schon eine `id`. Das ist ideal um Felder automatisch zu befüllen die von der `id` abhängen. Im Projekt: Das `Product`-Model nutzt `static::created()` um nach jedem `Product::create()` die `artikel_nr` auf `10000 + $product->id` zu setzen. So muss der Controller sich nicht darum kümmern.
 ```php
@@ -113,3 +125,8 @@ Alle Begriffe die im Projekt vorkommen, kurz und einfach erklärt.
 | booted() | Methode im Eloquent-Model wo man Model Events registriert |
 | created() | Model Event das nach dem Speichern eines neuen Datensatzes ausgelöst wird – `id` ist dann bereits gesetzt |
 | artikel_nr | Eigene Spalte für eine sichtbare Artikelnummer (10001, 10002, ...) – wird automatisch per Model Event gesetzt |
+| selectRaw | Eloquent-Methode um rohes SQL für Aggregationen zu schreiben (z.B. COUNT, SUM) |
+| groupBy | SQL/Eloquent: Ergebnisse nach einem Feld zusammenfassen (z.B. pro Tag) |
+| match() | PHP-Kurzform für if-else: vergleicht einen Wert und gibt das passende Ergebnis zurück |
+| Partial | Kleines wiederverwendbares Blade-Template, eingebunden per @include() |
+| syncRoles | Spatie-Funktion: alle alten Rollen entfernen und neue Rolle(n) setzen |

@@ -88,5 +88,20 @@ Das Layout hat keinen fixen max-width auf dem `<main>`-Tag. Jede View setzt ihre
 **22.04.2026 – Unique-Constraint für Reviews auf Datenbankebene**
 Die reviews-Tabelle hat einen `unique(['user_id', 'product_id'])`-Constraint, damit ein Nutzer ein Produkt wirklich nur einmal bewerten kann – auch wenn ein Buggy Request es zweimal versucht. Zusätzlich prüft der Controller die Duplikate vorher ab und gibt eine freundliche Fehlermeldung aus.
 
+---
+
+### Phase 3 (22.04.2026)
+
+**22.04.2026 – Admin-Zugriffskontrolle per privater Hilfsmethode statt Middleware**
+Die Admin-Routen sind zwar alle hinter `middleware('auth')`, aber die Rollen-Prüfung (admin vs. mitarbeiter) passiert direkt im Controller über private Methoden `nurAdmin()` und `nurAdminOderMitarbeiter()`. Das ist einfacher als eigene Middleware zu schreiben, weil die Logik direkt sichtbar ist und nicht in einer anderen Datei versteckt liegt.
+
+**22.04.2026 – Verkaufsübersicht mit selectRaw und groupBy statt PHP-seitig aggregieren**
+Die Tages-Gruppierung der bezahlten Bestellungen wird direkt in MySQL mit `selectRaw('DATE(created_at) as tag, COUNT(*) as anzahl, SUM(total) as umsatz')` + `groupBy('tag')` erledigt. So holt Laravel nur fertig aggregierte Zeilen aus der Datenbank, statt alle Bestellungen zu laden und in PHP zu summieren – deutlich effizienter.
+
+**22.04.2026 – Status-Badge als separates Blade-Partial**
+Das farbige Status-Badge (offen/bezahlt/versendet/storniert) wurde als eigenes Partial `admin/partials/status-badge.blade.php` ausgelagert. Es wird sowohl im Dashboard als auch in der Bestellliste eingebunden. So muss der `match()`-Block mit den Farben nur an einer Stelle gepflegt werden.
+
+---
+
 **22.04.2026 – Artikelnummer als echte DB-Spalte mit Model-Event statt Controller-Logik**
 Die Artikelnummer (10001, 10002, ...) wird als eigene Spalte `artikel_nr` in der Datenbank gespeichert, nicht nur zur Anzeige berechnet. Vorteil: Die Nummer bleibt stabil, auch wenn das Produkt bearbeitet wird, und lässt sich filtern oder sortieren. Die automatische Vergabe passiert im `Product`-Model über ein Eloquent-Model-Event (`booted()` + `static::created()`): nach jedem `Product::create()` wird sofort `artikel_nr = id + 10000` gesetzt. So ist der Controller frei davon und die Logik sitzt an einer einzigen Stelle. Zwei Migrationen waren nötig: erst die Spalte als NOT NULL + unique anlegen, dann in einer zweiten Migration nullable machen – damit das booted()-Event nach dem create() mit update() schreiben kann ohne einen NOT-NULL-Fehler zu werfen.

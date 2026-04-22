@@ -1,7 +1,7 @@
 # CultPlanet – Handover
 
 ## Aktueller Stand
-**Phase 0, 1 und 2 abgeschlossen. 50 Tests alle grün. Phase 3 (Adminbereich) kann gestartet werden.**
+**Phase 0, 1, 2 und 3 abgeschlossen. 60 Tests alle grün. Spezialisierung (Tagesauktion) kann gestartet werden.**
 
 ### Phase 0 – Erledigt
 - Laravel 13 installiert, MySQL konfiguriert, Git initialisiert
@@ -41,10 +41,20 @@
 - Reviews: ReviewController, Duplikat-Schutz (unique constraint), Sterne 1–5
 - Lagerbestand wird bei Bestellung automatisch reduziert
 - Artikelnummer: echte DB-Spalte `artikel_nr`, wird automatisch per Eloquent-Model-Event gesetzt (id + 10000)
+- Artikelnummer (artikel_nr): echte DB-Spalte, automatisch gesetzt per Eloquent-Model-Event
 - 51 PHPUnit Tests – alle grün
 
+### Phase 3 – Erledigt (22.04.2026)
+- AdminController: dashboard(), orders(), orderUpdate(), users(), userRoleUpdate(), sales()
+- 6 Admin-Routen unter `/admin/` mit Prefix `admin.`
+- 4 Views: admin/dashboard, admin/orders, admin/users, admin/sales
+- Status-Badge als wiederverwendbares Partial (offen/bezahlt/versendet/storniert)
+- Navigation: Admin-Link (nur admin), Verkauf-Link (admin + mitarbeiter)
+- Produkte in Admin-Panel: create/edit/destroy war bereits fertig (aus Phase 2)
+- 9 neue PHPUnit-Tests – 60 Tests insgesamt, alle grün
+
 ## Letzte bearbeitete Datei
-`database/migrations/2026_04_22_195249_make_artikel_nr_nullable_in_products_table.php` (22.04.2026)
+`tests/Feature/AdminTest.php` (22.04.2026)
 
 ## Bugfixes dieser Session (22.04.2026)
 - `tests/Feature/Auth/AuthenticationTest.php`: `route('dashboard')` → `route('home')` gefixt
@@ -62,16 +72,13 @@
 - Tailwind v4 @theme korrekt in app.css ✓
 - @tailwindcss/vite korrekt in vite.config.js ✓
 
-## Wichtig für den Start von Phase 3
+## Wichtig für den Start der Spezialisierung – Tagesauktion
 
-Phase 3 – Adminbereich (eigene Blade-Seiten, kein Filament):
-1. Admin-Dashboard: Übersicht Bestellungen, Produkte, Nutzer
-2. Bestellungen verwalten (Status ändern: offen → versendet)
-3. Nutzer verwalten + Rollen zuweisen
-4. Verkaufsübersicht für Mitarbeiter (verkaufte Produkte pro Tag)
-5. PHPUnit Tests für Admin-Logik
-
-Hinweis: Admin-CRUD für Produkte existiert bereits (products.create/edit/destroy) – in Phase 3 in ein richtiges Admin-Panel integrieren.
+- Täglich ein Artikel zur Versteigerung (auction-Tabelle + bid-Tabelle anlegen)
+- Gebote: eingeloggte Nutzer, Mindestgebot = aktuelles Höchstgebot + 1
+- Countdown per Vanilla JS (kein WebSocket) – Auktionsende via Laravel Scheduler
+- Auktions-Banner auf Startseite (design.md enthält fertige Vorlage)
+- Route: `auction.index` – Platzhalter schon in navigation.blade.php
 
 ## Wichtig für den Start von Phase 2 (ABGESCHLOSSEN)
 
