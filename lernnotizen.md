@@ -43,6 +43,18 @@ Eine Route verbindet eine URL mit einer Aktion. In Laravel steht das in `routes/
 ### .env – Die Konfigurationsdatei
 Die `.env`-Datei enthält Einstellungen die sich je nach Umgebung ändern – zum Beispiel Datenbankpasswort oder App-Name. Diese Datei wird nicht in Git eingecheckt, damit Passwörter nicht öffentlich werden. Laravel liest diese Datei beim Start automatisch. Im Projekt: Hier haben wir `DB_DATABASE=cultplanet` und das MySQL-Passwort eingetragen.
 
+### Storage und Bildupload – Dateien in Laravel speichern
+Laravel speichert hochgeladene Dateien im Ordner `storage/app/public/`. Damit der Browser diese Dateien sehen kann, muss einmalig `php artisan storage:link` ausgeführt werden – das legt einen symbolischen Link von `public/storage` zu `storage/app/public` an. Im Code wird ein Bild so gespeichert: `$request->file('image')->store('products', 'public')`. Im Blade-Template: `asset('storage/' . $product->image)`. Im Projekt: Produktbilder werden in `storage/app/public/products/` gespeichert.
+
+### Eloquent-Beziehungen – Tabellen miteinander verbinden
+Eloquent ist das ORM (Object-Relational Mapper) von Laravel – es ermöglicht den Zugriff auf Datenbanktabellen wie auf normale PHP-Objekte. Beziehungen werden im Model definiert: `hasMany` (hat viele) und `belongsTo` (gehört zu). Im Projekt: Ein `Order` hat viele `OrderItem`s (`hasMany`), und ein `OrderItem` gehört zu einer `Order` (`belongsTo`). Damit kann man `$order->items` schreiben statt SQL.
+
+### Session – Daten zwischen Seitenanfragen merken
+HTTP ist zustandslos – jede Anfrage vergisst alles vom letzten Mal. Die Session löst das: sie speichert Daten auf dem Server und merkt sich anhand eines Cookies welcher Nutzer welche Daten hat. In Laravel: `session(['key' => $wert])` speichern, `session('key')` lesen, `session()->forget('key')` löschen. Im Projekt: Der Warenkorb liegt komplett in der Session – kein Datenbankeintrag nötig.
+
+### @stack und @push – JavaScript pro Seite einbinden
+Mit `@stack('scripts')` im Layout reserviert man einen Platz für seitenspezifisches JavaScript. Einzelne Views können dann mit `@push('scripts')` Code in diesen Platz einfügen. Vorteil: Das `<script>`-Tag landet trotzdem am Ende des Body im Layout, nicht mitten im HTML. Im Projekt: Der Mengenwahl-Button auf der Produktseite nutzt `@push('scripts')` für die `changeQty()`-Funktion.
+
 ---
 
 ## Vokabular (Wörterbuch)
@@ -79,3 +91,10 @@ Alle Begriffe die im Projekt vorkommen, kurz und einfach erklärt.
 | hasRole | Spatie-Funktion: hat dieser Nutzer die angegebene Rolle? |
 | ParseError | PHP-Fehler: der Code hat einen Syntaxfehler – z.B. eine nicht geschlossene if-Anweisung |
 | Blade-Kommentar | `{{-- ... --}}` wird beim Kompilieren komplett entfernt; HTML-Kommentare `<!-- -->` werden von Blade verarbeitet |
+| storage:link | Einmaliger Artisan-Befehl der `public/storage` mit `storage/app/public` verknüpft – nötig für Bildupload |
+| hasMany | Eloquent-Beziehung: ein Datensatz hat viele andere (z.B. Order hat viele OrderItems) |
+| belongsTo | Eloquent-Beziehung: ein Datensatz gehört zu einem anderen (z.B. OrderItem gehört zu Order) |
+| Session | Server-seitiger Zwischenspeicher der Daten zwischen Seitenanfragen aufbewahrt |
+| decrement | Laravel-Funktion: Zahl in der Datenbank direkt um einen Wert verringern (z.B. Lagerbestand -2) |
+| unique constraint | Datenbankregel die verhindert dass ein Wert doppelt vorkommt (z.B. ein Nutzer bewertet ein Produkt nur einmal) |
+| @stack / @push | Blade-Mechanismus um seitenspezifisches JavaScript gesammelt am Ende des Layouts einzubinden |

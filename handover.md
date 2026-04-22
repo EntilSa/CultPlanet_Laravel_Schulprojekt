@@ -1,8 +1,7 @@
 # CultPlanet – Handover
 
 ## Aktueller Stand
-**Phase 0 und Phase 1 abgeschlossen. 28 Tests alle grün. Phase 2 kann gestartet werden.**
-Vollständige Konsistenzprüfung durchgeführt – keine Fehler vorhanden.
+**Phase 0, 1 und 2 abgeschlossen. 50 Tests alle grün. Phase 3 (Adminbereich) kann gestartet werden.**
 
 ### Phase 0 – Erledigt
 - Laravel 13 installiert, MySQL konfiguriert, Git initialisiert
@@ -32,8 +31,19 @@ Vollständige Konsistenzprüfung durchgeführt – keine Fehler vorhanden.
 - Alle 6 Auth-Controller: Redirect von route('dashboard') → route('home')
 - Phase-2-Routen in web.php als auskommentierte TODOs vorbereitet
 
+### Phase 2 – Erledigt (22.04.2026)
+- storage:link ausgeführt
+- Produkte: Migration, Model, ProductController (CRUD), Admin-geschützte Verwaltungsrouten
+- Bildupload: Storage::store(), altes Bild wird beim Update gelöscht
+- Session-Warenkorb: CartController (add, remove, clear, index), Badge in Navigation
+- Checkout: OrderController, Lieferadresse + Zahlungswahl, Bestellung + OrderItems speichern
+- Attrappen-Zahlung: Fake-PayPal und Sofortüberweisung Seite, Status offen → bezahlt
+- Reviews: ReviewController, Duplikat-Schutz (unique constraint), Sterne 1–5
+- Lagerbestand wird bei Bestellung automatisch reduziert
+- 50 PHPUnit Tests – alle grün
+
 ## Letzte bearbeitete Datei
-`resources/views/layouts/app.blade.php` (Blade-Kommentar-Bug behoben, 22.04.2026)
+`tests/Feature/ReviewTest.php` (22.04.2026)
 
 ## Bugfixes dieser Session (22.04.2026)
 - `tests/Feature/Auth/AuthenticationTest.php`: `route('dashboard')` → `route('home')` gefixt
@@ -51,7 +61,18 @@ Vollständige Konsistenzprüfung durchgeführt – keine Fehler vorhanden.
 - Tailwind v4 @theme korrekt in app.css ✓
 - @tailwindcss/vite korrekt in vite.config.js ✓
 
-## Wichtig für den Start von Phase 2
+## Wichtig für den Start von Phase 3
+
+Phase 3 – Adminbereich (eigene Blade-Seiten, kein Filament):
+1. Admin-Dashboard: Übersicht Bestellungen, Produkte, Nutzer
+2. Bestellungen verwalten (Status ändern: offen → versendet)
+3. Nutzer verwalten + Rollen zuweisen
+4. Verkaufsübersicht für Mitarbeiter (verkaufte Produkte pro Tag)
+5. PHPUnit Tests für Admin-Logik
+
+Hinweis: Admin-CRUD für Produkte existiert bereits (products.create/edit/destroy) – in Phase 3 in ein richtiges Admin-Panel integrieren.
+
+## Wichtig für den Start von Phase 2 (ABGESCHLOSSEN)
 
 Das Layout ist fertig aufgebaut und entspricht den Mockups.
 In navigation.blade.php sind drei Stellen mit "TODO Phase 2" markiert:

@@ -71,3 +71,19 @@ Breeze legt standardmäßig Tests an die nach dem Login auf `/dashboard` weiterl
 
 **22.04.2026 – Blade-Kommentar statt HTML-Kommentar für Code-Hinweise die x-Komponenten erwähnen**
 In `app.blade.php` stand ein HTML-Kommentar `<!-- ... <x-app-layout> ... -->` der erklärte wie das Layout zwei Blade-Stile unterstützt. Blade versucht jeden `<x-...>`-Tag im Template zu verarbeiten – auch innerhalb von HTML-Kommentaren. Das erzeugte ungültigen PHP-Code und schlug mit "ParseError: unexpected end of file" fehl. Lösung: HTML-Kommentar durch Blade-Kommentar `{{-- ... --}}` ersetzen, der beim Kompilieren vollständig entfernt wird.
+
+---
+
+### Phase 2 (22.04.2026)
+
+**22.04.2026 – Preise und Namen in order_items gespeichert statt nur Fremdschlüssel**
+In `order_items` wird nicht nur `product_id` gespeichert, sondern auch `name` und `price` zum Zeitpunkt der Bestellung. Wenn ein Produkt später gelöscht oder der Preis geändert wird, bleibt die Bestellhistorie trotzdem korrekt und nachvollziehbar.
+
+**22.04.2026 – Session-Warenkorb statt Datenbank-Warenkorb**
+Der Warenkorb liegt in der PHP-Session als Array `[produkt_id => [name, price, qty, image]]`. Das ist einfacher zu implementieren als eine eigene DB-Tabelle und für dieses Schulprojekt völlig ausreichend. Nicht-eingeloggte Nutzer können trotzdem Artikel hinzufügen.
+
+**22.04.2026 – max-w-7xl pro View statt im Layout-main-Tag**
+Das Layout hat keinen fixen max-width auf dem `<main>`-Tag. Jede View setzt ihren eigenen Wrapper (`max-w-7xl`, `max-w-2xl` usw.). Begründung: verschiedene Seiten brauchen verschiedene Breiten – Checkout schmaler, Admin eventuell volle Breite.
+
+**22.04.2026 – Unique-Constraint für Reviews auf Datenbankebene**
+Die reviews-Tabelle hat einen `unique(['user_id', 'product_id'])`-Constraint, damit ein Nutzer ein Produkt wirklich nur einmal bewerten kann – auch wenn ein Buggy Request es zweimal versucht. Zusätzlich prüft der Controller die Duplikate vorher ab und gibt eine freundliche Fehlermeldung aus.

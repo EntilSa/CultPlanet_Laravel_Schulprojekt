@@ -7,9 +7,10 @@
 | 1 | 2026-04-21 | – | 3012 | 11 | Phase 0 | Laravel installiert, MySQL konfiguriert, Git init, Layout + statische Seiten + Fehlerseiten erstellt |
 | 2 | 2026-04-21 | – | 611 | 12 | Phase 1 | Breeze installiert, Tailwind v4 Konflikt behoben, Spatie Rollen eingerichtet, 28 Tests grün |
 | 3 | 2026-04-22 | – | 5 | 4 | Phase 1 Bugfix | 5 fehlgeschlagene Tests gefixt: route('dashboard') → route('home') in 3 Test-Dateien, Blade-Kommentar-Bug in app.blade.php behoben |
+| 4 | 2026-04-22 | – | 1932 | 28 | Phase 2 | Schritte 1-12 komplett: Produkte CRUD, Bildupload, Warenkorb, Checkout, Attrappen-Zahlung, Reviews, 50 Tests grün |
 
 ## Gesamt
 
 | Zeilen Code gesamt | Dateien gesamt | Anzahl Sessions |
 |--------------------|----------------|-----------------|
-| 3628 | 27 | 3 |
+| 5560 | 55 | 4 |
