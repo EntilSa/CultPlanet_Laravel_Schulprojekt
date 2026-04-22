@@ -1,7 +1,7 @@
 # CultPlanet – Handover
 
 ## Aktueller Stand
-**Phase 0, 1, 2 und 3 abgeschlossen. 60 Tests alle grün. Spezialisierung (Tagesauktion) kann gestartet werden.**
+**Phase 0, 1, 2 und 3 abgeschlossen. Spezialisierung läuft – Schritte 1–7, 9, 11 erledigt. Offen: Schritte 8, 10, 12. 60 Tests alle grün.**
 
 ### Phase 0 – Erledigt
 - Laravel 13 installiert, MySQL konfiguriert, Git initialisiert
@@ -54,7 +54,7 @@
 - 9 neue PHPUnit-Tests – 60 Tests insgesamt, alle grün
 
 ## Letzte bearbeitete Datei
-`resources/views/auction/show.blade.php` (22.04.2026) – Detailseite mit Countdown, Bietformular, Gebotsverlauf
+`handover.md` (22.04.2026) – Schritt 11 auf ✓ korrigiert, Aktueller Stand aktualisiert
 
 ## Bugfixes dieser Session (22.04.2026)
 - `tests/Feature/Auth/AuthenticationTest.php`: `route('dashboard')` → `route('home')` gefixt
@@ -72,7 +72,7 @@
 - Tailwind v4 @theme korrekt in app.css ✓
 - @tailwindcss/vite korrekt in vite.config.js ✓
 
-## Spezialisierung – Vollständige Arbeitsanweisung (Schritte 1–4 erledigt, 5–12 offen)
+## Spezialisierung – Vollständige Arbeitsanweisung (Schritte 1–7, 9, 11 erledigt – offen: 8, 10, 12)
 
 ### A) Vorarbeiten – ERLEDIGT (22.04.2026)
 
@@ -171,8 +171,13 @@
 8. → Auktions-Banner auf Startseite
 9. ✓ Navigation: `auction.index` Route aktiviert
 10. → Artisan-Command `auctions:close` + Scheduler-Registrierung
-11. → Gewinner-Bestellung automatisch anlegen bei Auktionsende
-12. → PHPUnit Tests
+11. ✓ Gewinner-Bestellung automatisch anlegen bei Auktionsende (in schliesseAuktion() umgesetzt, zahlungsmethode='auktion', status='bezahlt')
+12. → PHPUnit Tests (Auktion anlegen, Bieten, Auktionsende, Lagerbestand-Sperre)
+
+### Nächste Session – nur noch 3 Schritte offen:
+- **Schritt 8**: Auktions-Banner auf Startseite (design.md enthält fertige Vorlage)
+- **Schritt 10**: Artisan-Command `php artisan auctions:close` + Scheduler-Registrierung in `routes/console.php`
+- **Schritt 12**: PHPUnit Tests für Auktion (8–10 neue Tests erwartet)
 
 ## Wichtig für den Start von Phase 2 (ABGESCHLOSSEN)
 
