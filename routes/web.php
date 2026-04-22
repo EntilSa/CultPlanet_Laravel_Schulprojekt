@@ -5,6 +5,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\AdminController;
 use Illuminate\Support\Facades\Route;
 
 // Startseite
@@ -59,6 +60,16 @@ Route::middleware('auth')->group(function () {
 // Reviews – nur für eingeloggte Nutzer
 Route::middleware('auth')->group(function () {
     Route::post('/shop/{product}/bewertung', [ReviewController::class, 'store'])->name('reviews.store');
+});
+
+// Admin-Bereich – Dashboard, Bestellungen, Nutzer, Verkaufsübersicht
+Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
+    Route::get('/bestellungen', [AdminController::class, 'orders'])->name('orders');
+    Route::patch('/bestellungen/{order}/status', [AdminController::class, 'orderUpdate'])->name('orders.update');
+    Route::get('/nutzer', [AdminController::class, 'users'])->name('users');
+    Route::patch('/nutzer/{user}/rolle', [AdminController::class, 'userRoleUpdate'])->name('users.role');
+    Route::get('/verkauf', [AdminController::class, 'sales'])->name('sales');
 });
 
 // TODO Spezialisierung: Auktion

@@ -31,6 +31,22 @@
             </a>
 
             @auth
+                {{-- Admin-Link – nur für admins sichtbar --}}
+                @if(auth()->user()->hasRole('admin'))
+                    <a href="{{ route('admin.dashboard') }}"
+                       class="text-white hover:text-orange-400 text-sm font-medium transition-colors">
+                        Admin
+                    </a>
+                @endif
+
+                {{-- Verkauf-Link – für admins und mitarbeiter --}}
+                @if(auth()->user()->hasRole('admin') || auth()->user()->hasRole('mitarbeiter'))
+                    <a href="{{ route('admin.sales') }}"
+                       class="text-white hover:text-orange-400 text-sm font-medium transition-colors">
+                        Verkauf
+                    </a>
+                @endif
+
                 {{-- Mein Konto – funktioniert bereits (Breeze) --}}
                 <a href="{{ route('profile.edit') }}"
                    class="text-white hover:text-orange-400 text-sm font-medium transition-colors">
