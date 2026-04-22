@@ -59,24 +59,28 @@
             <p class="text-slate-500 text-sm mt-1">inkl. MwSt., zzgl. Versandkosten</p>
 
             {{-- Lagerbestand --}}
+            @php $verfuegbar = $product->verfuegbarImShop(); @endphp
             <div class="flex items-center gap-2 mt-4">
-                @if($product->stock > 0)
-                    <span class="w-2.5 h-2.5 bg-green-500 rounded-full"></span>
-                    <span class="text-green-700 text-sm font-medium">Auf Lager (noch {{ $product->stock }} verfügbar)</span>
-                @else
+                @if($product->stock === 0)
                     <span class="w-2.5 h-2.5 bg-red-500 rounded-full"></span>
                     <span class="text-red-600 text-sm font-medium">Ausverkauft</span>
+                @elseif($verfuegbar === 0)
+                    <span class="w-2.5 h-2.5 bg-orange-500 rounded-full"></span>
+                    <span class="text-orange-600 text-sm font-medium">Alle verfügbaren Stücke sind aktuell in einer Auktion</span>
+                @else
+                    <span class="w-2.5 h-2.5 bg-green-500 rounded-full"></span>
+                    <span class="text-green-700 text-sm font-medium">Auf Lager (noch {{ $verfuegbar }} im Shop verfügbar)</span>
                 @endif
             </div>
 
             {{-- In den Warenkorb --}}
-            @if($product->stock > 0)
+            @if($verfuegbar > 0)
                 <form action="{{ route('cart.add', $product) }}" method="POST" class="flex items-center gap-4 mt-6">
                     @csrf
                     <div class="flex items-center border border-slate-300 rounded-lg overflow-hidden">
                         <button type="button" onclick="changeQty(-1)"
                                 class="px-4 py-3 text-slate-600 hover:bg-slate-100 transition font-bold text-lg">−</button>
-                        <input type="number" name="quantity" id="qty" value="1" min="1" max="{{ $product->stock }}"
+                        <input type="number" name="quantity" id="qty" value="1" min="1" max="{{ $verfuegbar }}"
                                class="w-12 py-3 text-center font-semibold text-slate-800 border-x border-slate-300 focus:outline-none">
                         <button type="button" onclick="changeQty(1)"
                                 class="px-4 py-3 text-slate-600 hover:bg-slate-100 transition font-bold text-lg">+</button>

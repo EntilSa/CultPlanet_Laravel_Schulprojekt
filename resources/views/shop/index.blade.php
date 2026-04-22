@@ -38,9 +38,12 @@
                             <span class="text-slate-300 text-5xl">🧸</span>
                         @endif
 
-                        {{-- Badge: NEU oder AUSVERKAUFT --}}
+                        {{-- Badge: AUSVERKAUFT, IN AUKTION oder NEU --}}
+                        @php $verfuegbar = $product->verfuegbarImShop(); @endphp
                         @if($product->stock === 0)
                             <span class="absolute top-3 right-3 bg-slate-500 text-white text-xs font-semibold px-2 py-1 rounded-md">Ausverkauft</span>
+                        @elseif($verfuegbar === 0)
+                            <span class="absolute top-3 right-3 bg-orange-500 text-white text-xs font-semibold px-2 py-1 rounded-md">In Auktion</span>
                         @elseif($product->created_at->isCurrentMonth())
                             <span class="absolute top-3 left-3 bg-blue-600 text-white text-xs font-bold px-2 py-1 rounded-md">NEU</span>
                         @endif
@@ -66,16 +69,20 @@
                                class="bg-slate-200 hover:bg-slate-300 text-slate-700 py-2 px-3 rounded-lg text-sm font-medium transition">
                                 Ansehen
                             </a>
-                            @if($product->stock > 0)
+                            @if($verfuegbar > 0)
                                 <form action="{{ route('cart.add', $product) }}" method="POST">
                                     @csrf
                                     <button class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-3 rounded-lg text-sm font-medium transition">
                                         + Warenkorb
                                     </button>
                                 </form>
-                            @else
+                            @elseif($product->stock === 0)
                                 <button disabled class="bg-slate-200 text-slate-400 py-2 px-3 rounded-lg text-sm font-medium cursor-not-allowed">
                                     Ausverkauft
+                                </button>
+                            @else
+                                <button disabled class="bg-orange-100 text-orange-500 py-2 px-3 rounded-lg text-sm font-medium cursor-not-allowed">
+                                    In Auktion
                                 </button>
                             @endif
                         </div>

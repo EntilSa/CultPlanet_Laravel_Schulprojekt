@@ -28,19 +28,28 @@ class CartController extends Controller
 
         $qty = (int) $request->input('quantity', 1);
 
-        // wenn mehr bestellt wird als auf lager, auf lagerbestand begrenzen
-        $qty = min($qty, $product->stock);
+        // verfügbar = lagerbestand minus reservierte auktions-stücke
+        $verfuegbar = $product->verfuegbarImShop();
 
-        if ($qty < 1) {
-            return back()->with('error', 'Dieses Produkt ist nicht mehr auf Lager.');
+        if ($verfuegbar < 1) {
+            return back()->with('error', 'Dieses Produkt ist nicht mehr verfügbar (alle Stücke sind für Auktionen reserviert).');
+        }
+
+        // menge auf verfügbaren bestand begrenzen (nicht gesamten stock)
+        if ($qty > $verfuegbar) {
+            return back()->with('error', "Nur {$verfuegbar} Stück verfügbar (ein oder mehrere Stücke sind für laufende Auktionen reserviert).");
         }
 
         // warenkorb aus session holen, produkt hinzufügen oder menge erhöhen
         $cart = session('cart', []);
 
         if (isset($cart[$product->id])) {
-            // produkt ist schon im warenkorb – menge erhöhen, max. lagerbestand
-            $cart[$product->id]['qty'] = min($cart[$product->id]['qty'] + $qty, $product->stock);
+            // produkt ist schon im warenkorb – menge erhöhen, max. verfügbarer bestand
+            $neueQty = $cart[$product->id]['qty'] + $qty;
+            if ($neueQty > $verfuegbar) {
+                return back()->with('error', "Nur {$verfuegbar} Stück verfügbar. Du hast bereits {$cart[$product->id]['qty']} im Warenkorb.");
+            }
+            $cart[$product->id]['qty'] = $neueQty;
         } else {
             // neues produkt in den warenkorb
             $cart[$product->id] = [

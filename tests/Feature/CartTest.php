@@ -48,9 +48,10 @@ class CartTest extends TestCase
     {
         $product = $this->makeProduct(stock: 3);
 
-        $this->post(route('cart.add', $product), ['quantity' => 99]);
-
-        $this->assertEquals(3, session('cart')[$product->id]['qty']);
+        // mehr als verfügbar → fehlermeldung, kein eintrag im warenkorb
+        $response = $this->post(route('cart.add', $product), ['quantity' => 99]);
+        $response->assertRedirect();
+        $response->assertSessionHas('error');
     }
 
     public function test_produkt_kann_aus_warenkorb_entfernt_werden(): void
