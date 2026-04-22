@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Auction;
+use App\Models\Bid;
+use App\Models\Order;
+use App\Models\OrderItem;
 use App\Models\Product;
 use Illuminate\Http\Request;
 
@@ -76,5 +79,137 @@ class AuctionController extends Controller
         return redirect()
             ->route('products.edit', $product)
             ->with('success', 'Auktion wurde gelöscht.');
+    }
+
+    // auktions-übersicht – alle aktiven + geplanten auktionen
+    public function index()
+    {
+        // beim laden: geplante starten und abgelaufene schließen
+        $this->statusAktualisieren();
+
+        $aktiv = Auction::with(['product', 'bids'])
+            ->where('status', 'aktiv')
+            ->orderBy('end_time')
+            ->get();
+
+        $geplant = Auction::with('product')
+            ->where('status', 'geplant')
+            ->orderBy('start_time')
+            ->get();
+
+        return view('auction.index', compact('aktiv', 'geplant'));
+    }
+
+    // einzelne auktions-detailseite mit bietformular
+    public function show(Auction $auction)
+    {
+        // beim laden: automatisch aktivieren oder schließen
+        $this->statusAktualisieren();
+        $auction->refresh();
+
+        $auction->load(['product', 'bids' => fn($q) => $q->with('user')->orderByDesc('amount'), 'winner']);
+
+        return view('auction.show', compact('auction'));
+    }
+
+    // gebot abgeben (nur eingeloggte nutzer)
+    public function bid(Request $request, Auction $auction)
+    {
+        $request->validate([
+            'amount' => ['required', 'numeric', 'min:0.01'],
+        ], [
+            'amount.required' => 'Bitte gib einen Betrag ein.',
+            'amount.numeric'  => 'Der Betrag muss eine Zahl sein – keine Buchstaben erlaubt.',
+            'amount.min'      => 'Der Betrag muss mindestens 0,01 € betragen.',
+        ]);
+
+        // auktion muss aktiv und noch nicht abgelaufen sein
+        if ($auction->status !== 'aktiv' || $auction->abgelaufen()) {
+            return back()->withErrors(['amount' => 'Diese Auktion ist bereits beendet oder noch nicht gestartet.']);
+        }
+
+        // mindestgebot: aktuelles höchstgebot + 1,00 €
+        $mindest = $auction->hoechstGebot() + 1.00;
+        if ($request->amount < $mindest) {
+            return back()->withErrors(['amount' =>
+                'Dein Gebot muss mindestens € ' . number_format($mindest, 2, ',', '.') .
+                ' betragen (aktuelles Höchstgebot + 1,00 €).'
+            ]);
+        }
+
+        // nutzer darf nicht auf eigenes höchstgebot bieten
+        if ($auction->hoechstBieter()?->id === auth()->id()) {
+            return back()->withErrors(['amount' => 'Du bist bereits der Höchstbietende. Warte auf ein anderes Gebot.']);
+        }
+
+        Bid::create([
+            'auction_id' => $auction->id,
+            'user_id'    => auth()->id(),
+            'amount'     => $request->amount,
+        ]);
+
+        return back()->with('success', 'Dein Gebot über € ' . number_format($request->amount, 2, ',', '.') . ' wurde abgegeben.');
+    }
+
+    // hilfsmethode: geplante auktionen starten, abgelaufene schließen
+    private function statusAktualisieren(): void
+    {
+        // geplante auktionen die jetzt starten sollten → aktiv setzen
+        Auction::where('status', 'geplant')
+            ->where('start_time', '<=', now())
+            ->update(['status' => 'aktiv']);
+
+        // aktive auktionen die abgelaufen sind → schließen
+        $abgelaufene = Auction::where('status', 'aktiv')
+            ->where('end_time', '<', now())
+            ->get();
+
+        foreach ($abgelaufene as $auktion) {
+            $this->schliesseAuktion($auktion);
+        }
+    }
+
+    // auktion schließen: gewinner setzen + bestellung anlegen
+    private function schliesseAuktion(Auction $auction): void
+    {
+        $hoechstesBid = $auction->bids()->orderByDesc('amount')->first();
+
+        $auction->update([
+            'status'      => 'beendet',
+            'winner_id'   => $hoechstesBid?->user_id,
+            'winning_bid' => $hoechstesBid?->amount,
+        ]);
+
+        // nur wenn jemand geboten hat eine bestellung anlegen
+        if (!$hoechstesBid) {
+            return;
+        }
+
+        $winner = $hoechstesBid->user;
+        $nameParts = explode(' ', $winner->name, 2);
+
+        $order = Order::create([
+            'user_id'         => $winner->id,
+            'vorname'         => $nameParts[0],
+            'nachname'        => $nameParts[1] ?? '-',
+            // platzhalter – gewinner muss adresse noch ergänzen
+            'strasse'         => 'Bitte Lieferadresse eintragen',
+            'plz'             => '00000',
+            'ort'             => 'Bitte ergänzen',
+            'zahlungsmethode' => 'auktion',
+            'total'           => $hoechstesBid->amount,
+            'status'          => 'bezahlt',
+        ]);
+
+        OrderItem::create([
+            'order_id'   => $order->id,
+            'product_id' => $auction->product_id,
+            'name'       => $auction->product->name,
+            'price'      => $hoechstesBid->amount,
+            'quantity'   => 1,
+        ]);
+
+        // lagerbestand um 1 reduzieren
+        $auction->product->decrement('stock');
     }
 }

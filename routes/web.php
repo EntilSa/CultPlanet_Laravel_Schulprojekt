@@ -80,9 +80,9 @@ Route::middleware('auth')->group(function () {
     Route::delete('/admin/auktionen/{auction}', [AuctionController::class, 'destroy'])->name('auctions.destroy');
 });
 
-// TODO Spezialisierung: Auktions-Frontend (öffentlich + eingeloggt)
-// Route::get('/auktion', [AuctionController::class, 'index'])->name('auction.index');
-// Route::get('/auktion/{auction}', [AuctionController::class, 'show'])->name('auction.show');
-// Route::post('/auktion/{auction}/gebot', [AuctionController::class, 'bid'])->name('auction.bid');
+// Auktions-Frontend – übersicht öffentlich, gebot nur eingeloggt
+Route::get('/auktion', [AuctionController::class, 'index'])->name('auction.index');
+Route::get('/auktion/{auction}', [AuctionController::class, 'show'])->name('auction.show');
+Route::middleware('auth')->post('/auktion/{auction}/gebot', [AuctionController::class, 'bid'])->name('auction.bid');
 
 require __DIR__.'/auth.php';

@@ -24,8 +24,7 @@
                 Shop
             </a>
 
-            {{-- Auktions-Link – TODO Phase 2: # ersetzen durch route('auction.index') --}}
-            <a href="#"
+            <a href="{{ route('auction.index') }}"
                class="text-white hover:text-orange-400 text-sm font-medium transition-colors">
                 Auktion
             </a>
