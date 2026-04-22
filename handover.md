@@ -54,7 +54,7 @@
 - 9 neue PHPUnit-Tests – 60 Tests insgesamt, alle grün
 
 ## Letzte bearbeitete Datei
-`resources/views/products/edit.blade.php` (22.04.2026) – Auktions-Planungsformular ergänzt
+`resources/views/shop/show.blade.php` (22.04.2026) – Lagerbestand-Logik auf verfuegbarImShop() umgestellt
 
 ## Bugfixes dieser Session (22.04.2026)
 - `tests/Feature/Auth/AuthenticationTest.php`: `route('dashboard')` → `route('home')` gefixt
@@ -165,7 +165,7 @@
 2. ✓ Migration `auctions` + `bids` + Models (Auction, Bid) + Beziehungen
 3. ✓ Admin: Produkt-Übersichtsseite (`admin.products`) + Import-Attrappe
 4. ✓ Admin: Auktion-Planungsformular im Produkt-Edit (Validation + Lagerbestand-Check)
-5. → Lagerbestand-Logik in CartController + Shop-Views (Badge "In Auktion", gesperrter Button)
+5. ✓ Lagerbestand-Logik in CartController + Shop-Views (Badge "In Auktion", gesperrter Button)
 6. → AuctionController: index(), show(), bid(), close()
 7. → Auktions-Views: Übersicht (Grid), Detailseite (Countdown + Bietformular + Verlauf)
 8. → Auktions-Banner auf Startseite
