@@ -61,6 +61,7 @@ class ProductController extends Controller
             $imagePath = $request->file('image')->store('products', 'public');
         }
 
+        // artikelnummer wird automatisch vom Product-Model gesetzt (booted-methode)
         Product::create([
             'name'        => $request->name,
             'description' => $request->description,

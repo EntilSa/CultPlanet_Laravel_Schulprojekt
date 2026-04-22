@@ -91,6 +91,9 @@
             {{-- Trennlinie --}}
             <hr class="my-6 border-slate-200">
 
+            {{-- Artikelnummer --}}
+            <p class="text-slate-400 text-xs mb-4">Artikelnummer: {{ $product->artikel_nr }}</p>
+
             {{-- Beschreibung --}}
             <h3 class="font-semibold text-slate-800 mb-2">Beschreibung</h3>
             <p class="text-slate-600 text-sm leading-relaxed">{{ $product->description }}</p>

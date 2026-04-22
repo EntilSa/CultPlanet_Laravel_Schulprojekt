@@ -69,4 +69,24 @@ class ShopTest extends TestCase
         $response->assertRedirect(route('shop.index'));
         $this->assertDatabaseHas('products', ['name' => 'Neues Produkt']);
     }
+
+    public function test_neues_produkt_bekommt_automatisch_artikelnummer(): void
+    {
+        $admin = User::factory()->create();
+        $admin->assignRole(Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'web']));
+
+        $this->actingAs($admin)->post(route('products.store'), [
+            'name'        => 'Artikel Test',
+            'description' => 'Beschreibung',
+            'price'       => 9.99,
+            'stock'       => 5,
+        ]);
+
+        $product = \App\Models\Product::where('name', 'Artikel Test')->first();
+
+        // artikelnummer muss gesetzt sein und größer als 10000
+        $this->assertNotNull($product->artikel_nr);
+        $this->assertGreaterThan(10000, $product->artikel_nr);
+        $this->assertEquals(10000 + $product->id, $product->artikel_nr);
+    }
 }

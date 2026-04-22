@@ -22,6 +22,12 @@
         @method('PATCH')
 
         <div>
+            <label class="block text-slate-700 font-medium mb-1 text-sm">Artikelnummer</label>
+            <input type="text" value="{{ $product->artikel_nr }}" disabled
+                   class="w-full border border-slate-200 rounded-lg p-3 text-sm bg-slate-50 text-slate-400 cursor-not-allowed">
+        </div>
+
+        <div>
             <label class="block text-slate-700 font-medium mb-1">Name</label>
             <input type="text" name="name" value="{{ old('name', $product->name) }}"
                    class="w-full border border-slate-300 rounded-lg p-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
