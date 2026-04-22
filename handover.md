@@ -61,6 +61,49 @@
 - Tailwind v4 @theme korrekt in app.css ✓
 - @tailwindcss/vite korrekt in vite.config.js ✓
 
+## Offene Aufgabe: Artikelnummer (VOR Phase 3 erledigen)
+
+Produkte brauchen eine sichtbare Artikelnummer (10001, 10002, ...).
+Umsetzung als echte DB-Spalte – bitte folgende Schritte in dieser Reihenfolge ausführen:
+
+1. Migration anlegen:
+   ```bash
+   php artisan make:migration add_artikel_nr_to_products_table
+   ```
+2. In der neuen Migration:
+   ```php
+   public function up(): void {
+       Schema::table('products', function (Blueprint $table) {
+           // nach der id einfügen, auto-increment ab 10001
+           $table->unsignedInteger('artikel_nr')->unique()->after('id');
+       });
+   }
+   ```
+3. `php artisan migrate` ausführen.
+4. Bestehende Produkte bekommen ihre Nummer per Tinker:
+   ```bash
+   php artisan tinker
+   App\Models\Product::all()->each(fn($p) => $p->update(['artikel_nr' => 10000 + $p->id]));
+   ```
+5. In `Product.php`: `'artikel_nr'` zum `$fillable`-Array hinzufügen.
+6. In `ProductController::store()`: beim Anlegen automatisch befüllen:
+   ```php
+   'artikel_nr' => 10000 + (Product::max('id') ?? 0) + 1,
+   ```
+   Hinweis: Das max(id)+1 vor dem create() ermitteln, da die neue ID noch nicht existiert.
+   Einfacher und sicherer: nach dem create() mit update() nachziehen:
+   ```php
+   $product = Product::create([...ohne artikel_nr...]);
+   $product->update(['artikel_nr' => 10000 + $product->id]);
+   ```
+7. Artikelnummer in den Views anzeigen:
+   - `shop/index.blade.php`: unter dem Produktnamen `<p class="text-slate-400 text-xs">Art.-Nr. {{ $product->artikel_nr }}</p>`
+   - `shop/show.blade.php`: gleich unter dem Produkttitel
+   - `products/edit.blade.php`: als nicht editierbares Feld anzeigen
+8. PHPUnit Test ergänzen: in `ShopTest` prüfen ob `artikel_nr` nach dem Anlegen gesetzt ist.
+
+---
+
 ## Wichtig für den Start von Phase 3
 
 Phase 3 – Adminbereich (eigene Blade-Seiten, kein Filament):
