@@ -17,5 +17,7 @@ class DatabaseSeeder extends Seeder
     {
         // Zuerst die Rollen anlegen, sonst schlägt assignRole fehl
         $this->call(RolesSeeder::class);
+        // dummy-kunden für tests und demo
+        $this->call(DummyCustomersSeeder::class);
     }
 }

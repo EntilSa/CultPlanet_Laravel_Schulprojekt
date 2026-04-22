@@ -44,6 +44,16 @@ class AdminController extends Controller
         return view('admin.dashboard', compact('stats', 'letzteBestellungen'));
     }
 
+    // produkt-übersichtsseite im admin mit lagerbestand und verfügbarkeit
+    public function products()
+    {
+        $this->nurAdmin();
+
+        $products = Product::latest()->paginate(20);
+
+        return view('admin.products.index', compact('products'));
+    }
+
     // alle bestellungen anzeigen (mit paginierung)
     public function orders()
     {

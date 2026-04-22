@@ -20,8 +20,8 @@
         <div class="bg-white rounded-xl shadow p-5">
             <p class="text-slate-500 text-sm">Produkte</p>
             <p class="text-3xl font-bold text-slate-900 mt-1">{{ $stats['produkte'] }}</p>
-            <a href="{{ route('products.create') }}"
-               class="text-blue-600 text-xs font-medium hover:underline mt-2 inline-block">+ Neues Produkt</a>
+            <a href="{{ route('admin.products') }}"
+               class="text-blue-600 text-xs font-medium hover:underline mt-2 inline-block">Alle Produkte</a>
         </div>
 
         <div class="bg-white rounded-xl shadow p-5">
@@ -98,9 +98,9 @@
            class="bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2.5 rounded-lg transition text-sm">
             Verkaufsübersicht
         </a>
-        <a href="{{ route('products.create') }}"
+        <a href="{{ route('admin.products') }}"
            class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-medium px-4 py-2.5 rounded-lg transition text-sm">
-            Produkt anlegen
+            Produkte verwalten
         </a>
     </div>
 

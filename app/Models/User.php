@@ -11,13 +11,21 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 
-#[Fillable(['name', 'email', 'password'])]
+#[Fillable(['name', 'email', 'password', 'kundennummer'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
     // HasRoles kommt von Spatie – damit kann man dem User eine Rolle zuweisen
     use HasFactory, Notifiable, HasRoles;
+
+    // nach jedem create() wird die kundennummer automatisch gesetzt: id + 20000
+    protected static function booted(): void
+    {
+        static::created(function ($user) {
+            $user->update(['kundennummer' => 20000 + $user->id]);
+        });
+    }
 
     /**
      * Get the attributes that should be cast.
@@ -36,5 +44,11 @@ class User extends Authenticatable
     public function orders()
     {
         return $this->hasMany(Order::class);
+    }
+
+    // ein nutzer kann viele gebote abgeben
+    public function bids()
+    {
+        return $this->hasMany(Bid::class);
     }
 }

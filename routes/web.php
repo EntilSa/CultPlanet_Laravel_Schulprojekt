@@ -6,6 +6,7 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AuctionController;
 use Illuminate\Support\Facades\Route;
 
 // Startseite
@@ -65,6 +66,7 @@ Route::middleware('auth')->group(function () {
 // Admin-Bereich – Dashboard, Bestellungen, Nutzer, Verkaufsübersicht
 Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
+    Route::get('/produkte', [AdminController::class, 'products'])->name('products');
     Route::get('/bestellungen', [AdminController::class, 'orders'])->name('orders');
     Route::patch('/bestellungen/{order}/status', [AdminController::class, 'orderUpdate'])->name('orders.update');
     Route::get('/nutzer', [AdminController::class, 'users'])->name('users');
@@ -72,7 +74,15 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::get('/verkauf', [AdminController::class, 'sales'])->name('sales');
 });
 
-// TODO Spezialisierung: Auktion
+// Auktion-Verwaltung (admin) – auktion für ein produkt planen oder löschen
+Route::middleware('auth')->group(function () {
+    Route::post('/admin/produkte/{product}/auktion', [AuctionController::class, 'store'])->name('auctions.store');
+    Route::delete('/admin/auktionen/{auction}', [AuctionController::class, 'destroy'])->name('auctions.destroy');
+});
+
+// TODO Spezialisierung: Auktions-Frontend (öffentlich + eingeloggt)
 // Route::get('/auktion', [AuctionController::class, 'index'])->name('auction.index');
+// Route::get('/auktion/{auction}', [AuctionController::class, 'show'])->name('auction.show');
+// Route::post('/auktion/{auction}/gebot', [AuctionController::class, 'bid'])->name('auction.bid');
 
 require __DIR__.'/auth.php';

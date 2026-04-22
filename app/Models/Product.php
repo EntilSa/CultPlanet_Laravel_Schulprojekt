@@ -22,4 +22,19 @@ class Product extends Model
     {
         return $this->hasMany(Review::class);
     }
+
+    // ein produkt kann in mehreren auktionen (sequenziell) laufen
+    public function auctions()
+    {
+        return $this->hasMany(Auction::class);
+    }
+
+    // wie viele stück sind im shop verfügbar (abzüglich laufender/geplanter auktionen)
+    public function verfuegbarImShop(): int
+    {
+        $reserviert = $this->auctions()
+            ->whereIn('status', ['geplant', 'aktiv'])
+            ->count();
+        return max(0, $this->stock - $reserviert);
+    }
 }
