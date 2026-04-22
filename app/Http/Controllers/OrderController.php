@@ -71,10 +71,38 @@ class OrderController extends Controller
             Product::where('id', $productId)->decrement('stock', $item['qty']);
         }
 
-        // warenkorb leeren nach erfolgreicher bestellung
+        // warenkorb leeren – bestellung ist gespeichert
         session()->forget('cart');
 
-        return redirect()->route('orders.success', $order)->with('success', 'Bestellung erfolgreich aufgegeben!');
+        // zur fake-zahlungsseite weiterleiten (schritt 10: attrappen-zahlung)
+        return redirect()->route('orders.payment', $order);
+    }
+
+    // fake-zahlungsseite anzeigen (attrappen-button für paypal / sofortüberweisung)
+    public function payment(Order $order)
+    {
+        if ($order->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        // nur bestellungen mit status 'offen' kommen auf diese seite
+        if ($order->status !== 'offen') {
+            return redirect()->route('orders.success', $order);
+        }
+
+        return view('checkout.payment', compact('order'));
+    }
+
+    // zahlung "abschließen" – status auf bezahlt setzen und zur bestätigung
+    public function completePayment(Order $order)
+    {
+        if ($order->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        $order->update(['status' => 'bezahlt']);
+
+        return redirect()->route('orders.success', $order)->with('success', 'Zahlung erfolgreich!');
     }
 
     // bestellbestätigung anzeigen

@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\ReviewController;
 use Illuminate\Support\Facades\Route;
 
 // Startseite
@@ -50,11 +51,15 @@ Route::delete('/warenkorb/leeren', [CartController::class, 'clear'])->name('cart
 Route::middleware('auth')->group(function () {
     Route::get('/checkout', [OrderController::class, 'index'])->name('checkout.index');
     Route::post('/checkout', [OrderController::class, 'store'])->name('checkout.store');
+    Route::get('/bestellung/{order}/zahlung', [OrderController::class, 'payment'])->name('orders.payment');
+    Route::post('/bestellung/{order}/zahlung', [OrderController::class, 'completePayment'])->name('orders.complete_payment');
     Route::get('/bestellung/{order}/danke', [OrderController::class, 'success'])->name('orders.success');
 });
 
-// TODO Reviews (folgt noch)
-// Route::post('/shop/{product}/bewertung', [ReviewController::class, 'store'])->name('reviews.store');
+// Reviews – nur für eingeloggte Nutzer
+Route::middleware('auth')->group(function () {
+    Route::post('/shop/{product}/bewertung', [ReviewController::class, 'store'])->name('reviews.store');
+});
 
 // TODO Spezialisierung: Auktion
 // Route::get('/auktion', [AuctionController::class, 'index'])->name('auction.index');

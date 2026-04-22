@@ -149,9 +149,69 @@
             <p class="text-slate-400 text-sm">Noch keine Bewertungen vorhanden.</p>
         @endif
 
-        {{-- Bewertung schreiben – Formular kommt wenn ReviewController fertig ist --}}
-        <div class="mt-6 bg-white rounded-xl shadow p-6 border-2 border-dashed border-slate-200">
-            <p class="text-slate-400 text-sm">Bewertungen abgeben wird in Kürze freigeschaltet.</p>
+        {{-- Bewertung schreiben --}}
+        <div class="mt-6">
+            @auth
+                @php
+                    // prüfen ob der eingeloggte nutzer dieses produkt schon bewertet hat
+                    $hatSchonBewertet = $product->reviews->where('user_id', auth()->id())->isNotEmpty();
+                @endphp
+
+                @if($hatSchonBewertet)
+                    <div class="bg-green-50 border border-green-200 rounded-xl p-6">
+                        <p class="text-green-700 text-sm font-medium">Du hast dieses Produkt bereits bewertet.</p>
+                    </div>
+                @else
+                    <div class="bg-white rounded-xl shadow p-6">
+                        <h3 class="font-semibold text-slate-800 mb-4">Eigene Bewertung schreiben</h3>
+
+                        @if(session('success'))
+                            <div class="bg-green-50 border border-green-200 text-green-700 rounded-lg p-3 mb-4 text-sm">
+                                {{ session('success') }}
+                            </div>
+                        @endif
+                        @if(session('error'))
+                            <div class="bg-red-50 border border-red-200 text-red-600 rounded-lg p-3 mb-4 text-sm">
+                                {{ session('error') }}
+                            </div>
+                        @endif
+
+                        <form action="{{ route('reviews.store', $product) }}" method="POST" class="space-y-4">
+                            @csrf
+                            <div>
+                                <label class="block text-slate-700 font-medium mb-1 text-sm">Sterne</label>
+                                <select name="rating" class="border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="5">★★★★★ Ausgezeichnet</option>
+                                    <option value="4">★★★★ Gut</option>
+                                    <option value="3">★★★ Okay</option>
+                                    <option value="2">★★ Schlecht</option>
+                                    <option value="1">★ Sehr schlecht</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-slate-700 font-medium mb-1 text-sm">Kommentar</label>
+                                <textarea name="text" rows="3"
+                                          class="w-full border border-slate-300 rounded-lg p-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                          placeholder="Mindestens 10 Zeichen..."></textarea>
+                                @error('text')
+                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+                            <button class="bg-blue-600 hover:bg-blue-700 text-white font-medium px-5 py-2.5 rounded-lg text-sm transition">
+                                Bewertung abschicken
+                            </button>
+                        </form>
+                    </div>
+                @endif
+            @else
+                <div class="bg-white rounded-xl shadow p-6 border-2 border-dashed border-slate-200">
+                    <p class="text-slate-500 text-sm mb-3">Du musst eingeloggt sein um eine Bewertung zu schreiben.</p>
+                    <a href="{{ route('login') }}"
+                       class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-medium px-5 py-2.5 rounded-lg text-sm transition">
+                        Jetzt einloggen
+                    </a>
+                </div>
+            @endauth
         </div>
     </section>
 
