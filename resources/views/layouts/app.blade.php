@@ -36,5 +36,8 @@
     <!-- Footer -->
     @include('layouts.footer')
 
+    {{-- optionale scripts von einzelnen views (z.b. countdown, mengenwahl) --}}
+    @stack('scripts')
+
 </body>
 </html>
