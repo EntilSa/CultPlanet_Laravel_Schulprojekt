@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\OrderController;
 use Illuminate\Support\Facades\Route;
 
 // Startseite
@@ -44,6 +45,13 @@ Route::get('/warenkorb', [CartController::class, 'index'])->name('cart.index');
 Route::post('/warenkorb/{product}/hinzufuegen', [CartController::class, 'add'])->name('cart.add');
 Route::delete('/warenkorb/{product}/entfernen', [CartController::class, 'remove'])->name('cart.remove');
 Route::delete('/warenkorb/leeren', [CartController::class, 'clear'])->name('cart.clear');
+
+// Checkout + Bestellbestätigung – nur für eingeloggte Nutzer
+Route::middleware('auth')->group(function () {
+    Route::get('/checkout', [OrderController::class, 'index'])->name('checkout.index');
+    Route::post('/checkout', [OrderController::class, 'store'])->name('checkout.store');
+    Route::get('/bestellung/{order}/danke', [OrderController::class, 'success'])->name('orders.success');
+});
 
 // TODO Reviews (folgt noch)
 // Route::post('/shop/{product}/bewertung', [ReviewController::class, 'store'])->name('reviews.store');

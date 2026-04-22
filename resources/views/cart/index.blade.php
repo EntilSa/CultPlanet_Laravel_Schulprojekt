@@ -27,7 +27,7 @@
                 <div class="flex items-center gap-4 p-4">
 
                     {{-- produktbild --}}
-                    <div class="w-20 h-20 bg-slate-50 rounded-lg overflow-hidden flex-shrink-0 flex items-center justify-center">
+                    <div class="w-20 h-20 bg-slate-50 rounded-lg overflow-hidden shrink-0 flex items-center justify-center">
                         @if($item['image'])
                             <img src="{{ asset('storage/' . $item['image']) }}"
                                  class="w-full h-full object-cover" alt="{{ $item['name'] }}">
@@ -83,11 +83,18 @@
             <div class="text-right">
                 <p class="text-slate-500 text-sm mb-1">Gesamtsumme</p>
                 <p class="text-3xl font-bold text-blue-600">€ {{ number_format($total, 2, ',', '.') }}</p>
-                <a href="#"
-                   class="mt-3 inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold px-8 py-3 rounded-lg transition text-sm">
-                    Zur Kasse →
-                </a>
-                <p class="text-slate-400 text-xs mt-2">Checkout folgt in Kürze</p>
+                @auth
+                    <a href="{{ route('checkout.index') }}"
+                       class="mt-3 inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold px-8 py-3 rounded-lg transition text-sm">
+                        Zur Kasse →
+                    </a>
+                @else
+                    {{-- nicht eingeloggte nutzer müssen sich erst anmelden --}}
+                    <a href="{{ route('login') }}"
+                       class="mt-3 inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold px-8 py-3 rounded-lg transition text-sm">
+                        Einloggen & zur Kasse →
+                    </a>
+                @endauth
             </div>
 
         </div>
