@@ -31,4 +31,10 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    // ein nutzer kann viele bestellungen haben
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
 }
