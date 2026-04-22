@@ -8,9 +8,10 @@
 | 2 | 2026-04-21 | – | 611 | 12 | Phase 1 | Breeze installiert, Tailwind v4 Konflikt behoben, Spatie Rollen eingerichtet, 28 Tests grün |
 | 3 | 2026-04-22 | – | 5 | 4 | Phase 1 Bugfix | 5 fehlgeschlagene Tests gefixt: route('dashboard') → route('home') in 3 Test-Dateien, Blade-Kommentar-Bug in app.blade.php behoben |
 | 4 | 2026-04-22 | – | 1932 | 28 | Phase 2 | Schritte 1-12 komplett: Produkte CRUD, Bildupload, Warenkorb, Checkout, Attrappen-Zahlung, Reviews, 50 Tests grün |
+| 5 | 2026-04-22 | – | 98 | 7 | Phase 2 | Artikelnummer: echte DB-Spalte, booted()-Model-Event, Views, Test – 51 Tests grün |
 
 ## Gesamt
 
 | Zeilen Code gesamt | Dateien gesamt | Anzahl Sessions |
 |--------------------|----------------|-----------------|
-| 5560 | 55 | 4 |
+| 5658 | 62 | 5 |

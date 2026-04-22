@@ -55,6 +55,17 @@ HTTP ist zustandslos – jede Anfrage vergisst alles vom letzten Mal. Die Sessio
 ### @stack und @push – JavaScript pro Seite einbinden
 Mit `@stack('scripts')` im Layout reserviert man einen Platz für seitenspezifisches JavaScript. Einzelne Views können dann mit `@push('scripts')` Code in diesen Platz einfügen. Vorteil: Das `<script>`-Tag landet trotzdem am Ende des Body im Layout, nicht mitten im HTML. Im Projekt: Der Mengenwahl-Button auf der Produktseite nutzt `@push('scripts')` für die `changeQty()`-Funktion.
 
+### Eloquent Model Events – automatisch etwas tun wenn ein Datensatz erstellt wird
+Laravel-Models können auf bestimmte Ereignisse reagieren: erstellt, aktualisiert, gelöscht usw. Das nennt sich Model Event. Man registriert diese Reaktionen in der `booted()`-Methode des Models. `static::created()` wird jedes Mal ausgelöst, nachdem ein neuer Datensatz in die Datenbank geschrieben wurde – dann hat der Datensatz schon eine `id`. Das ist ideal um Felder automatisch zu befüllen die von der `id` abhängen. Im Projekt: Das `Product`-Model nutzt `static::created()` um nach jedem `Product::create()` die `artikel_nr` auf `10000 + $product->id` zu setzen. So muss der Controller sich nicht darum kümmern.
+```php
+protected static function booted(): void
+{
+    static::created(function ($product) {
+        $product->update(['artikel_nr' => 10000 + $product->id]);
+    });
+}
+```
+
 ---
 
 ## Vokabular (Wörterbuch)
@@ -98,3 +109,7 @@ Alle Begriffe die im Projekt vorkommen, kurz und einfach erklärt.
 | decrement | Laravel-Funktion: Zahl in der Datenbank direkt um einen Wert verringern (z.B. Lagerbestand -2) |
 | unique constraint | Datenbankregel die verhindert dass ein Wert doppelt vorkommt (z.B. ein Nutzer bewertet ein Produkt nur einmal) |
 | @stack / @push | Blade-Mechanismus um seitenspezifisches JavaScript gesammelt am Ende des Layouts einzubinden |
+| Model Event | Automatische Reaktion auf Datenbankaktionen wie erstellen, aktualisieren oder löschen |
+| booted() | Methode im Eloquent-Model wo man Model Events registriert |
+| created() | Model Event das nach dem Speichern eines neuen Datensatzes ausgelöst wird – `id` ist dann bereits gesetzt |
+| artikel_nr | Eigene Spalte für eine sichtbare Artikelnummer (10001, 10002, ...) – wird automatisch per Model Event gesetzt |

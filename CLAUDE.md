@@ -139,26 +139,28 @@ Am Ende jeder Arbeits-Session folgende Schritte ausführen:
 ## Aktueller Stand
 - Phase 0 – abgeschlossen
 - Phase 1 – abgeschlossen
-- Phase 2 – bereit zum Start (vollständige Konsistenzprüfung bestanden, keine Fehler)
+- Phase 2 – abgeschlossen (inkl. Artikelnummer)
 
 ### Was bisher fertig ist
 - Laravel 13, MySQL, Git, Vite + Tailwind v4
 - Blade-Layout (app.blade.php, navigation.blade.php, footer.blade.php, guest.blade.php) – CultPlanet-Design aktiv
 - app.blade.php unterstützt beide Blade-Stile: $slot (Breeze) + @yield (Phase-2-Views)
 - Statische Seiten: Startseite, Impressum, Datenschutz, 404, 500
-- web.php: alle Routen korrekt benannt, Phase-2-Routen als auskommentierte TODOs vorbereitet
+- web.php: alle Routen für Phase 2 aktiv (shop, cart, checkout, orders, reviews, products CRUD)
 - Alle Auth-Controller: Redirect nach Login/Register/Verify → route('home') statt dashboard
 - Laravel Breeze (Login, Registrierung, Passwort-Reset, Profil)
 - Spatie Laravel-Permission: 3 Rollen (admin, mitarbeiter, kunde)
 - Neue Nutzer bekommen automatisch Rolle "kunde"
-- 28 PHPUnit Tests – alle grün
+- Produkte CRUD (Admin), Bildupload, Session-Warenkorb, Checkout, Attrappen-Zahlung, Reviews
+- Artikelnummer (artikel_nr): echte DB-Spalte, automatisch gesetzt per Eloquent-Model-Event
+- 51 PHPUnit Tests – alle grün
 - Logo (logo.svg), Favicon (favicon.svg) in public/images/
 - Design-Referenz (design.md) + Mockups erstellt
 
 ### Technische Besonderheiten
 - Tailwind v4: kein tailwind.config.js – Inter-Font wird über @theme in app.css gesetzt
 - MySQL Passwort in .env gesetzt (Henry+007)
-- storage:link noch nicht ausgeführt – vor erstem Bildupload nötig: `php artisan storage:link`
+- storage:link bereits ausgeführt (Bildupload aktiv)
 
 ## Datenbankstruktur (geplant)
 Tabellen die wir brauchen werden:

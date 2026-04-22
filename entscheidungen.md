@@ -87,3 +87,6 @@ Das Layout hat keinen fixen max-width auf dem `<main>`-Tag. Jede View setzt ihre
 
 **22.04.2026 – Unique-Constraint für Reviews auf Datenbankebene**
 Die reviews-Tabelle hat einen `unique(['user_id', 'product_id'])`-Constraint, damit ein Nutzer ein Produkt wirklich nur einmal bewerten kann – auch wenn ein Buggy Request es zweimal versucht. Zusätzlich prüft der Controller die Duplikate vorher ab und gibt eine freundliche Fehlermeldung aus.
+
+**22.04.2026 – Artikelnummer als echte DB-Spalte mit Model-Event statt Controller-Logik**
+Die Artikelnummer (10001, 10002, ...) wird als eigene Spalte `artikel_nr` in der Datenbank gespeichert, nicht nur zur Anzeige berechnet. Vorteil: Die Nummer bleibt stabil, auch wenn das Produkt bearbeitet wird, und lässt sich filtern oder sortieren. Die automatische Vergabe passiert im `Product`-Model über ein Eloquent-Model-Event (`booted()` + `static::created()`): nach jedem `Product::create()` wird sofort `artikel_nr = id + 10000` gesetzt. So ist der Controller frei davon und die Logik sitzt an einer einzigen Stelle. Zwei Migrationen waren nötig: erst die Spalte als NOT NULL + unique anlegen, dann in einer zweiten Migration nullable machen – damit das booted()-Event nach dem create() mit update() schreiben kann ohne einen NOT-NULL-Fehler zu werfen.
