@@ -111,6 +111,15 @@ Die Kundennummer (`kundennummer = 20000 + id`) folgt exakt dem gleichen Muster w
 **22.04.2026 – Auktions-Lagerbestand-Check im Controller statt Datenbankconstraint**
 Ob ein Produkt noch eine weitere Auktion aufnehmen kann (`anzahl_geplanter_auktionen < stock`), wird im `AuctionController::store()` geprüft – nicht per DB-Constraint. Ein DB-Constraint könnte das nicht ausdrücken, weil es einen Vergleich zwischen zwei Tabellen erfordert. Die Controller-Prüfung gibt außerdem eine klare Fehlermeldung mit Zahlen ("Maximal X Auktionen möglich, aktuell Y geplant").
 
+**22.04.2026 – Auktionsende und Statuswechsel beim Seitenaufruf statt nur per Scheduler**
+Die Methode `statusAktualisieren()` wird in `index()` und `show()` aufgerufen – beim Laden der Seite werden geplante Auktionen automatisch aktiviert und abgelaufene automatisch geschlossen. So funktioniert das System auch ohne laufenden Cron-Job. Der Artisan-Command (Schritt 10) wird zusätzlich gebaut um das Konzept zu zeigen, ist aber nicht zwingend nötig für den Betrieb.
+
+**22.04.2026 – Gebotsverlauf anonymisiert (erste 2 Buchstaben + Sternchen)**
+Im Gebotsverlauf wird der Name des Bieters auf die ersten 2 Buchstaben + "***" gekürzt (z.B. "An***"). So sehen andere Bieter wer bietet, können aber die Person nicht vollständig identifizieren. Einfache Umsetzung mit `mb_substr()`.
+
+**22.04.2026 – Countdown mit automatischem Seiten-Reload bei Ablauf**
+Wenn der JS-Countdown auf 0 läuft, reloadet die Seite nach 3 Sekunden automatisch. Beim Reload wird `statusAktualisieren()` aufgerufen und die Auktion als "beendet" angezeigt. Kein WebSocket oder AJAX nötig – simpel und ausreichend.
+
 **22.04.2026 – Auktions-Planungsformular direkt im Produkt-Edit statt separater Seite**
 Das Formular zum Planen einer Auktion wurde als zusätzlicher Abschnitt in `products/edit.blade.php` eingebaut, nicht als eigene Seite. So hat der Admin alles auf einen Blick: Produktdaten bearbeiten und Auktionen planen in einer Ansicht. Weniger Klicks, weniger Routen.
 

@@ -54,7 +54,7 @@
 - 9 neue PHPUnit-Tests – 60 Tests insgesamt, alle grün
 
 ## Letzte bearbeitete Datei
-`resources/views/shop/show.blade.php` (22.04.2026) – Lagerbestand-Logik auf verfuegbarImShop() umgestellt
+`resources/views/auction/show.blade.php` (22.04.2026) – Detailseite mit Countdown, Bietformular, Gebotsverlauf
 
 ## Bugfixes dieser Session (22.04.2026)
 - `tests/Feature/Auth/AuthenticationTest.php`: `route('dashboard')` → `route('home')` gefixt
@@ -166,10 +166,10 @@
 3. ✓ Admin: Produkt-Übersichtsseite (`admin.products`) + Import-Attrappe
 4. ✓ Admin: Auktion-Planungsformular im Produkt-Edit (Validation + Lagerbestand-Check)
 5. ✓ Lagerbestand-Logik in CartController + Shop-Views (Badge "In Auktion", gesperrter Button)
-6. → AuctionController: index(), show(), bid(), close()
-7. → Auktions-Views: Übersicht (Grid), Detailseite (Countdown + Bietformular + Verlauf)
+6. ✓ AuctionController: index(), show(), bid(), schliesseAuktion() (privat), statusAktualisieren() (privat)
+7. ✓ Auktions-Views: auction/index.blade.php (Grid + Demnächst + Mini-Countdown), auction/show.blade.php (Countdown, Bietformular, Gebotsverlauf anonymisiert)
 8. → Auktions-Banner auf Startseite
-9. → Navigation: `auction.index` Route aktivieren
+9. ✓ Navigation: `auction.index` Route aktiviert
 10. → Artisan-Command `auctions:close` + Scheduler-Registrierung
 11. → Gewinner-Bestellung automatisch anlegen bei Auktionsende
 12. → PHPUnit Tests

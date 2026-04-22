@@ -55,6 +55,12 @@ HTTP ist zustandslos – jede Anfrage vergisst alles vom letzten Mal. Die Sessio
 ### @stack und @push – JavaScript pro Seite einbinden
 Mit `@stack('scripts')` im Layout reserviert man einen Platz für seitenspezifisches JavaScript. Einzelne Views können dann mit `@push('scripts')` Code in diesen Platz einfügen. Vorteil: Das `<script>`-Tag landet trotzdem am Ende des Body im Layout, nicht mitten im HTML. Im Projekt: Der Mengenwahl-Button auf der Produktseite nutzt `@push('scripts')` für die `changeQty()`-Funktion.
 
+### location.reload() – Seite per JavaScript neu laden
+Mit `location.reload()` kann man die aktuelle Seite per JavaScript neu laden – genau so als ob der Nutzer F5 drückt. Das ist nützlich wenn sich Daten auf dem Server geändert haben und die Seite das anzeigen soll, ohne dass der Nutzer selbst etwas tut. Im Projekt: Wenn der Auktions-Countdown auf 0 läuft, wird die Seite nach 3 Sekunden automatisch neu geladen damit der neue Status "beendet" angezeigt wird.
+
+### mb_substr() – Text kürzen mit Unterstützung für Umlaute
+`mb_substr($text, 0, 2)` gibt die ersten 2 Zeichen eines Strings zurück – und funktioniert auch korrekt mit deutschen Umlauten (ä, ö, ü) und anderen Sonderzeichen. Das `mb_` steht für "multibyte" – ohne mb_ kann es bei Umlauten zu falschen Ergebnissen kommen. Im Projekt: Für den anonymisierten Gebotsverlauf werden die ersten 2 Buchstaben des Nutzernamens + "***" angezeigt.
+
 ### datetime-local – Datum und Uhrzeit in HTML-Formularen
 Das HTML-Inputfeld `type="datetime-local"` zeigt einen Datums- und Uhrzeitpicker direkt im Browser. Der Wert wird als String im Format `2026-04-22T15:30` übertragen. Laravel versteht dieses Format direkt bei der Validierung mit `'date'` und `'after:now'`. Im Projekt: Das Auktions-Planungsformular nutzt `datetime-local` für Start- und Endzeitpunkt der Auktion.
 
