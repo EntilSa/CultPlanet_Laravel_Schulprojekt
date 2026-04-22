@@ -1,0 +1,108 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 370" width="500" height="370" role="img" aria-label="CultPlanet Logo">
+  <defs>
+
+    <!-- Sphere-Farbverlauf: helles Blau oben links, dunkles Navy unten rechts -->
+    <radialGradient id="planetGrad" cx="32%" cy="26%" r="70%">
+      <stop offset="0%"   stop-color="#b0e8ff"/>
+      <stop offset="18%"  stop-color="#4dbdff"/>
+      <stop offset="50%"  stop-color="#1878d0"/>
+      <stop offset="80%"  stop-color="#0b3a80"/>
+      <stop offset="100%" stop-color="#050f2e"/>
+    </radialGradient>
+
+    <!-- Glanz-Overlay auf der Sphere (weißer Schimmer oben links) -->
+    <radialGradient id="shineGrad" cx="27%" cy="20%" r="44%">
+      <stop offset="0%"   stop-color="#ffffff" stop-opacity="0.50"/>
+      <stop offset="55%"  stop-color="#ffffff" stop-opacity="0.07"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Ring-Farbverlauf: dunkelgrau mit leichtem Tiefeneffekt -->
+    <linearGradient id="ringGrad" x1="0%" y1="0%" x2="60%" y2="100%">
+      <stop offset="0%"   stop-color="#383838"/>
+      <stop offset="50%"  stop-color="#141414"/>
+      <stop offset="100%" stop-color="#060606"/>
+    </linearGradient>
+
+    <!-- Schatten unter dem gesamten Logo -->
+    <filter id="dropShadow" x="-15%" y="-15%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="6" stdDeviation="10" flood-color="#000000" flood-opacity="0.35"/>
+    </filter>
+
+    <!-- Text-Schatten-Filter -->
+    <filter id="textShadow">
+      <feDropShadow dx="1" dy="1" stdDeviation="2" flood-color="#000000" flood-opacity="0.7"/>
+    </filter>
+
+    <!-- Pfad für den vorderen Ring-Bogen (Text folgt diesem Bogen) -->
+    <!-- Ring-Mitte: (250,215), rx=185, ry=58, Rotation: +18 Grad -->
+    <!-- Linker Endpunkt oben links: (74,158), Rechter Endpunkt unten rechts: (426,272) -->
+    <path id="textArc" d="M 74,158 A 185,58 18 0,1 426,272"/>
+
+  </defs>
+
+  <!-- ===== SCHICHT 1: Hinterer Ring-Bogen (hinter der Sphere) ===== -->
+  <!-- Geht von rechts unten (426,272) nach links oben (74,158) – oben rum / hinter der Sphere -->
+  <path d="M 426,272 A 185,58 18 0,1 74,158"
+        fill="none"
+        stroke="url(#ringGrad)"
+        stroke-width="42"
+        stroke-linecap="butt"/>
+
+  <!-- Feiner heller Rand am hinteren Ring -->
+  <path d="M 426,272 A 185,58 18 0,1 74,158"
+        fill="none"
+        stroke="#404040"
+        stroke-width="5"
+        stroke-linecap="butt"/>
+
+
+  <!-- ===== SCHICHT 2: Sphere ===== -->
+  <circle cx="250" cy="185" r="128" fill="url(#planetGrad)" filter="url(#dropShadow)"/>
+
+  <!-- Blaues Leuchten an der Sphere-Kante -->
+  <circle cx="250" cy="185" r="128"
+          fill="none"
+          stroke="#3aaeff"
+          stroke-width="3"
+          stroke-opacity="0.4"/>
+
+  <!-- Weiß-Glanz oben links -->
+  <circle cx="250" cy="185" r="128" fill="url(#shineGrad)"/>
+
+  <!-- Kleiner heller Fleck (Highlight-Punkt) -->
+  <ellipse cx="195" cy="133" rx="32" ry="20"
+           fill="white" fill-opacity="0.18"
+           transform="rotate(-20, 195, 133)"/>
+
+
+  <!-- ===== SCHICHT 3: Vorderer Ring-Bogen (vor der Sphere) ===== -->
+  <!-- Geht von links oben (74,158) nach rechts unten (426,272) – unten rum / vor der Sphere -->
+  <path d="M 74,158 A 185,58 18 0,1 426,272"
+        fill="none"
+        stroke="url(#ringGrad)"
+        stroke-width="42"
+        stroke-linecap="butt"/>
+
+  <!-- Feiner heller Rand am vorderen Ring -->
+  <path d="M 74,158 A 185,58 18 0,1 426,272"
+        fill="none"
+        stroke="#3a3a3a"
+        stroke-width="4"
+        stroke-linecap="butt"/>
+
+
+  <!-- ===== SCHICHT 4: Text auf dem vorderen Ring ===== -->
+  <text
+    font-family="'Arial Black', 'Arial Bold', Impact, sans-serif"
+    font-weight="900"
+    font-size="46"
+    font-style="italic"
+    fill="white"
+    text-anchor="middle"
+    filter="url(#textShadow)"
+    letter-spacing="1">
+    <textPath href="#textArc" startOffset="50%">Cult Planet</textPath>
+  </text>
+
+</svg>

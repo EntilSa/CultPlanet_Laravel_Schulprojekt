@@ -17,6 +17,17 @@ Alleinentwicklung. Entwickler ist Umschüler im Lernprozess.
 - Niemals Fortgeschrittenen-Code ohne explizite Aufforderung
 - Deutsch als Kommentarsprache im Code
 
+## Design-Vorgaben (PFLICHT – vor jedem Frontend-Task lesen)
+WICHTIG: Vor dem Erstellen oder Bearbeiten von Blade-Templates IMMER zuerst `design.md` lesen.
+- Primärfarbe: #1a2e4a (Dunkelblau für Nav/Header/Footer)
+- Buttons: #2563eb (Blau, Tailwind `bg-blue-600`)
+- Akzent: #f97316 (Orange, Tailwind `bg-orange-500`) – besonders für Auktions-Banner
+- Hintergrund: #f8fafc (`bg-slate-50`)
+- Kein eigenes CSS – nur Tailwind-Utilities
+- Auktions-Banner: IMMER prominent, volle Breite, orangener Rand oben, gut sichtbar
+- Logo: `public/images/logo.png` (blauer Planet, weißer Text "Cult Planet")
+- Alle Details in `design.md`
+
 ## Tech-Stack
 - Laravel 13
 - Blade (Frontend-Templates)
@@ -126,7 +137,28 @@ Am Ende jeder Arbeits-Session folgende Schritte ausführen:
    - Offene Punkte oder Probleme
 
 ## Aktueller Stand
-- Phase 0 – noch nicht gestartet
+- Phase 0 – abgeschlossen
+- Phase 1 – abgeschlossen
+- Phase 2 – bereit zum Start (vollständige Konsistenzprüfung bestanden, keine Fehler)
+
+### Was bisher fertig ist
+- Laravel 13, MySQL, Git, Vite + Tailwind v4
+- Blade-Layout (app.blade.php, navigation.blade.php, footer.blade.php, guest.blade.php) – CultPlanet-Design aktiv
+- app.blade.php unterstützt beide Blade-Stile: $slot (Breeze) + @yield (Phase-2-Views)
+- Statische Seiten: Startseite, Impressum, Datenschutz, 404, 500
+- web.php: alle Routen korrekt benannt, Phase-2-Routen als auskommentierte TODOs vorbereitet
+- Alle Auth-Controller: Redirect nach Login/Register/Verify → route('home') statt dashboard
+- Laravel Breeze (Login, Registrierung, Passwort-Reset, Profil)
+- Spatie Laravel-Permission: 3 Rollen (admin, mitarbeiter, kunde)
+- Neue Nutzer bekommen automatisch Rolle "kunde"
+- 28 PHPUnit Tests – alle grün
+- Logo (logo.svg), Favicon (favicon.svg) in public/images/
+- Design-Referenz (design.md) + Mockups erstellt
+
+### Technische Besonderheiten
+- Tailwind v4: kein tailwind.config.js – Inter-Font wird über @theme in app.css gesetzt
+- MySQL Passwort in .env gesetzt (Henry+007)
+- storage:link noch nicht ausgeführt – vor erstem Bildupload nötig: `php artisan storage:link`
 
 ## Datenbankstruktur (geplant)
 Tabellen die wir brauchen werden:
