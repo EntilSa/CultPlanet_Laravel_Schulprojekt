@@ -129,7 +129,7 @@
                 <form action="{{ route('admin.departments.store') }}" method="POST">
                     @csrf
                     <div class="mb-3">
-                        <label class="block text-sm text-slate-600 mb-1">Bereichsname</label>
+                        <label class="block text-slate-700 font-medium mb-1">Bereichsname</label>
                         <input type="text" name="name" value="{{ old('name') }}"
                                placeholder="z.B. Lager, Verkauf, Kasse..."
                                class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">

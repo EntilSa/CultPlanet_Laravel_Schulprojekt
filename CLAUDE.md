@@ -149,14 +149,15 @@ Am Ende jeder Arbeits-Session folgende Schritte ausführen:
 - Phase 1 – abgeschlossen
 - Phase 2 – abgeschlossen (inkl. Artikelnummer)
 - Phase 3 – abgeschlossen
-- Spezialisierung – in Arbeit (Schritte 1–4 erledigt, 5–12 offen)
+- Spezialisierung – abgeschlossen (alle 12 Schritte erledigt)
+- Individualprojekt – abgeschlossen
 
 ### Was bisher fertig ist
 - Laravel 13, MySQL, Git, Vite + Tailwind v4
 - Blade-Layout (app.blade.php, navigation.blade.php, footer.blade.php, guest.blade.php) – CultPlanet-Design aktiv
 - app.blade.php unterstützt beide Blade-Stile: $slot (Breeze) + @yield (Phase-2-Views)
 - Statische Seiten: Startseite, Impressum, Datenschutz, 404, 500
-- web.php: alle Routen für Phase 2 aktiv (shop, cart, checkout, orders, reviews, products CRUD)
+- web.php: alle Routen aktiv (shop, cart, checkout, orders, reviews, products CRUD, auctions, departments)
 - Alle Auth-Controller: Redirect nach Login/Register/Verify → route('home') statt dashboard
 - Laravel Breeze (Login, Registrierung, Passwort-Reset, Profil)
 - Spatie Laravel-Permission: 3 Rollen (admin, mitarbeiter, kunde)
@@ -164,13 +165,15 @@ Am Ende jeder Arbeits-Session folgende Schritte ausführen:
 - Produkte CRUD (Admin), Bildupload, Session-Warenkorb, Checkout, Attrappen-Zahlung, Reviews
 - Artikelnummer (artikel_nr): echte DB-Spalte, automatisch gesetzt per Eloquent-Model-Event
 - Admin-Bereich: Dashboard, Bestellungsverwaltung, Nutzerverwaltung, Verkaufsübersicht
-- 60 PHPUnit Tests – alle grün
+- Spezialisierung Tagesauktion: Auktionen, Gebote, Countdown, Lagerbestand-Logik, Artisan-Command, Auktions-Banner
+- Individualprojekt Mitarbeiterverwaltung: Bereiche CRUD, Mitarbeiter zuweisen/entfernen, Warnsystem
+- 85 PHPUnit Tests – alle grün
 - Logo (logo.svg), Favicon (favicon.svg) in public/images/
 - Design-Referenz (design.md) + Mockups erstellt
 
 ### Technische Besonderheiten
 - Tailwind v4: kein tailwind.config.js – Inter-Font wird über @theme in app.css gesetzt
-- MySQL Passwort in .env gesetzt (Henry+007)
+- MySQL Passwort in .env gesetzt (siehe .env)
 - storage:link bereits ausgeführt (Bildupload aktiv)
 
 ## Datenbankstruktur (geplant)
