@@ -16,9 +16,10 @@
 | 10 | 2026-04-24 | – | 118 | 7 | Spezialisierung 8,10,12 | Auktions-Banner, Artisan-Command auctions:close, 14 PHPUnit-Tests – 74 Tests grün |
 | 11 | 2026-04-24 | – | 544 | 10 | Individualprojekt | Mitarbeiterverwaltung: Bereiche CRUD, Mitarbeiter zuweisen/entfernen, Warnsystem, 11 Tests – 85 Tests grün |
 | 12 | 2026-04-24 | – | 307 | 2 | Kundenreise-Tests | 8 Feature-Tests für vollständige Shop-Nutzung (Registrierung, Warenkorb, Checkout, Bewertung) – 93 Tests grün |
+| 13 | 2026-04-24 | – | 437 | 2 | Sicherheits- & Grenzwerttests | 23 neue Tests nach Branchenstandard (fremde Bestellung, Mengen-Grenzwerte, Bewertungs-Grenzen) – 116 Tests grün |
 
 ## Gesamt
 
 | Zeilen Code gesamt | Dateien gesamt | Anzahl Sessions |
 |--------------------|----------------|-----------------|
-| 8371 | 114 | 12 |
+| 8808 | 116 | 13 |
