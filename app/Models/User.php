@@ -51,4 +51,10 @@ class User extends Authenticatable
     {
         return $this->hasMany(Bid::class);
     }
+
+    // ein mitarbeiter kann in mehreren bereichen sein (many-to-many)
+    public function departments()
+    {
+        return $this->belongsToMany(Department::class);
+    }
 }

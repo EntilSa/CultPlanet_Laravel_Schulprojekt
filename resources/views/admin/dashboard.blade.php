@@ -102,6 +102,10 @@
            class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-medium px-4 py-2.5 rounded-lg transition text-sm">
             Produkte verwalten
         </a>
+        <a href="{{ route('admin.departments.index') }}"
+           class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-medium px-4 py-2.5 rounded-lg transition text-sm">
+            Mitarbeiterverwaltung
+        </a>
     </div>
 
 </div>

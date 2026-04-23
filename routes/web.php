@@ -7,6 +7,7 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuctionController;
+use App\Http\Controllers\DepartmentController;
 use Illuminate\Support\Facades\Route;
 
 // Startseite – aktive Auktion für Banner mitgeben
@@ -85,6 +86,13 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::get('/nutzer', [AdminController::class, 'users'])->name('users');
     Route::patch('/nutzer/{user}/rolle', [AdminController::class, 'userRoleUpdate'])->name('users.role');
     Route::get('/verkauf', [AdminController::class, 'sales'])->name('sales');
+
+    // Mitarbeiterverwaltung – Bereiche anlegen, Mitarbeiter zuweisen/entfernen
+    Route::get('/bereiche', [DepartmentController::class, 'index'])->name('departments.index');
+    Route::post('/bereiche', [DepartmentController::class, 'store'])->name('departments.store');
+    Route::delete('/bereiche/{department}', [DepartmentController::class, 'destroy'])->name('departments.destroy');
+    Route::post('/bereiche/{department}/mitarbeiter', [DepartmentController::class, 'addUser'])->name('departments.addUser');
+    Route::delete('/bereiche/{department}/mitarbeiter/{user}', [DepartmentController::class, 'removeUser'])->name('departments.removeUser');
 });
 
 // Auktion-Verwaltung (admin) – auktion für ein produkt planen oder löschen

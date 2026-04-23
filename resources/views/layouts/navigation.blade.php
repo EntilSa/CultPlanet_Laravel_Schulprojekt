@@ -46,6 +46,14 @@
                     </a>
                 @endif
 
+                {{-- Bereiche-Link – nur für admins --}}
+                @if(auth()->user()->hasRole('admin'))
+                    <a href="{{ route('admin.departments.index') }}"
+                       class="text-white hover:text-orange-400 text-sm font-medium transition-colors">
+                        Bereiche
+                    </a>
+                @endif
+
                 {{-- Mein Konto – funktioniert bereits (Breeze) --}}
                 <a href="{{ route('profile.edit') }}"
                    class="text-white hover:text-orange-400 text-sm font-medium transition-colors">
