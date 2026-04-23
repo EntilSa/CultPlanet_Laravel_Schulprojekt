@@ -1,7 +1,7 @@
 # CultPlanet – Handover
 
 ## Aktueller Stand
-**Phase 0, 1, 2 und 3 abgeschlossen. Spezialisierung läuft – Schritte 1–7, 9, 11 erledigt. Offen: Schritte 8, 10, 12. 60 Tests alle grün.**
+**Phase 0, 1, 2, 3 und Spezialisierung vollständig abgeschlossen. Alle 12 Schritte erledigt. 74 Tests alle grün.**
 
 ### Phase 0 – Erledigt
 - Laravel 13 installiert, MySQL konfiguriert, Git initialisiert
@@ -54,7 +54,7 @@
 - 9 neue PHPUnit-Tests – 60 Tests insgesamt, alle grün
 
 ## Letzte bearbeitete Datei
-`handover.md` (22.04.2026) – Schritt 11 auf ✓ korrigiert, Aktueller Stand aktualisiert
+`tests/Feature/AuctionTest.php` (24.04.2026) – 14 PHPUnit-Tests für Auktion (Schritt 12)
 
 ## Bugfixes dieser Session (22.04.2026)
 - `tests/Feature/Auth/AuthenticationTest.php`: `route('dashboard')` → `route('home')` gefixt
@@ -168,16 +168,13 @@
 5. ✓ Lagerbestand-Logik in CartController + Shop-Views (Badge "In Auktion", gesperrter Button)
 6. ✓ AuctionController: index(), show(), bid(), schliesseAuktion() (privat), statusAktualisieren() (privat)
 7. ✓ Auktions-Views: auction/index.blade.php (Grid + Demnächst + Mini-Countdown), auction/show.blade.php (Countdown, Bietformular, Gebotsverlauf anonymisiert)
-8. → Auktions-Banner auf Startseite
+8. ✓ Auktions-Banner auf Startseite (aktive oder nächste geplante Auktion, Countdown, Button)
 9. ✓ Navigation: `auction.index` Route aktiviert
-10. → Artisan-Command `auctions:close` + Scheduler-Registrierung
+10. ✓ Artisan-Command `auctions:close` + Scheduler-Registrierung in `routes/console.php` (everyMinute)
 11. ✓ Gewinner-Bestellung automatisch anlegen bei Auktionsende (in schliesseAuktion() umgesetzt, zahlungsmethode='auktion', status='bezahlt')
-12. → PHPUnit Tests (Auktion anlegen, Bieten, Auktionsende, Lagerbestand-Sperre)
+12. ✓ PHPUnit Tests – 14 Tests: Auktion anlegen, Validation, Lagerbestand-Check, Bieten, Auktionsende, Shop-Sperre
 
-### Nächste Session – nur noch 3 Schritte offen:
-- **Schritt 8**: Auktions-Banner auf Startseite (design.md enthält fertige Vorlage)
-- **Schritt 10**: Artisan-Command `php artisan auctions:close` + Scheduler-Registrierung in `routes/console.php`
-- **Schritt 12**: PHPUnit Tests für Auktion (8–10 neue Tests erwartet)
+### Spezialisierung – VOLLSTÄNDIG ABGESCHLOSSEN (24.04.2026)
 
 ## Wichtig für den Start von Phase 2 (ABGESCHLOSSEN)
 
@@ -204,6 +201,6 @@ In web.php sind diese Routen als auskommentierte TODOs vorbereitet.
 
 ## Wichtige Hinweise
 - Tailwind v4: kein tailwind.config.js – Inter-Font über @theme in app.css
-- MySQL Passwort: Henry+007 (in .env)
+- MySQL Passwort: siehe .env
 - storage:link vor erstem Bildupload ausführen: `php artisan storage:link`
 - Vorlage für alle Views: design.md + mockup-startseite.html + mockup-produktseite.html

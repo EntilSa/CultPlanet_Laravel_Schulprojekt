@@ -13,9 +13,10 @@
 | 7 | 2026-04-22 | – | 563 | 16 | Spezialisierung 1-4 | Kundennummer, Auktion-DB, Admin-Produkte, Auktion planen – 60 Tests grün |
 | 8 | 2026-04-22 | – | 39 | 4 | Spezialisierung 5 | Lagerbestand-Logik im Shop (Auktion-Reservierung) – 60 Tests grün |
 | 9 | 2026-04-22 | – | 450 | 6 | Spezialisierung 6 | AuctionController + Views + Navigation – 60 Tests grün |
+| 10 | 2026-04-24 | – | 118 | 7 | Spezialisierung 8,10,12 | Auktions-Banner, Artisan-Command auctions:close, 14 PHPUnit-Tests – 74 Tests grün |
 
 ## Gesamt
 
 | Zeilen Code gesamt | Dateien gesamt | Anzahl Sessions |
 |--------------------|----------------|-----------------|
-| 7402 | 97 | 9 |
+| 7520 | 103 | 10 |

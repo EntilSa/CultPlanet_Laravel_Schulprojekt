@@ -87,6 +87,12 @@ protected static function booted(): void
 }
 ```
 
+### Artisan-Command (eigener) – eigene Konsolen-Befehle schreiben
+Man kann in Laravel eigene `php artisan`-Befehle schreiben. Dazu legt man eine Klasse in `app/Console/Commands/` an mit zwei Pflichtfeldern: `$signature` (der Befehlsname, z.B. `auctions:close`) und `$description` (kurze Erklärung). Die eigentliche Logik kommt in die `handle()`-Methode. Laravel erkennt den Befehl automatisch und er ist sofort über `php artisan auctions:close` aufrufbar. Im Projekt: Der Command schließt alle abgelaufenen Auktionen und setzt den Gewinner.
+
+### Laravel Scheduler – automatische Aufgaben planen
+Der Scheduler ist Laravels eingebaute Lösung für wiederkehrende Aufgaben (wie ein Cron-Job). Man registriert Commands in `routes/console.php` mit `Schedule::command('auctions:close')->everyMinute()`. Auf einem echten Server würde man einmalig einen Cron-Job einrichten: `* * * * * php artisan schedule:run` – das läuft jede Minute und Laravel entscheidet dann selbst welche geplanten Aufgaben dran sind. Lokal kann man `php artisan schedule:run` manuell aufrufen oder den Command direkt. Im Projekt: `auctions:close` wird jede Minute registriert – aktiviert geplante Auktionen und schließt abgelaufene.
+
 ---
 
 ## Vokabular (Wörterbuch)
@@ -141,3 +147,8 @@ Alle Begriffe die im Projekt vorkommen, kurz und einfach erklärt.
 | syncRoles | Spatie-Funktion: alle alten Rollen entfernen und neue Rolle(n) setzen |
 | datetime-local | HTML-Input-Typ für Datum + Uhrzeit kombiniert – wird von Laravel-Validierung direkt verstanden |
 | kundennummer | Automatisch vergebene Kundennummer (20000 + id) – per booted()-Event wie artikel_nr |
+| Artisan-Command | Eigener Konsolen-Befehl in Laravel – wird in `app/Console/Commands/` angelegt, Aufruf: `php artisan name` |
+| Scheduler | Laravels eingebautes System für geplante Aufgaben – konfiguriert in `routes/console.php` |
+| everyMinute() | Scheduler-Methode: diese Aufgabe soll jede Minute ausgeführt werden |
+| $signature | Pflichtfeld in einem Artisan-Command – legt den Befehlsnamen fest (z.B. `auctions:close`) |
+| handle() | Methode in einem Artisan-Command die beim Ausführen aufgerufen wird – hier kommt die Logik rein |

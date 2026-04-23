@@ -125,5 +125,16 @@ Das Formular zum Planen einer Auktion wurde als zusätzlicher Abschnitt in `prod
 
 ---
 
+**24.04.2026 – Auktions-Banner zeigt aktive oder nächste geplante Auktion**
+Der Banner auf der Startseite zeigt zuerst die aktive Auktion, falls keine läuft die nächste geplante. Die Logik sitzt direkt in der Home-Route-Closure in `web.php` – kein eigener Controller nötig, da es nur zwei Abfragen sind. Falls gar keine Auktion vorhanden ist, wird der Banner-Bereich komplett ausgeblendet (`@if($auktionBanner)`).
+
+**24.04.2026 – Artisan-Command enthält doppelte Logik (bewusste Entscheidung)**
+Die `schliesseAuktion()`-Methode existiert sowohl im `AuctionController` als auch im `CloseAuctions`-Command. Eine gemeinsame Service-Klasse wäre sauberer, aber für ein Schulprojekt mit zwei Stellen ist das Over-Engineering. Die Doppelung ist überschaubar und der Code bleibt dadurch in jeder Datei direkt lesbar ohne zwischen Dateien zu springen.
+
+**24.04.2026 – ExampleTest braucht RefreshDatabase nach Startseiten-Änderung**
+Der Standard-ExampleTest hatte kein `RefreshDatabase` – das war kein Problem solange die Startseite keine DB-Abfrage machte. Nach dem Hinzufügen der Auktions-Abfrage in der Home-Route schlug der Test fehl ("no such table: auctions"). Lösung: `RefreshDatabase` + `$seed = true` in ExampleTest ergänzt. Konsequenz: alle Feature-Tests brauchen RefreshDatabase wenn die App DB-Abfragen macht.
+
+---
+
 **22.04.2026 – Artikelnummer als echte DB-Spalte mit Model-Event statt Controller-Logik**
 Die Artikelnummer (10001, 10002, ...) wird als eigene Spalte `artikel_nr` in der Datenbank gespeichert, nicht nur zur Anzeige berechnet. Vorteil: Die Nummer bleibt stabil, auch wenn das Produkt bearbeitet wird, und lässt sich filtern oder sortieren. Die automatische Vergabe passiert im `Product`-Model über ein Eloquent-Model-Event (`booted()` + `static::created()`): nach jedem `Product::create()` wird sofort `artikel_nr = id + 10000` gesetzt. So ist der Controller frei davon und die Logik sitzt an einer einzigen Stelle. Zwei Migrationen waren nötig: erst die Spalte als NOT NULL + unique anlegen, dann in einer zweiten Migration nullable machen – damit das booted()-Event nach dem create() mit update() schreiben kann ohne einen NOT-NULL-Fehler zu werfen.
