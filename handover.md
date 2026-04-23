@@ -56,6 +56,23 @@
 ## Letzte bearbeitete Datei
 `resources/views/shop/index.blade.php` + `ProductController::index()` (24.04.2026) – Suche & Filter im Shop: Textsuche (LIKE), Preisbereich (min/max), Verfügbarkeitsfilter, 4 Sortieroptionen, aktive Filter als Chips, Zurücksetzen-Link. 16 neue Tests in `SuchfilterTest.php`.
 
+## Was als nächstes ansteht
+
+### Offen (nach Priorität)
+1. **Projektdokumentation schreiben** (höchste Priorität – Schulabgabe)
+   - Ca. 3 Seiten (±1): ER-Diagramm, Ablaufdiagramm Tagesauktion, Entscheidungsfindung, Fazit, Umsetzungsauszug
+   - Material liegt bereits vor: `entscheidungen.md`, `lernnotizen.md`, `handover.md` als Quellen nutzen
+2. **Abschlusspräsentation vorbereiten**
+   - 132 Tests als Beleg für Qualitätssicherung zeigen
+   - Phasen-Aufbau erklären, Entscheidungen begründen
+
+### Bereits fertig (nicht mehr anfassen nötig)
+- Alle 6 Phasen abgeschlossen (Phase 0–3, Spezialisierung, Individualprojekt)
+- 20 Produkte mit Bildern im Shop
+- Suche + Filter im Shop (Textsuche, Preisbereich, Verfügbarkeit, Sortierung)
+- 132 PHPUnit Tests – alle grün
+- Testdateien: AdminTest, AuctionTest, CartTest, DepartmentTest, GrenzwertTest, KundenreiseTest, OrderTest, ReviewTest, RoleTest, ShopTest, SicherheitsTest, SuchfilterTest
+
 ## Individualprojekt – Mitarbeiterverwaltung – ABGESCHLOSSEN (24.04.2026)
 - Migration `departments` (id, name unique, timestamps)
 - Migration `department_user` (Pivot-Tabelle, cascadeOnDelete)
