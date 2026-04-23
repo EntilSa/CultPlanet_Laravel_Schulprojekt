@@ -17,9 +17,10 @@
 | 11 | 2026-04-24 | – | 544 | 10 | Individualprojekt | Mitarbeiterverwaltung: Bereiche CRUD, Mitarbeiter zuweisen/entfernen, Warnsystem, 11 Tests – 85 Tests grün |
 | 12 | 2026-04-24 | – | 307 | 2 | Kundenreise-Tests | 8 Feature-Tests für vollständige Shop-Nutzung (Registrierung, Warenkorb, Checkout, Bewertung) – 93 Tests grün |
 | 13 | 2026-04-24 | – | 437 | 2 | Sicherheits- & Grenzwerttests | 23 neue Tests nach Branchenstandard (fremde Bestellung, Mengen-Grenzwerte, Bewertungs-Grenzen) – 116 Tests grün |
+| 14 | 2026-04-24 | – | 356 | 3 | Suche & Filter | Textsuche, Preisbereich, Verfügbarkeit, Sortierung im Shop – 16 neue Tests, 132 Tests grün |
 
 ## Gesamt
 
 | Zeilen Code gesamt | Dateien gesamt | Anzahl Sessions |
 |--------------------|----------------|-----------------|
-| 8808 | 116 | 13 |
+| 9164 | 117 | 14 |

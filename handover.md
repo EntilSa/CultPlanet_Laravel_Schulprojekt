@@ -1,7 +1,7 @@
 # CultPlanet – Handover
 
 ## Aktueller Stand
-**Phase 0, 1, 2, 3, Spezialisierung und Individualprojekt vollständig abgeschlossen. 116 Tests alle grün.**
+**Phase 0, 1, 2, 3, Spezialisierung und Individualprojekt vollständig abgeschlossen. 132 Tests alle grün.**
 
 ### Phase 0 – Erledigt
 - Laravel 13 installiert, MySQL konfiguriert, Git initialisiert
@@ -54,7 +54,7 @@
 - 9 neue PHPUnit-Tests – 60 Tests insgesamt, alle grün
 
 ## Letzte bearbeitete Datei
-`tests/Feature/SicherheitsTest.php` + `GrenzwertTest.php` (24.04.2026) – 23 neue Tests nach E-Commerce-Branchenstandard: Zugriffschutz auf fremde Bestellungen, Mengen-Grenzwerte im Warenkorb, Bewertungs-Grenzwerte, ungültige Zahlungsmethoden, Doppel-Registrierung
+`resources/views/shop/index.blade.php` + `ProductController::index()` (24.04.2026) – Suche & Filter im Shop: Textsuche (LIKE), Preisbereich (min/max), Verfügbarkeitsfilter, 4 Sortieroptionen, aktive Filter als Chips, Zurücksetzen-Link. 16 neue Tests in `SuchfilterTest.php`.
 
 ## Individualprojekt – Mitarbeiterverwaltung – ABGESCHLOSSEN (24.04.2026)
 - Migration `departments` (id, name unique, timestamps)

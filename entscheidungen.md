@@ -151,6 +151,19 @@ Der Standard-ExampleTest hatte kein `RefreshDatabase` – das war kein Problem s
 
 ---
 
+### Suche & Filter im Shop (24.04.2026)
+
+**24.04.2026 – Suche und Filter als GET-Formular statt JavaScript/AJAX**
+Die Such- und Filterleiste im Shop verwendet ein einfaches HTML-Formular mit `method="GET"`. Beim Absenden werden die Parameter an die URL angehängt (z.B. `/shop?suche=lego&preis_max=50`). Die Alternative wäre AJAX gewesen – die Seite aktualisiert sich ohne Reload. GET hat aber entscheidende Vorteile: der Link ist teilbar, der Zurück-Button funktioniert, und kein JavaScript ist nötig. Für ein Schulprojekt eindeutig die einfachere und sicherere Wahl.
+
+**24.04.2026 – Filterchips zeigen aktive Filter visuell an**
+Nach dem Vorbild von Amazon und Otto werden aktive Filter als kleine farbige "Chips" (blaue Badges) unterhalb der Filterleiste angezeigt. Das empfiehlt das Baymard Institute als Best Practice, weil Nutzer sonst vergessen was sie gefiltert haben. Der "Zurücksetzen"-Button erscheint nur wenn mindestens ein Filter aktiv ist – nicht immer, um den Screen nicht zu überladen.
+
+**24.04.2026 – Sortierung per match()-Ausdruck statt if/else-Kette**
+Die vier Sortieroptionen (neueste, preis_asc, preis_desc, bewertung) werden mit einem PHP-`match()`-Ausdruck auf die entsprechende Eloquent-Methode gemappt. Das ist kompakter als vier if/else-Blöcke und trotzdem direkt lesbar. Default-Fall ist `latest()` – das war schon vorher die Standardsortierung.
+
+---
+
 ### Tests nach Branchenstandard (24.04.2026)
 
 **24.04.2026 – Testfälle an E-Commerce-Branchenstandards ausgerichtet**

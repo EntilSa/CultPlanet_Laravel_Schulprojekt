@@ -215,6 +215,14 @@ Wichtig dabei: `$this->actingAs($kunde)` erlaubt es, in einem Test als bestimmte
 
 Ein häufiger Fehler: Wenn man Texte per `assertSee('...')` prüft, muss man den echten Text aus der View nehmen – also z.B. `assertSee('Kasse')` statt `assertSee('Checkout')` wenn die Seite auf Deutsch "Kasse" zeigt. Außerdem müssen Formulardaten die Validierungsregeln des Controllers erfüllen – z.B. muss der Bewertungstext mindestens 10 Zeichen haben wenn die Validierung `min:10` sagt.
 
+### Suche und Filter mit GET-Parametern
+
+Wenn man ein HTML-Formular mit `method="GET"` abschickt, werden die Eingaben direkt in die URL geschrieben – zum Beispiel `/shop?suche=lego&preis_max=50`. Das heißt: der Server bekommt die Suchwörter und Filterwerte über die URL, ohne dass eine neue Seite wirklich "abgesendet" wird. Im Controller greift man auf diese Werte mit `$request->input('suche')` oder `$request->filled('suche')` zu – `filled()` prüft dabei ob der Wert vorhanden und nicht leer ist. Im Projekt: `ProductController::index()` liest alle Filter aus der URL und baut daraus eine Datenbankabfrage zusammen.
+
+Für Textsuche in der Datenbank nutzt man in SQL das `LIKE`-Schlüsselwort mit Prozentzeichen als Platzhalter. `WHERE name LIKE '%lego%'` findet alle Namen die "lego" irgendwo enthalten – egal ob am Anfang, Ende oder in der Mitte. Das Prozentzeichen bedeutet "beliebig viele Zeichen". In Eloquent schreibt man das als `->where('name', 'like', '%' . $suche . '%')`. Im Projekt: die Textsuche im Shop findet "LEGO City" wenn man nur "lego" eintippt.
+
+Die Pagination (Seitennavigation) muss die Filter-Parameter kennen, sonst gehen sie bei einem Klick auf "Seite 2" verloren. Laravel löst das mit `->appends($request->query())` – das hängt alle aktuellen URL-Parameter an jeden Seitenlink an. Im Projekt: `$products = $query->paginate(12)->appends($request->query())` sorgt dafür dass die Suche beim Blättern erhalten bleibt.
+
 ### Sicherheitstests – Zugriffskontrolle per HTTP-Statuscode prüfen
 
 In Laravel gibt es zwei verschiedene Arten wie der Server auf unerlaubte Zugriffe reagiert: mit einem Redirect (Weiterleitung) oder mit einem Fehlercode. Wenn ein nicht eingeloggter Nutzer eine geschützte Seite aufruft, schickt die Auth-Middleware einen Redirect zu `route('login')` – der Test prüft dann `->assertRedirect(route('login'))`. Wenn aber ein eingeloggter Nutzer die Seite eines *anderen* Nutzers aufruft, greift die Controller-Prüfung mit `abort(403)` – das schickt einen HTTP-403-Fehlercode ("Verboten"), keinen Redirect. Der Test prüft dann `->assertStatus(403)`. Im Projekt: `OrderController` prüft `if ($order->user_id !== auth()->id()) { abort(403); }`.
@@ -309,3 +317,8 @@ Alle Begriffe die im Projekt vorkommen, kurz und einfach erklärt.
 | assertStatus(403) | PHPUnit-Prüfung: der Server hat mit Fehlercode 403 geantwortet |
 | Grenzwerttest | Test der prüft was bei Extremwerten passiert – z.B. genau der erlaubte Max-Wert, einer drüber |
 | boundary value test | Englischer Begriff für Grenzwerttest – gehört zum Standard-Vokabular im Software-Testing |
+| GET-Parameter | Werte die über die URL übergeben werden, z.B. `/shop?suche=lego` |
+| LIKE | SQL-Operator für Textsuche mit Platzhalter: `LIKE '%lego%'` findet alles was "lego" enthält |
+| filled() | Laravel-Funktion: prüft ob ein Request-Parameter vorhanden UND nicht leer ist |
+| appends() | Pagination-Methode: hängt URL-Parameter an alle Seitenlinks an damit Filter erhalten bleiben |
+| Filterchip | Kleines farbiges Badge das anzeigt welche Filter gerade aktiv sind – UI-Best-Practice |
