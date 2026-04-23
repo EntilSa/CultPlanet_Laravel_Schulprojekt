@@ -125,6 +125,19 @@ Das Formular zum Planen einer Auktion wurde als zusätzlicher Abschnitt in `prod
 
 ---
 
+### Individualprojekt (24.04.2026)
+
+**24.04.2026 – Mitarbeiterverwaltung als eigene Seite statt in bestehende Admin-Views integriert**
+Die Bereiche-Verwaltung hat eine eigene View `admin/departments/index.blade.php` statt z.B. in die Nutzer-Verwaltung integriert zu werden. So ist alles was mit Bereichen zu tun hat an einer Stelle – Bereiche anlegen, Mitarbeiter zuweisen, Warnanzeige. Ein eigener Controller `DepartmentController` hält die Logik sauber getrennt vom `AdminController`.
+
+**24.04.2026 – Many-to-Many ohne eigenes Pivot-Model (nur Pivot-Tabelle)**
+Die Beziehung Mitarbeiter ↔ Bereiche läuft über eine einfache Pivot-Tabelle `department_user`. Ein eigenes Eloquent-Model für die Pivot-Tabelle (`DepartmentUser`) wäre nur nötig wenn man auf der Pivot-Tabelle eigene Spalten (z.B. `since`) bräuchte. Da hier nur die Zuordnung zählt, reicht `belongsToMany()` direkt – einfacher und ausreichend.
+
+**24.04.2026 – Warnsystem als orange Hervorhebung statt E-Mail oder Push**
+Der Hinweis auf unbesetzte Bereiche erscheint als auffällige orangene Infobox oben auf der Bereiche-Seite sowie als "Unbesetzt"-Badge auf jeder Bereichskarte. Eine aktivere Benachrichtigung (E-Mail, Dashboard-Badge) wäre für ein Schulprojekt Over-Engineering. Die Warnung ist gut sichtbar wenn ein Admin die Seite aufruft.
+
+---
+
 **24.04.2026 – Auktions-Banner zeigt aktive oder nächste geplante Auktion**
 Der Banner auf der Startseite zeigt zuerst die aktive Auktion, falls keine läuft die nächste geplante. Die Logik sitzt direkt in der Home-Route-Closure in `web.php` – kein eigener Controller nötig, da es nur zwei Abfragen sind. Falls gar keine Auktion vorhanden ist, wird der Banner-Bereich komplett ausgeblendet (`@if($auktionBanner)`).
 

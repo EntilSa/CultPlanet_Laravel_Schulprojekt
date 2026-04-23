@@ -87,6 +87,12 @@ protected static function booted(): void
 }
 ```
 
+### Many-to-Many – Beziehung zwischen zwei Tabellen in beide Richtungen
+Eine Many-to-Many-Beziehung bedeutet: ein Mitarbeiter kann in mehreren Bereichen sein, und ein Bereich kann mehrere Mitarbeiter haben. In Laravel braucht man dafür eine Zwischentabelle (Pivot-Tabelle), die nur zwei Spalten hat: die IDs beider Tabellen. Die Beziehung wird in beiden Models mit `belongsToMany()` definiert. Laravel kümmert sich dann automatisch um die Pivot-Tabelle – man muss sie nie direkt ansprechen. Im Projekt: `Department::belongsToMany(User)` und `User::belongsToMany(Department)` über die Tabelle `department_user`.
+
+### attach() / detach() / syncWithoutDetaching() – Pivot-Einträge verwalten
+Um einen Eintrag in einer Pivot-Tabelle anzulegen nutzt man `attach($id)`, um ihn zu entfernen `detach($id)`. `syncWithoutDetaching([$id])` ist wie attach, aber fügt den Eintrag nur hinzu wenn er noch nicht existiert – verhindert also Duplikate. Im Projekt: `$bereich->users()->syncWithoutDetaching([$user->id])` weist einen Mitarbeiter einem Bereich zu ohne Fehler wenn er schon drin ist.
+
 ### Artisan-Command (eigener) – eigene Konsolen-Befehle schreiben
 Man kann in Laravel eigene `php artisan`-Befehle schreiben. Dazu legt man eine Klasse in `app/Console/Commands/` an mit zwei Pflichtfeldern: `$signature` (der Befehlsname, z.B. `auctions:close`) und `$description` (kurze Erklärung). Die eigentliche Logik kommt in die `handle()`-Methode. Laravel erkennt den Befehl automatisch und er ist sofort über `php artisan auctions:close` aufrufbar. Im Projekt: Der Command schließt alle abgelaufenen Auktionen und setzt den Gewinner.
 
@@ -152,3 +158,9 @@ Alle Begriffe die im Projekt vorkommen, kurz und einfach erklärt.
 | everyMinute() | Scheduler-Methode: diese Aufgabe soll jede Minute ausgeführt werden |
 | $signature | Pflichtfeld in einem Artisan-Command – legt den Befehlsnamen fest (z.B. `auctions:close`) |
 | handle() | Methode in einem Artisan-Command die beim Ausführen aufgerufen wird – hier kommt die Logik rein |
+| Many-to-Many | Datenbankbeziehung: beide Seiten können viele der anderen haben – braucht eine Pivot-Tabelle |
+| Pivot-Tabelle | Zwischentabelle bei Many-to-Many – enthält nur die IDs der beiden verknüpften Tabellen |
+| belongsToMany | Eloquent-Beziehung für Many-to-Many – in beiden Models definiert |
+| attach() | Einen Eintrag in der Pivot-Tabelle anlegen (Mitarbeiter einem Bereich zuweisen) |
+| detach() | Einen Eintrag aus der Pivot-Tabelle entfernen (Mitarbeiter aus Bereich entfernen) |
+| syncWithoutDetaching | Wie attach(), aber verhindert Duplikate wenn der Eintrag schon existiert |

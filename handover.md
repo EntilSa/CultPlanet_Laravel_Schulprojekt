@@ -1,7 +1,7 @@
 # CultPlanet – Handover
 
 ## Aktueller Stand
-**Phase 0, 1, 2, 3 und Spezialisierung vollständig abgeschlossen. Alle 12 Schritte erledigt. 74 Tests alle grün.**
+**Phase 0, 1, 2, 3, Spezialisierung und Individualprojekt vollständig abgeschlossen. 85 Tests alle grün.**
 
 ### Phase 0 – Erledigt
 - Laravel 13 installiert, MySQL konfiguriert, Git initialisiert
@@ -54,7 +54,19 @@
 - 9 neue PHPUnit-Tests – 60 Tests insgesamt, alle grün
 
 ## Letzte bearbeitete Datei
-`tests/Feature/AuctionTest.php` (24.04.2026) – 14 PHPUnit-Tests für Auktion (Schritt 12)
+`tests/Feature/DepartmentTest.php` (24.04.2026) – 11 PHPUnit-Tests für Mitarbeiterverwaltung
+
+## Individualprojekt – Mitarbeiterverwaltung – ABGESCHLOSSEN (24.04.2026)
+- Migration `departments` (id, name unique, timestamps)
+- Migration `department_user` (Pivot-Tabelle, cascadeOnDelete)
+- `Department`-Model: `belongsToMany(User)`, `istUnbesetzt()`-Hilfsmethode
+- `User`-Model: `belongsToMany(Department)` ergänzt
+- `DepartmentController`: index(), store(), destroy(), addUser(), removeUser()
+- 5 Routen unter `/admin/bereiche/` mit Prefix `admin.departments.`
+- View `admin/departments/index.blade.php`: Bereiche-Karten, Mitarbeiterliste, Zuweisungs-Dropdown, Warnsystem
+- Warnsystem: orangene Warnung wenn min. 1 Bereich unbesetzt; Badge "Unbesetzt"/"Besetzt" pro Bereich
+- Link im Admin-Dashboard + "Bereiche"-Link in Navigation (nur admin)
+- 11 PHPUnit-Tests – alle grün
 
 ## Bugfixes dieser Session (22.04.2026)
 - `tests/Feature/Auth/AuthenticationTest.php`: `route('dashboard')` → `route('home')` gefixt

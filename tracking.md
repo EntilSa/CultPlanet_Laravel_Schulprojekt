@@ -14,9 +14,10 @@
 | 8 | 2026-04-22 | – | 39 | 4 | Spezialisierung 5 | Lagerbestand-Logik im Shop (Auktion-Reservierung) – 60 Tests grün |
 | 9 | 2026-04-22 | – | 450 | 6 | Spezialisierung 6 | AuctionController + Views + Navigation – 60 Tests grün |
 | 10 | 2026-04-24 | – | 118 | 7 | Spezialisierung 8,10,12 | Auktions-Banner, Artisan-Command auctions:close, 14 PHPUnit-Tests – 74 Tests grün |
+| 11 | 2026-04-24 | – | 544 | 10 | Individualprojekt | Mitarbeiterverwaltung: Bereiche CRUD, Mitarbeiter zuweisen/entfernen, Warnsystem, 11 Tests – 85 Tests grün |
 
 ## Gesamt
 
 | Zeilen Code gesamt | Dateien gesamt | Anzahl Sessions |
 |--------------------|----------------|-----------------|
-| 7520 | 103 | 10 |
+| 8064 | 113 | 11 |
