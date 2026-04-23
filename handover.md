@@ -1,7 +1,7 @@
 # CultPlanet – Handover
 
 ## Aktueller Stand
-**Phase 0, 1, 2, 3, Spezialisierung und Individualprojekt vollständig abgeschlossen. 85 Tests alle grün.**
+**Phase 0, 1, 2, 3, Spezialisierung und Individualprojekt vollständig abgeschlossen. 93 Tests alle grün.**
 
 ### Phase 0 – Erledigt
 - Laravel 13 installiert, MySQL konfiguriert, Git initialisiert
@@ -54,7 +54,7 @@
 - 9 neue PHPUnit-Tests – 60 Tests insgesamt, alle grün
 
 ## Letzte bearbeitete Datei
-`tests/Feature/DepartmentTest.php` (24.04.2026) – 11 PHPUnit-Tests für Mitarbeiterverwaltung
+`tests/Feature/KundenreiseTest.php` (24.04.2026) – 8 Feature-Tests für vollständige Kundenreise durch den Shop (Registrierung → Warenkorb → Checkout → Zahlung → Bewertung)
 
 ## Individualprojekt – Mitarbeiterverwaltung – ABGESCHLOSSEN (24.04.2026)
 - Migration `departments` (id, name unique, timestamps)

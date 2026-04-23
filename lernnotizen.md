@@ -207,6 +207,14 @@ Startet Vite im Entwicklungsmodus. Vite überwacht alle CSS- und JavaScript-Date
 #### `npm run build`
 Erstellt eine optimierte, komprimierte Version aller CSS- und JavaScript-Dateien für den Produktivbetrieb. Die Dateien werden in `public/build/` gespeichert und sind kleiner und schneller als im Entwicklungsmodus. Im Entwicklungsalltag reicht `npm run dev` – `npm run build` würde man erst beim Deployment auf einen echten Server brauchen.
 
+### Feature-Tests als Kundenreise-Simulation
+
+Normalerweise testen Feature-Tests einzelne Aktionen wie "kann ich mich einloggen?" oder "wird eine Bestellung gespeichert?". Man kann aber auch mehrere Schritte hintereinander in einem Test kombinieren und so den kompletten Weg eines echten Kunden simulieren – von der Registrierung bis zur Bestellbestätigung. Das nennt man eine "Kundenreise" (englisch: customer journey). Im Projekt: `KundenreiseTest.php` hat 8 solche Szenarien – Szenario 1 geht von der Registrierung über Warenkorb und Checkout bis zur Zahlung in einem einzigen Test durch.
+
+Wichtig dabei: `$this->actingAs($kunde)` erlaubt es, in einem Test als bestimmter Nutzer zu agieren. Jede Anfrage mit `$this->actingAs($kunde)->post(...)` läuft als würde dieser Nutzer gerade den Button klicken. So kann man testen ob der komplette Ablauf stimmt, ohne einen echten Browser zu öffnen.
+
+Ein häufiger Fehler: Wenn man Texte per `assertSee('...')` prüft, muss man den echten Text aus der View nehmen – also z.B. `assertSee('Kasse')` statt `assertSee('Checkout')` wenn die Seite auf Deutsch "Kasse" zeigt. Außerdem müssen Formulardaten die Validierungsregeln des Controllers erfüllen – z.B. muss der Bewertungstext mindestens 10 Zeichen haben wenn die Validierung `min:10` sagt.
+
 ---
 
 ## Vokabular (Wörterbuch)
@@ -289,3 +297,5 @@ Alle Begriffe die im Projekt vorkommen, kurz und einfach erklärt.
 | npm install | Alle JavaScript-Pakete aus package.json installieren |
 | npm run dev | Vite im Entwicklungsmodus starten (automatische Browser-Aktualisierung) |
 | npm run build | Optimierte CSS/JS-Dateien für den Produktivbetrieb erstellen |
+| Kundenreise | Kompletter Weg eines Kunden durch den Shop – von Registrierung bis Bezahlung |
+| actingAs() | PHPUnit-Funktion: diese Anfrage so schicken als wäre der angegebene Nutzer eingeloggt |
