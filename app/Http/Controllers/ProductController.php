@@ -8,13 +8,39 @@ use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
-    // shop übersicht – alle produkte als liste anzeigen
-    public function index()
+    // shop übersicht – mit suche, filter und sortierung
+    public function index(Request $request)
     {
-        $products = Product::withAvg('reviews', 'rating')
-            ->withCount('reviews')
-            ->latest()
-            ->paginate(12);
+        $query = Product::withAvg('reviews', 'rating')->withCount('reviews');
+
+        // textsuche: name enthält den suchbegriff
+        if ($request->filled('suche')) {
+            $query->where('name', 'like', '%' . $request->suche . '%');
+        }
+
+        // preisbereich: nur produkte zwischen min und max
+        if ($request->filled('preis_min')) {
+            $query->where('price', '>=', (float) $request->preis_min);
+        }
+        if ($request->filled('preis_max')) {
+            $query->where('price', '<=', (float) $request->preis_max);
+        }
+
+        // nur verfügbare produkte (lagerbestand > 0)
+        if ($request->boolean('nur_verfuegbar')) {
+            $query->where('stock', '>', 0);
+        }
+
+        // sortierung – standard: neueste zuerst
+        match($request->input('sortierung')) {
+            'preis_asc'  => $query->orderBy('price', 'asc'),
+            'preis_desc' => $query->orderBy('price', 'desc'),
+            'bewertung'  => $query->orderByDesc('reviews_avg_rating'),
+            default      => $query->latest(),
+        };
+
+        // seitennavigation behält die filter-parameter in der url
+        $products = $query->paginate(12)->appends($request->query());
 
         return view('shop.index', compact('products'));
     }
