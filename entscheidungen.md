@@ -149,5 +149,20 @@ Der Standard-ExampleTest hatte kein `RefreshDatabase` – das war kein Problem s
 
 ---
 
+---
+
+### Tests nach Branchenstandard (24.04.2026)
+
+**24.04.2026 – Testfälle an E-Commerce-Branchenstandards ausgerichtet**
+Nach einer Internetrecherche (Quellen: Katalon, BrowserStack, TestGrid) wurden die fehlenden Standardtestfälle für Onlineshops identifiziert und in zwei neue Testdateien umgesetzt. Die wichtigsten Lücken waren Sicherheitstests (fremde Bestellungen einsehen) und Grenzwerttests (negative Mengen, überlange Felder). Beides ist in echten Shops erfahrungsgemäß Quelle von Bugs oder Sicherheitslücken.
+
+**24.04.2026 – Sicherheitstests prüfen 403-Status statt Redirect**
+Wenn ein Nutzer auf eine fremde Ressource zugreift, gibt `abort(403)` einen HTTP-403-Fehlercode zurück – keinen Redirect. Der Test prüft deshalb `->assertStatus(403)` und nicht `->assertRedirect()`. Gäste hingegen werden von Laravels Auth-Middleware mit einem Redirect zu `route('login')` abgefangen, bevor der Controller-Code überhaupt ausgeführt wird.
+
+**24.04.2026 – Zwei separate Testdateien statt eine große**
+Sicherheitstests (`SicherheitsTest.php`) und Grenzwerttests (`GrenzwertTest.php`) wurden bewusst getrennt, weil sie verschiedene Konzepte testen: Zugriffsschutz vs. Eingabe-Validierung. So ist die Teststruktur übersichtlich und man findet beim Fehlschlag eines Tests sofort die richtige Kategorie.
+
+---
+
 **22.04.2026 – Artikelnummer als echte DB-Spalte mit Model-Event statt Controller-Logik**
 Die Artikelnummer (10001, 10002, ...) wird als eigene Spalte `artikel_nr` in der Datenbank gespeichert, nicht nur zur Anzeige berechnet. Vorteil: Die Nummer bleibt stabil, auch wenn das Produkt bearbeitet wird, und lässt sich filtern oder sortieren. Die automatische Vergabe passiert im `Product`-Model über ein Eloquent-Model-Event (`booted()` + `static::created()`): nach jedem `Product::create()` wird sofort `artikel_nr = id + 10000` gesetzt. So ist der Controller frei davon und die Logik sitzt an einer einzigen Stelle. Zwei Migrationen waren nötig: erst die Spalte als NOT NULL + unique anlegen, dann in einer zweiten Migration nullable machen – damit das booted()-Event nach dem create() mit update() schreiben kann ohne einen NOT-NULL-Fehler zu werfen.

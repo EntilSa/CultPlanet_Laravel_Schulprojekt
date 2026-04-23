@@ -215,6 +215,12 @@ Wichtig dabei: `$this->actingAs($kunde)` erlaubt es, in einem Test als bestimmte
 
 Ein häufiger Fehler: Wenn man Texte per `assertSee('...')` prüft, muss man den echten Text aus der View nehmen – also z.B. `assertSee('Kasse')` statt `assertSee('Checkout')` wenn die Seite auf Deutsch "Kasse" zeigt. Außerdem müssen Formulardaten die Validierungsregeln des Controllers erfüllen – z.B. muss der Bewertungstext mindestens 10 Zeichen haben wenn die Validierung `min:10` sagt.
 
+### Sicherheitstests – Zugriffskontrolle per HTTP-Statuscode prüfen
+
+In Laravel gibt es zwei verschiedene Arten wie der Server auf unerlaubte Zugriffe reagiert: mit einem Redirect (Weiterleitung) oder mit einem Fehlercode. Wenn ein nicht eingeloggter Nutzer eine geschützte Seite aufruft, schickt die Auth-Middleware einen Redirect zu `route('login')` – der Test prüft dann `->assertRedirect(route('login'))`. Wenn aber ein eingeloggter Nutzer die Seite eines *anderen* Nutzers aufruft, greift die Controller-Prüfung mit `abort(403)` – das schickt einen HTTP-403-Fehlercode ("Verboten"), keinen Redirect. Der Test prüft dann `->assertStatus(403)`. Im Projekt: `OrderController` prüft `if ($order->user_id !== auth()->id()) { abort(403); }`.
+
+Grenzwerttests (englisch: boundary value tests) prüfen was passiert wenn man die Extremwerte eines Feldes eingibt – also genau den erlaubten Maximalwert, einen mehr als erlaubt, einen weniger als erlaubt. Das ist wichtig weil Programmierfehler oft genau an den Grenzen auftreten. Zum Beispiel: Lagerbestand ist 3, man bestellt 3 (soll klappen), man bestellt 4 (soll Fehler geben). Im Projekt: `GrenzwertTest.php` testet quantity=0, quantity=-5, quantity=3 (exakt), quantity=4 (eins drüber) beim Warenkorb.
+
 ---
 
 ## Vokabular (Wörterbuch)
@@ -299,3 +305,7 @@ Alle Begriffe die im Projekt vorkommen, kurz und einfach erklärt.
 | npm run build | Optimierte CSS/JS-Dateien für den Produktivbetrieb erstellen |
 | Kundenreise | Kompletter Weg eines Kunden durch den Shop – von Registrierung bis Bezahlung |
 | actingAs() | PHPUnit-Funktion: diese Anfrage so schicken als wäre der angegebene Nutzer eingeloggt |
+| abort(403) | Laravel-Funktion: Anfrage sofort mit HTTP-Statuscode 403 "Verboten" abbrechen |
+| assertStatus(403) | PHPUnit-Prüfung: der Server hat mit Fehlercode 403 geantwortet |
+| Grenzwerttest | Test der prüft was bei Extremwerten passiert – z.B. genau der erlaubte Max-Wert, einer drüber |
+| boundary value test | Englischer Begriff für Grenzwerttest – gehört zum Standard-Vokabular im Software-Testing |
