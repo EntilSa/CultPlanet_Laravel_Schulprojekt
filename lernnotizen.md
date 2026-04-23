@@ -101,6 +101,114 @@ Der Scheduler ist Laravels eingebaute Lösung für wiederkehrende Aufgaben (wie 
 
 ---
 
+---
+
+## Terminal-Befehle (PowerShell / Bash)
+
+Alle Befehle die im Projektverlauf in der Kommandozeile eingegeben wurden – so erklärt wie ein Anfänger sie verstehen würde.
+
+---
+
+### Git – Versionskontrolle
+
+#### `git init`
+Mit `git init` wird ein neues Git-Repository im aktuellen Ordner angelegt. Git ist ein Programm das alle Änderungen am Code aufzeichnet – so kann man jederzeit sehen was wann geändert wurde und bei Bedarf eine ältere Version wiederherstellen. Man führt diesen Befehl einmalig am Anfang eines Projekts aus.
+
+#### `git status`
+`git status` zeigt den aktuellen Zustand des Repositories an: welche Dateien verändert wurden, welche neu sind und welche bereits für den nächsten Commit vorgemerkt sind. Das ist der erste Befehl den man tippt wenn man wissen will was gerade im Projekt los ist. Man kann ihn so oft ausführen wie man möchte – er verändert nichts.
+
+#### `git add <datei>`
+Mit `git add` werden Dateien für den nächsten Commit vorgemerkt (man sagt auch "gestaged"). Man gibt entweder einzelne Dateinamen an (`git add web.php`) oder mehrere auf einmal. Erst nach `git add` werden die Änderungen beim nächsten `git commit` gespeichert.
+
+#### `git commit -m "..."`
+`git commit` speichert alle vorgemerkten Änderungen dauerhaft im Repository mit einer kurzen Beschreibung was gemacht wurde. Die Option `-m` steht für "message" – dahinter kommt in Anführungszeichen die Commit-Nachricht. Im Projekt: `git commit -m "Phase 2: Warenkorb implementiert"` – so weiß man später noch was in diesem Commit passiert ist.
+
+#### `git log`
+`git log` zeigt die gesamte Commit-Historie an – wann was von wem gespeichert wurde. Jeder Eintrag hat einen langen Code (den sogenannten Hash), das Datum, den Autor und die Commit-Nachricht. So kann man den Verlauf eines Projekts von Anfang an nachverfolgen.
+
+#### `git diff`
+`git diff` zeigt die genauen Unterschiede zwischen dem aktuellen Stand der Dateien und dem letzten Commit. Hinzugefügte Zeilen werden mit `+` markiert, entfernte mit `-`. Das ist nützlich um vor einem Commit nochmal zu prüfen was man genau verändert hat.
+
+#### `git diff --numstat`
+Eine kompaktere Version von `git diff` die nur Zahlen ausgibt: wie viele Zeilen wurden hinzugefügt und wie viele gelöscht, aufgeteilt nach Datei. Im Projekt wurde dieser Befehl nach jeder Session verwendet um zu zählen wie viele Zeilen Code neu geschrieben wurden.
+
+#### `git diff --name-only`
+Zeigt nur die Namen der Dateien an die seit dem letzten Commit verändert wurden – ohne den genauen Inhalt der Änderungen. Praktisch wenn man schnell einen Überblick braucht welche Dateien angefasst wurden.
+
+---
+
+### PHP Artisan – Das Laravel-Werkzeug
+
+`php artisan` ist Laravels eingebautes Kommandozeilen-Werkzeug. Man tippt es immer im Projektordner. Es erspart viel Tipparbeit weil es Dateien automatisch anlegt und Aufgaben wie Datenbankmigrationen erledigt.
+
+#### `php artisan migrate`
+Führt alle noch nicht ausgeführten Migrationen aus – also alle Datenbankänderungen die in den Migrations-Dateien beschrieben sind. Jede neue Tabelle oder jede Änderung an einer bestehenden Tabelle wird so in die Datenbank übernommen. Im Projekt: Nach jedem `make:migration` muss `php artisan migrate` ausgeführt werden damit die Tabelle wirklich in MySQL angelegt wird.
+
+#### `php artisan make:migration <name>`
+Legt eine neue leere Migrations-Datei in `database/migrations/` an. Der Name beschreibt was die Migration macht, z.B. `create_products_table`. Laravel ergänzt automatisch einen Zeitstempel im Dateinamen damit die Reihenfolge der Migrationen eindeutig ist.
+
+#### `php artisan make:model <Name>`
+Erstellt ein neues Eloquent-Model in `app/Models/`. Ein Model ist die Verbindung zwischen einer Datenbanktabelle und dem PHP-Code – über das Model kann man Datensätze lesen, erstellen, ändern und löschen. Im Projekt: `php artisan make:model Product` hat das `Product`-Model angelegt.
+
+#### `php artisan make:controller <Name>`
+Legt einen neuen Controller in `app/Http/Controllers/` an. Ein Controller nimmt Anfragen vom Browser entgegen, verarbeitet sie (z.B. Daten aus der Datenbank holen) und gibt eine Antwort zurück (z.B. eine View anzeigen). Im Projekt: `php artisan make:controller ProductController`.
+
+#### `php artisan make:seeder <Name>`
+Erstellt eine neue Seeder-Datei in `database/seeders/`. Seeder sind PHP-Dateien die Testdaten in die Datenbank schreiben – z.B. Dummy-Kunden oder Standardrollen. So muss man beim Entwickeln nicht immer alles manuell über den Browser eingeben.
+
+#### `php artisan make:command <Name>`
+Erstellt eine neue Command-Datei in `app/Console/Commands/`. Damit kann man eigene `php artisan`-Befehle schreiben. Im Projekt: `php artisan make:command CloseAuctions` hat die Grundstruktur für den `auctions:close`-Befehl angelegt.
+
+#### `php artisan db:seed`
+Führt alle Seeder aus und befüllt die Datenbank mit Testdaten. Man kann auch einen einzelnen Seeder angeben mit `--class=DummyCustomersSeeder`. Im Projekt wurde dieser Befehl genutzt um Testrollen und Dummy-Kunden anzulegen.
+
+#### `php artisan storage:link`
+Erstellt einen symbolischen Link von `public/storage` auf `storage/app/public`. Dieser Befehl muss einmalig ausgeführt werden damit Bilder die ins Storage hochgeladen werden auch im Browser erreichbar sind. Ohne diesen Link würde man beim Bildupload immer einen 404-Fehler sehen.
+
+#### `php artisan test`
+Führt alle PHPUnit-Tests im Projekt aus und zeigt an wie viele bestanden oder fehlgeschlagen sind. Mit `--filter=KlassenName` kann man gezielt nur die Tests einer bestimmten Klasse ausführen, z.B. `php artisan test --filter=AuctionTest`. Im Projekt wurde dieser Befehl nach jeder Änderung ausgeführt um sicherzustellen dass nichts kaputt gegangen ist.
+
+#### `php artisan route:list`
+Zeigt eine Tabelle aller registrierten Routen der Anwendung an – mit HTTP-Methode, URL, Route-Name und dem zugehörigen Controller. Das ist sehr nützlich um zu prüfen ob eine Route korrekt registriert ist oder um den genauen Namen einer Route nachzuschlagen.
+
+#### `php artisan tinker`
+Tinker ist eine interaktive PHP-Konsole direkt im Laravel-Kontext. Man kann damit schnell Eloquent-Abfragen testen, Datensätze direkt anlegen oder Modelle abfragen ohne eine View oder einen Controller zu bauen. Im Projekt: Tinker wurde genutzt um bei bereits existierenden Nutzern die `kundennummer` nachträglich zu setzen.
+
+#### `php artisan db:show`
+Zeigt Informationen zur aktuellen Datenbankverbindung an – welche Datenbank, welcher Host, welche Version. Damit lässt sich schnell prüfen ob die `.env`-Einstellungen korrekt sind und Laravel sich erfolgreich mit MySQL verbinden kann.
+
+#### `php artisan auctions:close`
+Das ist unser selbst geschriebener Artisan-Command. Er prüft alle Auktionen in der Datenbank: geplante Auktionen die jetzt starten sollen werden auf "aktiv" gesetzt, und aktive Auktionen deren Endzeit abgelaufen ist werden geschlossen – mit Gewinner-Ermittlung und automatischer Bestellanlage. Im Produktivbetrieb würde dieser Befehl automatisch jede Minute durch den Laravel Scheduler ausgeführt.
+
+---
+
+### Composer – PHP-Paketverwaltung
+
+Composer ist das Programm mit dem man PHP-Pakete (fertige Bibliotheken) installiert. Man führt es immer im Projektordner aus. Die installierten Pakete und ihre Versionen werden in `composer.json` gespeichert.
+
+#### `composer require laravel/breeze`
+Installiert das Breeze-Paket von Laravel. Breeze liefert fertige Login-, Registrierungs- und Passwort-Reset-Seiten mit Blade-Templates. Nach der Installation muss noch `php artisan breeze:install` ausgeführt werden damit die Dateien ins Projekt kopiert werden.
+
+#### `composer require spatie/laravel-permission`
+Installiert das Spatie Permission-Paket das Rollenverwaltung für Laravel ermöglicht. Mit diesem Paket kann man Nutzern Rollen wie "admin", "mitarbeiter" oder "kunde" zuweisen und im Code ganz einfach prüfen ob ein Nutzer eine bestimmte Rolle hat. Nach der Installation müssen noch die Migrationen ausgeführt und der Provider veröffentlicht werden.
+
+---
+
+### npm – JavaScript-Paketverwaltung
+
+npm (Node Package Manager) ist das Gegenstück zu Composer – aber für JavaScript-Pakete. In diesem Projekt wird es hauptsächlich für Tailwind CSS und Vite verwendet. Man führt npm-Befehle ebenfalls immer im Projektordner aus.
+
+#### `npm install`
+Liest die `package.json`-Datei und installiert alle darin aufgelisteten JavaScript-Pakete in den `node_modules`-Ordner. Dieser Befehl muss einmalig nach dem Klonen oder Einrichten eines Projekts ausgeführt werden. Die `node_modules`-Ordner werden nicht in Git gespeichert weil sie sehr groß sind und jeder sie selbst installieren kann.
+
+#### `npm run dev`
+Startet Vite im Entwicklungsmodus. Vite überwacht alle CSS- und JavaScript-Dateien und aktualisiert den Browser automatisch wenn sich etwas ändert (Hot Reload). Im Projekt: Wenn man an Tailwind-Klassen arbeitet muss `npm run dev` im Hintergrund laufen damit die Änderungen sofort sichtbar sind.
+
+#### `npm run build`
+Erstellt eine optimierte, komprimierte Version aller CSS- und JavaScript-Dateien für den Produktivbetrieb. Die Dateien werden in `public/build/` gespeichert und sind kleiner und schneller als im Entwicklungsmodus. Im Entwicklungsalltag reicht `npm run dev` – `npm run build` würde man erst beim Deployment auf einen echten Server brauchen.
+
+---
+
 ## Vokabular (Wörterbuch)
 
 Alle Begriffe die im Projekt vorkommen, kurz und einfach erklärt.
@@ -164,3 +272,20 @@ Alle Begriffe die im Projekt vorkommen, kurz und einfach erklärt.
 | attach() | Einen Eintrag in der Pivot-Tabelle anlegen (Mitarbeiter einem Bereich zuweisen) |
 | detach() | Einen Eintrag aus der Pivot-Tabelle entfernen (Mitarbeiter aus Bereich entfernen) |
 | syncWithoutDetaching | Wie attach(), aber verhindert Duplikate wenn der Eintrag schon existiert |
+| git init | Neues Git-Repository im aktuellen Ordner anlegen – einmalig am Projektstart |
+| git status | Aktuellen Stand des Repos anzeigen – was ist geändert, was ist vorgemerkt |
+| git add | Dateien für den nächsten Commit vormerken ("stagen") |
+| git commit | Vorgemerkte Änderungen dauerhaft speichern mit einer Beschreibung |
+| git log | Commit-Verlauf anzeigen – wann was gespeichert wurde |
+| git diff | Genaue Unterschiede zum letzten Commit anzeigen |
+| php artisan migrate | Noch nicht ausgeführte Migrationen in der Datenbank ausführen |
+| php artisan make:... | Laravel-Befehl zum automatischen Erstellen von Dateien (Model, Controller, Migration usw.) |
+| php artisan db:seed | Seeder ausführen und Testdaten in die Datenbank eintragen |
+| php artisan storage:link | Einmaliger Befehl um Bildupload über den Browser erreichbar zu machen |
+| php artisan test | Alle PHPUnit-Tests ausführen |
+| php artisan route:list | Alle registrierten Routen der Anwendung anzeigen |
+| php artisan tinker | Interaktive PHP-Konsole im Laravel-Kontext – zum schnellen Testen |
+| composer require | Ein PHP-Paket installieren und in composer.json eintragen |
+| npm install | Alle JavaScript-Pakete aus package.json installieren |
+| npm run dev | Vite im Entwicklungsmodus starten (automatische Browser-Aktualisierung) |
+| npm run build | Optimierte CSS/JS-Dateien für den Produktivbetrieb erstellen |
