@@ -223,6 +223,22 @@ Für Textsuche in der Datenbank nutzt man in SQL das `LIKE`-Schlüsselwort mit P
 
 Die Pagination (Seitennavigation) muss die Filter-Parameter kennen, sonst gehen sie bei einem Klick auf "Seite 2" verloren. Laravel löst das mit `->appends($request->query())` – das hängt alle aktuellen URL-Parameter an jeden Seitenlink an. Im Projekt: `$products = $query->paginate(12)->appends($request->query())` sorgt dafür dass die Suche beim Blättern erhalten bleibt.
 
+### App-Timezone – warum now() nicht immer "jetzt" ist
+
+Laravel hat eine eigene Zeitzone-Einstellung in `config/app.php` unter `'timezone'`. Standardmäßig steht da `'UTC'`. Das Problem: wenn ein Nutzer in Deutschland ein Datum eingibt (z.B. 17:15 Uhr), meint er Berliner Zeit (CEST = UTC+2). Laravel speichert diesen Wert aber direkt so wie er ist. Wenn PHP dann `now()` aufruft und die Timezone auf UTC steht, kommt 15:15 UTC raus – also 2 Stunden Differenz. Vergleiche wie `start_time <= now()` schlagen dann falsch aus. Lösung: `'timezone' => 'Europe/Berlin'` setzen. Im Projekt: Geplante Auktionen starteten nie automatisch weil die `statusAktualisieren()`-Methode immer `false` als Ergebnis des Zeitvergleichs bekam.
+
+### Mailable – E-Mails in Laravel verschicken
+
+Eine `Mailable`-Klasse ist in Laravel die saubere Art um E-Mails zu verschicken. Man legt sie mit `php artisan make:mail KlassenName` an. Jede Mail-Klasse hat drei Methoden: `envelope()` für Betreff und Absender, `content()` für das Blade-Template der Mail, und `attachments()` für Anhänge. Verschickt wird sie mit `Mail::to('email@adresse.de')->send(new MeineMailKlasse($data))`. Im Projekt: `BestellbestaetigungMail` verschickt nach jedem Checkout eine Mail mit PDF-Rechnung als Anhang. `AuktionGewonnenMail` verschickt eine Mail wenn jemand eine Auktion gewonnen hat.
+
+### DomPDF – PDFs aus Blade-Templates generieren
+
+Das Paket `barryvdh/laravel-dompdf` wandelt ein normales HTML/Blade-Template in eine PDF-Datei um. Wichtig: DomPDF versteht kein Tailwind oder Vite – das Template muss reines HTML mit Inline-CSS sein. Aufgerufen wird es mit `Pdf::loadView('pfad.zum.template', ['data' => $daten])`. Das Ergebnis kann direkt heruntergeladen (`->download('dateiname.pdf')`) oder als Byte-String in eine Mail eingehängt werden (`->output()`). Im Projekt: `resources/views/pdf/rechnung.blade.php` enthält das Rechnungs-Layout mit Inline-CSS. Über `OrderController::downloadPdf()` kann der Kunde seine Rechnung herunterladen.
+
+### Mailpit – lokaler Fake-Mailserver für Entwicklung
+
+Mailpit ist ein kleines Programm das man lokal auf dem Rechner startet. Es täuscht einen echten Mailserver vor und fängt alle E-Mails ab die Laravel versucht zu verschicken – ohne dass sie wirklich ankommen. Man kann sie dann in einer Web-Oberfläche unter `localhost:8025` ansehen, inklusive Anhänge. In der `.env` stellt man `MAIL_MAILER=smtp`, `MAIL_HOST=127.0.0.1` und `MAIL_PORT=1025` ein. Im Projekt: Nach jedem Checkout erscheint die Bestellbestätigungsmail mit PDF-Anhang sofort in Mailpit – so kann man testen ob die Mail korrekt aussieht.
+
 ### Sicherheitstests – Zugriffskontrolle per HTTP-Statuscode prüfen
 
 In Laravel gibt es zwei verschiedene Arten wie der Server auf unerlaubte Zugriffe reagiert: mit einem Redirect (Weiterleitung) oder mit einem Fehlercode. Wenn ein nicht eingeloggter Nutzer eine geschützte Seite aufruft, schickt die Auth-Middleware einen Redirect zu `route('login')` – der Test prüft dann `->assertRedirect(route('login'))`. Wenn aber ein eingeloggter Nutzer die Seite eines *anderen* Nutzers aufruft, greift die Controller-Prüfung mit `abort(403)` – das schickt einen HTTP-403-Fehlercode ("Verboten"), keinen Redirect. Der Test prüft dann `->assertStatus(403)`. Im Projekt: `OrderController` prüft `if ($order->user_id !== auth()->id()) { abort(403); }`.
@@ -322,3 +338,13 @@ Alle Begriffe die im Projekt vorkommen, kurz und einfach erklärt.
 | filled() | Laravel-Funktion: prüft ob ein Request-Parameter vorhanden UND nicht leer ist |
 | appends() | Pagination-Methode: hängt URL-Parameter an alle Seitenlinks an damit Filter erhalten bleiben |
 | Filterchip | Kleines farbiges Badge das anzeigt welche Filter gerade aktiv sind – UI-Best-Practice |
+| App-Timezone | Einstellung in `config/app.php` die bestimmt welche Zeitzone `now()` und andere Datumsfunktionen verwenden |
+| UTC | Coordinated Universal Time – die "Weltzeit" ohne Sommerzeit; Serverstandard in vielen Systemen |
+| CEST | Central European Summer Time – deutsche Sommerzeit, = UTC+2 |
+| Mailable | Laravel-Klasse für E-Mails – enthält Betreff, Template und Anhänge in einer übersichtlichen Struktur |
+| DomPDF | PHP-Paket das HTML/Blade-Templates in PDF-Dateien umwandelt – kein Tailwind, nur Inline-CSS |
+| Mail::to() | Laravel-Funktion um eine Mail an eine Adresse zu schicken: `Mail::to($email)->send(new MailKlasse())` |
+| Mailpit | Lokaler Fake-Mailserver der E-Mails abfängt und in einer Web-UI anzeigt – für Entwicklung/Tests |
+| ->output() | DomPDF-Methode die das PDF als Byte-String zurückgibt – nützlich für Mail-Anhänge |
+| ->download() | DomPDF-Methode die das PDF direkt als Download an den Browser schickt |
+| Attachment | Laravel-Klasse zum Anhängen von Dateien an E-Mails, z.B. `Attachment::fromData(fn() => $pdf->output(), 'name.pdf')` |

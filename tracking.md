@@ -18,11 +18,5 @@
 | 12 | 2026-04-24 | – | 307 | 2 | Kundenreise-Tests | 8 Feature-Tests für vollständige Shop-Nutzung (Registrierung, Warenkorb, Checkout, Bewertung) – 93 Tests grün |
 | 13 | 2026-04-24 | – | 437 | 2 | Sicherheits- & Grenzwerttests | 23 neue Tests nach Branchenstandard (fremde Bestellung, Mengen-Grenzwerte, Bewertungs-Grenzen) – 116 Tests grün |
 | 14 | 2026-04-24 | – | 356 | 3 | Suche & Filter | Textsuche, Preisbereich, Verfügbarkeit, Sortierung im Shop – 16 neue Tests, 132 Tests grün |
-| 15 | 2026-04-25 | – | 262 | 10 | QoL-Verbesserungen | Shop-Redirect, Auktions-Banner, klickbare Karten, Hover-Effekte, Deutsche Auth-Views, ExampleTest fix – 132 Tests grün |
-| 16 | 2026-04-25 | – | 1473 | 50 | Neue Features | PDF-Rechnungen (dompdf), Mailpit, 2 Mail-Klassen, Meine Bestellungen, Lagerbestand-Warnung, Pint – 132 Tests grün |
-
-## Gesamt
-
-| Zeilen Code gesamt | Dateien gesamt | Anzahl Sessions |
-|--------------------|----------------|-----------------|
-| 10899 | 177 | 16 |
+| 15 | 2026-04-25 | – | 262 | 10 | QoL-Verbesserungen | Shop-Redirect, Auktions-Banner, klickbare Karten, Hover-Effekte, Deutsche Auth-Views, Pagination deutsch, ExampleTest angepasst |
+| 16 | 2026-04-25 | – | ~350 | 7 | Tests & Seeder | PDF/Mail/Meine Bestellungen via Claude Code umgesetzt; Timezone-Fix (UTC→Europe/Berlin); ReviewSeeder, OrderSeeder, DepartmentSeeder; Auktion vollständig per Browser getestet; 132 Tests grün |

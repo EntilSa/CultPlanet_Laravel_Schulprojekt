@@ -3,6 +3,17 @@
 ## Aktueller Stand
 **Phase 0, 1, 2, 3, Spezialisierung und Individualprojekt vollständig abgeschlossen. 132 Tests alle grün.**
 **QoL-Verbesserungen vollständig umgesetzt (25.04.2026) – alle 7 Schritte erledigt.**
+**PDF-Rechnungen, Mailpit, Meine Bestellungen, Lagerbestand-Warnung, Pint vollständig umgesetzt (25.04.2026).**
+**Alle Funktionen per Browser getestet und bestätigt (25.04.2026).**
+
+### Wichtige Bugfixes dieser Session (25.04.2026)
+- **Timezone-Fix:** `config/app.php` → `'timezone' => 'Europe/Berlin'` (war: `UTC`). Auktionen aktivierten sich nicht weil `now()` UTC zurückgab, Eingaben aber in CEST (UTC+2) gemacht wurden.
+
+### Neue Seeder (25.04.2026)
+- `ReviewSeeder` – 35 verschiedene Bewertungstexte, 1–3 Reviews pro Produkt, alle 20 Produkte abgedeckt
+- `OrderSeeder` – 15 Bestellungen, alle Status/Zahlungsmethoden/Mengen abgedeckt, 5 Dummy-Kunden
+- `DepartmentSeeder` – 4 Bereiche (Lager, Verkauf, Kasse, Versand) + 4 Mitarbeiter-Nutzer; Versand absichtlich leer für Warnsystem-Demo
+- Alle drei in `DatabaseSeeder` eingebunden → `php artisan migrate:fresh --seed` läuft alles durch
 
 ---
 
@@ -599,6 +610,22 @@ Claude Code hat den deutschen Text "Zeige X bis Y von Z Artikeln" korrekt hinzug
 
 Außerdem: `ExampleTest.php` auf `assertRedirect('/shop')` umgestellt (war `assertStatus(200)` für GET `/`).
 
+## Browsertest-Ergebnisse (25.04.2026)
+
+| Feature | Ergebnis |
+|---------|---------|
+| PDF-Rechnung per Mail nach Checkout | ✓ Mail in Mailpit, PDF-Anhang 1.1 MB |
+| "Meine Bestellungen" unter /meine-bestellungen | ✓ Nav-Link vorhanden, alle Bestellungen angezeigt |
+| Lagerbestand-Warnung im Admin | ✓ Rote Zahlen bei stock < 5 |
+| Auktion anlegen (Admin) | ✓ Formular funktioniert |
+| Auktion aktiviert sich automatisch beim Seitenaufruf | ✓ nach Timezone-Fix |
+| Zu niedriges Gebot | ✓ Fehlermeldung mit korrektem Mindestbetrag |
+| Gültiges Gebot | ✓ Höchstgebot aktualisiert, Verlauf angezeigt |
+| Als Höchstbietender nochmal bieten | ✓ korrekt blockiert |
+| Auktionsende – Gewinner angezeigt | ✓ "Gewinner: Benjamin Bannach" |
+| Mitarbeiterverwaltung mit Testdaten | ✓ Warnsystem aktiv (Versand unbesetzt) |
+| 132 PHPUnit Tests | ✓ alle grün |
+
 ## Was als nächstes ansteht
 
 ### Offen (nach Priorität)
@@ -759,8 +786,4 @@ In web.php sind diese Routen als auskommentierte TODOs vorbereitet.
 
 ## Phase 2 – Reihenfolge
 1. `php artisan storage:link` ausführen (einmalig, für Bildupload)
-2. Migration: products-Tabelle anlegen + `php artisan migrate`
-3. Product-Model + ProductController (CRUD)
-4. Routen in web.php aktivieren (shop.index, shop.show)
-5. Navigation TODO-Kommentare ersetzen (# → echte Routen)
-6. Prod
+2. Migration: products-Tabelle anlegen + `php artisan mig

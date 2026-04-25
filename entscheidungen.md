@@ -48,6 +48,15 @@ Die Kundenseite `orders/my-orders.blade.php` bindet das Admin-Partial `admin/par
 **25.04.2026 – Laravel Pint für einheitliche Code-Formatierung**
 Pint ist der offizielle Laravel Code-Formatter (basiert auf PHP-CS-Fixer). Er wurde als Dev-Dependency installiert und einmalig auf das gesamte Projekt angewendet. 32 Dateien wurden formatiert (Leerzeichen, Zeilenumbrüche, import-Reihenfolge). Dadurch ist der Code jetzt im Laravel-Standard-Stil.
 
+**25.04.2026 – App-Timezone auf Europe/Berlin geändert statt UTC zu lassen**
+Laravel ist standardmäßig auf UTC eingestellt. Das führte dazu dass geplante Auktionen nie automatisch aktiviert wurden: der Nutzer gibt Startzeiten in Lokalzeit (CEST = UTC+2) ein, aber `now()` in PHP gab UTC zurück – dadurch war `start_time <= now()` immer falsch. Lösung: `'timezone' => 'Europe/Berlin'` in `config/app.php`. Alternative wäre gewesen alle Eingaben serverseitig in UTC umzurechnen – aber das ist komplizierter und fehleranfälliger als eine einzige Konfigurationszeile.
+
+**25.04.2026 – DepartmentSeeder für Testdaten statt manuelle Eingabe über Browser**
+Die Mitarbeiterverwaltung war technisch fertig, aber ohne Testdaten wirkten die Bereiche leer. Statt Bereiche und Mitarbeiter manuell über das Admin-Formular einzugeben (was durch das Claude-in-Chrome-Extension-Problem eh nicht zuverlässig funktioniert), wurde ein dedizierter `DepartmentSeeder` geschrieben. Er legt 4 Bereiche an (Lager, Verkauf, Kasse, Versand) und 4 Mitarbeiter-Nutzer mit der Rolle "mitarbeiter". Versand bleibt absichtlich unbesetzt damit das Warnsystem sichtbar ist. Seeder können mit `php artisan db:seed --class=DepartmentSeeder` oder über `php artisan migrate:fresh --seed` direkt ausgeführt werden.
+
+**25.04.2026 – ReviewSeeder und OrderSeeder für realistische Demo-Daten**
+ReviewSeeder verteilt 35 verschiedene Bewertungstexte (Sterne 1–5) auf alle 20 Produkte. OrderSeeder erstellt 15 Bestellungen in verschiedenen Szenarien (Einzelartikel, Mehrfachartikel, verschiedene Mengen, alle Zahlungsmethoden, alle Status-Werte). Beide Seeder prüfen vor dem Anlegen ob der Datensatz schon existiert (idempotent) und sind in den DatabaseSeeder eingebunden, sodass `php artisan migrate:fresh --seed` alles auf einmal anlegt.
+
 *(Werden während des Projekts laufend ergänzt)*
 
 ---
@@ -202,22 +211,4 @@ Die Such- und Filterleiste im Shop verwendet ein einfaches HTML-Formular mit `me
 Nach dem Vorbild von Amazon und Otto werden aktive Filter als kleine farbige "Chips" (blaue Badges) unterhalb der Filterleiste angezeigt. Das empfiehlt das Baymard Institute als Best Practice, weil Nutzer sonst vergessen was sie gefiltert haben. Der "Zurücksetzen"-Button erscheint nur wenn mindestens ein Filter aktiv ist – nicht immer, um den Screen nicht zu überladen.
 
 **24.04.2026 – Sortierung per match()-Ausdruck statt if/else-Kette**
-Die vier Sortieroptionen (neueste, preis_asc, preis_desc, bewertung) werden mit einem PHP-`match()`-Ausdruck auf die entsprechende Eloquent-Methode gemappt. Das ist kompakter als vier if/else-Blöcke und trotzdem direkt lesbar. Default-Fall ist `latest()` – das war schon vorher die Standardsortierung.
-
----
-
-### Tests nach Branchenstandard (24.04.2026)
-
-**24.04.2026 – Testfälle an E-Commerce-Branchenstandards ausgerichtet**
-Nach einer Internetrecherche (Quellen: Katalon, BrowserStack, TestGrid) wurden die fehlenden Standardtestfälle für Onlineshops identifiziert und in zwei neue Testdateien umgesetzt. Die wichtigsten Lücken waren Sicherheitstests (fremde Bestellungen einsehen) und Grenzwerttests (negative Mengen, überlange Felder). Beides ist in echten Shops erfahrungsgemäß Quelle von Bugs oder Sicherheitslücken.
-
-**24.04.2026 – Sicherheitstests prüfen 403-Status statt Redirect**
-Wenn ein Nutzer auf eine fremde Ressource zugreift, gibt `abort(403)` einen HTTP-403-Fehlercode zurück – keinen Redirect. Der Test prüft deshalb `->assertStatus(403)` und nicht `->assertRedirect()`. Gäste hingegen werden von Laravels Auth-Middleware mit einem Redirect zu `route('login')` abgefangen, bevor der Controller-Code überhaupt ausgeführt wird.
-
-**24.04.2026 – Zwei separate Testdateien statt eine große**
-Sicherheitstests (`SicherheitsTest.php`) und Grenzwerttests (`GrenzwertTest.php`) wurden bewusst getrennt, weil sie verschiedene Konzepte testen: Zugriffsschutz vs. Eingabe-Validierung. So ist die Teststruktur übersichtlich und man findet beim Fehlschlag eines Tests sofort die richtige Kategorie.
-
----
-
-**22.04.2026 – Artikelnummer als echte DB-Spalte mit Model-Event statt Controller-Logik**
-Die Artikelnummer (10001, 10002, ...) wird als eigene Spalte `artikel_nr` in der Datenbank gespeichert, nicht nur zur Anzeige berechnet. Vorteil: Die Nummer bleibt stabil, auch wenn das Produkt bearbeitet wird, und lässt sich filtern oder sortieren. Die automatische Vergabe passiert im `Product`-Model über ein Eloquent-Model-Event (`booted()` + `static::created()`): nach jedem `Product::create()` wird sofort `artikel_nr = id + 10000` gesetzt. So ist der Controller frei davon und die Logik sitzt an einer einzigen Stelle. Zwei Migrationen waren nötig: erst die Spalte als NOT NULL + unique anlegen, dann in einer zweiten Migration nullable machen – damit das booted()-Event nach dem create() mit update() schreiben kann ohne einen NOT-NULL-Fehler zu werfen.
+Die vier Sortieroptionen (neueste, preis_asc, preis_desc, bewertung) werden mit einem PHP-`match()`-Ausdruck a

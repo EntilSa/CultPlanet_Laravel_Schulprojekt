@@ -18,5 +18,11 @@ class DatabaseSeeder extends Seeder
         $this->call(RolesSeeder::class);
         // dummy-kunden für tests und demo
         $this->call(DummyCustomersSeeder::class);
+        // produkt-bewertungen von dummy-kunden
+        $this->call(ReviewSeeder::class);
+        // demo-bestellungen in verschiedenen szenarien
+        $this->call(OrderSeeder::class);
+        // bereiche und mitarbeiter für die mitarbeiterverwaltung
+        $this->call(DepartmentSeeder::class);
     }
 }
