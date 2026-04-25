@@ -2,6 +2,89 @@
 
 ## Aktueller Stand
 **Phase 0, 1, 2, 3, Spezialisierung und Individualprojekt vollständig abgeschlossen. 132 Tests alle grün.**
+**QoL-Verbesserungen vollständig umgesetzt (25.04.2026) – alle 7 Schritte erledigt.**
+
+---
+
+## QoL-Verbesserungen – Nächste Session (25.04.2026)
+
+Nach einem vollständigen Frontend-Review wurden folgende Verbesserungen identifiziert und beschlossen.
+Alle Änderungen sind klein (kein neuer Controller, keine neue Migration, keine neuen Routen außer einem Redirect).
+
+### Änderung 1 – Startseite entfernt, Shop ist jetzt Landing Page
+**Datei:** `routes/web.php`
+- Die Route `/` gibt nicht mehr `pages.startseite` zurück
+- Stattdessen: `Route::redirect('/', '/shop')->name('home');`
+- Begründung: Echte Shops führen direkt zu Produkten. Die Startseite war eine leere Zwischenstation ohne Mehrwert.
+
+### Änderung 2 – Auktions-Banner in Shop-Übersicht integriert
+**Dateien:** `app/Http/Controllers/ProductController.php`, `resources/views/shop/index.blade.php`
+- Der Auktions-Banner (bisher nur auf der Startseite) wird jetzt oben in der Shop-Übersicht angezeigt, direkt über dem Produktgrid
+- `ProductController::index()` muss `$auktionBanner` laden (gleiche Logik wie bisher in der Home-Route in web.php):
+  ```php
+  $auktionBanner = \App\Models\Auction::with('product')
+      ->where('status', 'aktiv')
+      ->where('end_time', '>', now())
+      ->withCount('bids')
+      ->first();
+  if (!$auktionBanner) {
+      $auktionBanner = \App\Models\Auction::with('product')
+          ->where('status', 'geplant')
+          ->where('start_time', '>', now())
+          ->orderBy('start_time')
+          ->first();
+  }
+  ```
+- In `shop/index.blade.php` ganz oben (vor dem Produktgrid, nach dem Seitentitel) den Auktions-Banner aus `design.md` einfügen – nur wenn `$auktionBanner` vorhanden (`@if($auktionBanner)`)
+- Banner-Template steht fertig in `design.md` unter "Auktions-Banner"
+- Countdown-Script (Vanilla JS) muss mitgezogen werden – steht in `auction/show.blade.php` als Vorlage
+
+### Änderung 3 – Produktbild und Produktname klickbar (→ Detailseite)
+**Datei:** `resources/views/shop/index.blade.php`
+- Das Produktbild (`<img>`) und der Produktname (`<h3>` oder `<p>`) in jeder Produktkarte müssen in einen `<a href="{{ route('shop.show', $product) }}">` Link eingewickelt werden
+- Der "Ansehen"-Button bleibt zusätzlich bestehen
+- Standard in jedem Onlineshop – Nutzer erwarten dass Bild und Name klickbar sind
+
+### Änderung 4 – Hover-Effekt auf Produktkarten
+**Datei:** `resources/views/shop/index.blade.php`
+- Jede Produktkarte bekommt einen subtilen Hover-Effekt: `hover:shadow-lg hover:-translate-y-1 transition-all duration-200`
+- Das `transition-shadow` das bereits da ist durch `transition-all duration-200` ersetzen
+- Gibt dem Shop ein moderneres, lebendigeres Gefühl
+
+### Änderung 5 – Pagination-Text auf Deutsch
+**Datei:** `resources/views/shop/index.blade.php`
+- Der Text "Showing X to Y of Z results" (Laravel Standard-Pagination) auf Deutsch umstellen
+- Entweder: `AppServiceProvider` mit `Paginator::defaultView()` und eigenem Blade anpassen
+- Oder einfacher: unterhalb des Grids statt `{{ $products->links() }}` einen eigenen Pagination-Block mit deutschem Text bauen:
+  ```php
+  // Zeige X bis Y von Z Ergebnissen
+  Zeige {{ $products->firstItem() }} bis {{ $products->lastItem() }} von {{ $products->total() }} Artikeln
+  ```
+- Die Pagination-Links (`$products->links()`) bleiben, nur der Text darüber/darunter wird deutsch
+
+### Änderung 6 – Login- und Auth-Seiten auf Deutsch
+**Dateien:** `resources/views/auth/login.blade.php`, `resources/views/auth/register.blade.php`, `resources/views/auth/forgot-password.blade.php`
+- "LOG IN" → "Anmelden"
+- "Forgot your password?" → "Passwort vergessen?"
+- "Remember me" → "Angemeldet bleiben"
+- "Email" bleibt (international verständlich)
+- "Password" → "Passwort"
+- Auf der Login-Seite fehlt ein Link "Noch kein Konto? Jetzt registrieren" → hinzufügen
+
+### Reihenfolge der Umsetzung
+1. web.php: Route `/` auf Redirect umstellen
+2. ProductController::index(): $auktionBanner laden + in View übergeben
+3. shop/index.blade.php: Auktions-Banner oben einfügen
+4. shop/index.blade.php: Bild + Name klickbar machen
+5. shop/index.blade.php: Hover-Effekte auf Karten
+6. shop/index.blade.php: Pagination-Text eingedeutscht
+7. Auth-Views: Texte eingedeutscht + Register-Link auf Login-Seite
+
+### Was NICHT geändert wird
+- `startseite.blade.php` bleibt bestehen (wird nur nicht mehr direkt aufgerufen – schadet nicht)
+- Keine neuen Tests nötig (nur Frontend-Änderungen, keine Logik-Änderungen)
+- Keine neuen Routen außer dem Redirect
+- Keine Datenbankänderungen
 
 ### Phase 0 – Erledigt
 - Laravel 13 installiert, MySQL konfiguriert, Git initialisiert
@@ -54,7 +137,21 @@
 - 9 neue PHPUnit-Tests – 60 Tests insgesamt, alle grün
 
 ## Letzte bearbeitete Datei
-`resources/views/shop/index.blade.php` + `ProductController::index()` (24.04.2026) – Suche & Filter im Shop: Textsuche (LIKE), Preisbereich (min/max), Verfügbarkeitsfilter, 4 Sortieroptionen, aktive Filter als Chips, Zurücksetzen-Link. 16 neue Tests in `SuchfilterTest.php`.
+`resources/views/auth/login.blade.php` + `register.blade.php` + `forgot-password.blade.php` + `shop/index.blade.php` + `ExampleTest.php` (25.04.2026) – QoL-Verbesserungen: Shop-Redirect, Auktions-Banner, klickbare Karten, Hover-Effekte, Pagination auf Deutsch, Auth-Views auf Deutsch, Register-Link auf Login-Seite.
+
+## QoL-Verbesserungen – VOLLSTÄNDIG ERLEDIGT (25.04.2026)
+
+| Schritt | Beschreibung | Status |
+|---------|-------------|--------|
+| 1 | Route `/` → Redirect auf `/shop` | ✓ |
+| 2 | `ProductController::index()` lädt `$auktionBanner` | ✓ |
+| 3 | Auktions-Banner oben in `shop/index.blade.php` | ✓ |
+| 4 | Produktbild + Name klickbar zur Detailseite | ✓ |
+| 5 | Hover-Effekte auf Produktkarten | ✓ |
+| 6 | Pagination-Text auf Deutsch | ✓ |
+| 7 | Auth-Views auf Deutsch + Register-Link | ✓ |
+
+Außerdem: `ExampleTest.php` auf `assertRedirect('/shop')` umgestellt (war `assertStatus(200)` für GET `/`).
 
 ## Was als nächstes ansteht
 

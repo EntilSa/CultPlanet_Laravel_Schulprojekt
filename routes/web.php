@@ -10,23 +10,8 @@ use App\Http\Controllers\AuctionController;
 use App\Http\Controllers\DepartmentController;
 use Illuminate\Support\Facades\Route;
 
-// Startseite – aktive Auktion für Banner mitgeben
-Route::get('/', function () {
-    // zuerst schauen ob gerade eine aktive auktion läuft
-    $auktionBanner = \App\Models\Auction::where('status', 'aktiv')
-        ->with(['product', 'bids'])
-        ->first();
-
-    // falls keine aktive, die nächste geplante zeigen
-    if (!$auktionBanner) {
-        $auktionBanner = \App\Models\Auction::where('status', 'geplant')
-            ->with(['product', 'bids'])
-            ->orderBy('start_time')
-            ->first();
-    }
-
-    return view('pages.startseite', ['auktionBanner' => $auktionBanner]);
-})->name('home');
+// startseite leitet direkt zum shop weiter – keine leere zwischenstation mehr
+Route::redirect('/', '/shop')->name('home');
 
 // Statische Seiten
 Route::get('/impressum', function () {

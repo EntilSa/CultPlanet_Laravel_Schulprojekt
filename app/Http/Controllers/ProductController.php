@@ -8,9 +8,25 @@ use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
-    // shop übersicht – mit suche, filter und sortierung
+    // shop übersicht – mit suche, filter, sortierung und auktions-banner
     public function index(Request $request)
     {
+        // auktions-banner: zuerst aktive auktion suchen, sonst nächste geplante
+        $auktionBanner = \App\Models\Auction::with('product')
+            ->where('status', 'aktiv')
+            ->where('end_time', '>', now())
+            ->withCount('bids')
+            ->first();
+
+        if (!$auktionBanner) {
+            $auktionBanner = \App\Models\Auction::with('product')
+                ->where('status', 'geplant')
+                ->where('start_time', '>', now())
+                ->orderBy('start_time')
+                ->withCount('bids')
+                ->first();
+        }
+
         $query = Product::withAvg('reviews', 'rating')->withCount('reviews');
 
         // textsuche: name enthält den suchbegriff
@@ -42,7 +58,7 @@ class ProductController extends Controller
         // seitennavigation behält die filter-parameter in der url
         $products = $query->paginate(12)->appends($request->query());
 
-        return view('shop.index', compact('products'));
+        return view('shop.index', compact('products', 'auktionBanner'));
     }
 
     // einzelne produktseite anzeigen

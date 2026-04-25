@@ -6,6 +6,28 @@ Technische Entscheidungen mit Begründung – direkt verwendbar für die Projekt
 
 ## Entscheidungen
 
+---
+
+### QoL-Review nach Fertigstellung (25.04.2026)
+
+**25.04.2026 – Startseite entfernt, Shop ist jetzt Landing Page**
+Nach einem vollständigen Frontend-Review wurde festgestellt, dass die Startseite keinen Mehrwert bietet: Sie zeigte nur einen Titel, einen Untertitel und einen "Zum Shop"-Button. Echte Onlineshops (Amazon, Otto, Zalando) führen Nutzer direkt zu Produkten. Die Startseite war eine unnötige Zwischenstation. Entscheidung: Route `/` leitet per Redirect direkt auf `/shop` um. Der Auktions-Banner wird stattdessen oben in der Shop-Übersicht angezeigt.
+
+**25.04.2026 – Auktions-Banner in Shop-Übersicht integriert statt auf eigener Startseite**
+Da die Startseite entfernt wurde, wird der Auktions-Banner direkt in `shop/index.blade.php` oben eingebunden. Das ist näher am Standard moderner Shops: Aktionsware und Sonderangebote erscheinen dort wo der Nutzer eh schon ist – im Shop. Die Logik zum Laden der aktiven/nächsten Auktion wird aus der Home-Route in `ProductController::index()` verschoben.
+
+**25.04.2026 – Produktbild und Produktname klickbar zur Detailseite**
+Beim Frontend-Review wurde festgestellt, dass nur der "Ansehen"-Button zur Produktdetailseite führt. Bild und Name sind nicht klickbar. Das widerspricht dem Standard jedes Onlineshops. Nutzer klicken instinktiv auf Bild oder Name. Lösung: beide in einen Link auf `route('shop.show', $product)` einwickeln. Kein neuer Code nötig – nur HTML-Anpassung in der Blade-View.
+
+**25.04.2026 – Hover-Effekte auf Produktkarten für moderneres Erscheinungsbild**
+Die Produktkarten wirkten statisch. Ein leichter Hover-Effekt (`hover:shadow-lg hover:-translate-y-1`) gibt dem Shop ein lebendigeres, moderneres Gefühl ohne Overengineering. Standard in zeitgemäßen Onlineshops. Umsetzung: zwei Tailwind-Klassen pro Karte in der Blade-View.
+
+**25.04.2026 – Pagination-Text und Auth-Texte auf Deutsch**
+Laravel und Breeze liefern englische Standardtexte ("Showing 1 to 12 of 20 results", "LOG IN", "Forgot your password?"). Da CultPlanet ein deutschsprachiger Shop ist, werden diese Texte eingedeutscht. Außerdem fehlte auf der Login-Seite ein Link zur Registrierung – was ein Usability-Standard ist.
+
+**25.04.2026 – ExampleTest musste nach Redirect-Änderung angepasst werden**
+Der Standard-`ExampleTest.php` prüfte `GET /` → HTTP 200. Da `/` jetzt per `Route::redirect()` auf `/shop` weiterleitet, kommt stattdessen HTTP 302. Der Test wurde auf `assertRedirect('/shop')` umgestellt. Alle anderen 131 Tests waren nicht betroffen – die QoL-Änderungen berühren keine Controller-Logik oder Models.
+
 *(Werden während des Projekts laufend ergänzt)*
 
 ---
