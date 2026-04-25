@@ -1,13 +1,13 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\ProductController;
-use App\Http\Controllers\CartController;
-use App\Http\Controllers\OrderController;
-use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuctionController;
+use App\Http\Controllers\CartController;
 use App\Http\Controllers\DepartmentController;
+use App\Http\Controllers\OrderController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ReviewController;
 use Illuminate\Support\Facades\Route;
 
 // startseite leitet direkt zum shop weiter – keine leere zwischenstation mehr
@@ -55,6 +55,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/bestellung/{order}/zahlung', [OrderController::class, 'payment'])->name('orders.payment');
     Route::post('/bestellung/{order}/zahlung', [OrderController::class, 'completePayment'])->name('orders.complete_payment');
     Route::get('/bestellung/{order}/danke', [OrderController::class, 'success'])->name('orders.success');
+    Route::get('/meine-bestellungen', [OrderController::class, 'myOrders'])->name('orders.my');
+    Route::get('/meine-bestellungen/{order}/pdf', [OrderController::class, 'downloadPdf'])->name('orders.pdf');
 });
 
 // Reviews – nur für eingeloggte Nutzer

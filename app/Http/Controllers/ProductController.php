@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Auction;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -12,14 +13,14 @@ class ProductController extends Controller
     public function index(Request $request)
     {
         // auktions-banner: zuerst aktive auktion suchen, sonst nächste geplante
-        $auktionBanner = \App\Models\Auction::with('product')
+        $auktionBanner = Auction::with('product')
             ->where('status', 'aktiv')
             ->where('end_time', '>', now())
             ->withCount('bids')
             ->first();
 
-        if (!$auktionBanner) {
-            $auktionBanner = \App\Models\Auction::with('product')
+        if (! $auktionBanner) {
+            $auktionBanner = Auction::with('product')
                 ->where('status', 'geplant')
                 ->where('start_time', '>', now())
                 ->orderBy('start_time')
@@ -31,7 +32,7 @@ class ProductController extends Controller
 
         // textsuche: name enthält den suchbegriff
         if ($request->filled('suche')) {
-            $query->where('name', 'like', '%' . $request->suche . '%');
+            $query->where('name', 'like', '%'.$request->suche.'%');
         }
 
         // preisbereich: nur produkte zwischen min und max
@@ -48,11 +49,11 @@ class ProductController extends Controller
         }
 
         // sortierung – standard: neueste zuerst
-        match($request->input('sortierung')) {
-            'preis_asc'  => $query->orderBy('price', 'asc'),
+        match ($request->input('sortierung')) {
+            'preis_asc' => $query->orderBy('price', 'asc'),
             'preis_desc' => $query->orderBy('price', 'desc'),
-            'bewertung'  => $query->orderByDesc('reviews_avg_rating'),
-            default      => $query->latest(),
+            'bewertung' => $query->orderByDesc('reviews_avg_rating'),
+            default => $query->latest(),
         };
 
         // seitennavigation behält die filter-parameter in der url
@@ -75,7 +76,7 @@ class ProductController extends Controller
     public function create()
     {
         // nur admins dürfen produkte anlegen
-        if (!auth()->user()->hasRole('admin')) {
+        if (! auth()->user()->hasRole('admin')) {
             abort(403);
         }
 
@@ -85,16 +86,16 @@ class ProductController extends Controller
     // neues produkt speichern (nur admin)
     public function store(Request $request)
     {
-        if (!auth()->user()->hasRole('admin')) {
+        if (! auth()->user()->hasRole('admin')) {
             abort(403);
         }
 
         $request->validate([
-            'name'        => ['required', 'string', 'max:255'],
+            'name' => ['required', 'string', 'max:255'],
             'description' => ['required', 'string'],
-            'price'       => ['required', 'numeric', 'min:0'],
-            'stock'       => ['required', 'integer', 'min:0'],
-            'image'       => ['nullable', 'image', 'max:2048'], // max 2 mb
+            'price' => ['required', 'numeric', 'min:0'],
+            'stock' => ['required', 'integer', 'min:0'],
+            'image' => ['nullable', 'image', 'max:2048'], // max 2 mb
         ]);
 
         // bild hochladen falls vorhanden, sonst null
@@ -105,11 +106,11 @@ class ProductController extends Controller
 
         // artikelnummer wird automatisch vom Product-Model gesetzt (booted-methode)
         Product::create([
-            'name'        => $request->name,
+            'name' => $request->name,
             'description' => $request->description,
-            'price'       => $request->price,
-            'stock'       => $request->stock,
-            'image'       => $imagePath,
+            'price' => $request->price,
+            'stock' => $request->stock,
+            'image' => $imagePath,
         ]);
 
         return redirect()->route('shop.index')->with('success', 'Produkt wurde angelegt.');
@@ -118,7 +119,7 @@ class ProductController extends Controller
     // bearbeitungsformular für bestehendes produkt (nur admin)
     public function edit(Product $product)
     {
-        if (!auth()->user()->hasRole('admin')) {
+        if (! auth()->user()->hasRole('admin')) {
             abort(403);
         }
 
@@ -128,16 +129,16 @@ class ProductController extends Controller
     // bestehendes produkt aktualisieren (nur admin)
     public function update(Request $request, Product $product)
     {
-        if (!auth()->user()->hasRole('admin')) {
+        if (! auth()->user()->hasRole('admin')) {
             abort(403);
         }
 
         $request->validate([
-            'name'        => ['required', 'string', 'max:255'],
+            'name' => ['required', 'string', 'max:255'],
             'description' => ['required', 'string'],
-            'price'       => ['required', 'numeric', 'min:0'],
-            'stock'       => ['required', 'integer', 'min:0'],
-            'image'       => ['nullable', 'image', 'max:2048'],
+            'price' => ['required', 'numeric', 'min:0'],
+            'stock' => ['required', 'integer', 'min:0'],
+            'image' => ['nullable', 'image', 'max:2048'],
         ]);
 
         $imagePath = $product->image;
@@ -151,11 +152,11 @@ class ProductController extends Controller
         }
 
         $product->update([
-            'name'        => $request->name,
+            'name' => $request->name,
             'description' => $request->description,
-            'price'       => $request->price,
-            'stock'       => $request->stock,
-            'image'       => $imagePath,
+            'price' => $request->price,
+            'stock' => $request->stock,
+            'image' => $imagePath,
         ]);
 
         return redirect()->route('shop.show', $product)->with('success', 'Produkt wurde aktualisiert.');
@@ -164,7 +165,7 @@ class ProductController extends Controller
     // produkt löschen (nur admin)
     public function destroy(Product $product)
     {
-        if (!auth()->user()->hasRole('admin')) {
+        if (! auth()->user()->hasRole('admin')) {
             abort(403);
         }
 

@@ -13,7 +13,7 @@ class ReviewController extends Controller
     {
         $request->validate([
             'rating' => ['required', 'integer', 'min:1', 'max:5'],
-            'text'   => ['required', 'string', 'min:10', 'max:1000'],
+            'text' => ['required', 'string', 'min:10', 'max:1000'],
         ]);
 
         // prüfen ob der nutzer dieses produkt schon bewertet hat
@@ -26,10 +26,10 @@ class ReviewController extends Controller
         }
 
         Review::create([
-            'user_id'    => auth()->id(),
+            'user_id' => auth()->id(),
             'product_id' => $product->id,
-            'rating'     => $request->rating,
-            'text'       => $request->text,
+            'rating' => $request->rating,
+            'text' => $request->text,
         ]);
 
         return back()->with('success', 'Deine Bewertung wurde gespeichert!');

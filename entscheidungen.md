@@ -28,6 +28,26 @@ Laravel und Breeze liefern englische Standardtexte ("Showing 1 to 12 of 20 resul
 **25.04.2026 – ExampleTest musste nach Redirect-Änderung angepasst werden**
 Der Standard-`ExampleTest.php` prüfte `GET /` → HTTP 200. Da `/` jetzt per `Route::redirect()` auf `/shop` weiterleitet, kommt stattdessen HTTP 302. Der Test wurde auf `assertRedirect('/shop')` umgestellt. Alle anderen 131 Tests waren nicht betroffen – die QoL-Änderungen berühren keine Controller-Logik oder Models.
 
+### Neue Features (25.04.2026)
+
+**25.04.2026 – barryvdh/laravel-dompdf für PDF-Rechnungen**
+Für das Erstellen von PDF-Rechnungen wurde das Paket `barryvdh/laravel-dompdf` gewählt. Es ist das am weitesten verbreitete PDF-Paket für Laravel, gut dokumentiert und funktioniert ohne zusätzliche System-Abhängigkeiten. Alternative wäre TCPDF gewesen – dompdf ist aber einfacher zu benutzen und gut genug für ein Schulprojekt.
+
+**25.04.2026 – Mailpit als lokaler Fake-Mailserver statt Mailtrap oder Log-Mailer**
+Mailpit fängt alle Laravel-E-Mails lokal ab und zeigt sie mit Anhang in einer Web-UI an (localhost:8025). Alternative wäre der `log`-Mailer gewesen (Mail landet in storage/logs/laravel.log), aber damit kann man den PDF-Anhang nicht sichtbar prüfen. Mailpit ist kostenlos, offline nutzbar und zeigt die Mail so wie sie der Kunde sehen würde.
+
+**25.04.2026 – Mail nach Checkout direkt in OrderController::store() – kein Job/Queue**
+Die Bestellbestätigungs-Mail wird synchron direkt nach dem Speichern der Bestellung gesendet. Eine Queue (asynchrone Verarbeitung) wäre sauberer für Produktion, ist aber für ein Schulprojekt unnötig komplex. Wenn die Mail fehlschlägt, sieht der Nutzer einen Fehler – das ist akzeptabel.
+
+**25.04.2026 – Mail-Logik dupliziert zwischen AuctionController und CloseAuctions-Command (bewusst)**
+Beide `schliesseAuktion()`-Methoden (Controller + Command) senden jetzt die Auktion-Gewonnen-Mail. Eine gemeinsame Service-Klasse wäre sauberer, aber für zwei Stellen Over-Engineering. Die Duplikation bleibt überschaubar.
+
+**25.04.2026 – "Meine Bestellungen" nutzt vorhandenes Status-Badge-Partial**
+Die Kundenseite `orders/my-orders.blade.php` bindet das Admin-Partial `admin/partials/status-badge.blade.php` ein statt eigene Badge-Logik zu schreiben. Das Partial ist nicht admin-spezifisch – es zeigt nur ein farbiges Badge. Wiederverwendung spart Code und hält die Farben konsistent.
+
+**25.04.2026 – Laravel Pint für einheitliche Code-Formatierung**
+Pint ist der offizielle Laravel Code-Formatter (basiert auf PHP-CS-Fixer). Er wurde als Dev-Dependency installiert und einmalig auf das gesamte Projekt angewendet. 32 Dateien wurden formatiert (Leerzeichen, Zeilenumbrüche, import-Reihenfolge). Dadurch ist der Code jetzt im Laravel-Standard-Stil.
+
 *(Werden während des Projekts laufend ergänzt)*
 
 ---

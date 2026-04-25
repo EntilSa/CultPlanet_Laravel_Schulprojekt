@@ -24,10 +24,10 @@ class DummyCustomersSeeder extends Seeder
 
         foreach ($kunden as $data) {
             // nur anlegen wenn die e-mail noch nicht existiert
-            if (!User::where('email', $data['email'])->exists()) {
+            if (! User::where('email', $data['email'])->exists()) {
                 $user = User::create([
-                    'name'     => $data['name'],
-                    'email'    => $data['email'],
+                    'name' => $data['name'],
+                    'email' => $data['email'],
                     'password' => Hash::make('password'),
                 ]);
                 $user->assignRole($kundeRolle);

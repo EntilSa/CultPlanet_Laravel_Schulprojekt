@@ -13,7 +13,7 @@ class Auction extends Model
 
     protected $casts = [
         'start_time' => 'datetime',
-        'end_time'   => 'datetime',
+        'end_time' => 'datetime',
     ];
 
     // ein auktions-artikel gehört zu einem produkt
@@ -44,6 +44,7 @@ class Auction extends Model
     public function hoechstBieter()
     {
         $bid = $this->bids()->orderByDesc('amount')->first();
+
         return $bid?->user;
     }
 

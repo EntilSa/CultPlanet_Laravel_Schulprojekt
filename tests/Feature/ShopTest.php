@@ -60,10 +60,10 @@ class ShopTest extends TestCase
         $admin->assignRole(Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'web']));
 
         $response = $this->actingAs($admin)->post(route('products.store'), [
-            'name'        => 'Neues Produkt',
+            'name' => 'Neues Produkt',
             'description' => 'Eine Beschreibung',
-            'price'       => 19.99,
-            'stock'       => 10,
+            'price' => 19.99,
+            'stock' => 10,
         ]);
 
         $response->assertRedirect(route('shop.index'));
@@ -76,13 +76,13 @@ class ShopTest extends TestCase
         $admin->assignRole(Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'web']));
 
         $this->actingAs($admin)->post(route('products.store'), [
-            'name'        => 'Artikel Test',
+            'name' => 'Artikel Test',
             'description' => 'Beschreibung',
-            'price'       => 9.99,
-            'stock'       => 5,
+            'price' => 9.99,
+            'stock' => 5,
         ]);
 
-        $product = \App\Models\Product::where('name', 'Artikel Test')->first();
+        $product = Product::where('name', 'Artikel Test')->first();
 
         // artikelnummer muss gesetzt sein und größer als 10000
         $this->assertNotNull($product->artikel_nr);

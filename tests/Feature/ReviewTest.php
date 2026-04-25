@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Product;
+use App\Models\Review;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -37,13 +38,13 @@ class ReviewTest extends TestCase
 
         $this->actingAs($user)->post(route('reviews.store', $product), [
             'rating' => 4,
-            'text'   => 'Wirklich tolles Produkt, sehr empfehlenswert!',
+            'text' => 'Wirklich tolles Produkt, sehr empfehlenswert!',
         ]);
 
         $this->assertDatabaseHas('reviews', [
-            'user_id'    => $user->id,
+            'user_id' => $user->id,
             'product_id' => $product->id,
-            'rating'     => 4,
+            'rating' => 4,
         ]);
     }
 
@@ -73,7 +74,7 @@ class ReviewTest extends TestCase
         ]);
 
         $response->assertSessionHas('error');
-        $this->assertCount(1, \App\Models\Review::all());
+        $this->assertCount(1, Review::all());
     }
 
     public function test_bewertung_sterne_muessen_zwischen_1_und_5_liegen(): void

@@ -3,7 +3,11 @@
     "allow": [
       "Bash(awk '{sum += $1} END {print \"Zeilen:\", sum}')",
       "Bash(git add *)",
-      "Bash(git commit -m ' *)"
+      "Bash(git commit -m ' *)",
+      "Bash(awk '{sum += $1} END {print sum}')",
+      "Bash(php artisan *)",
+      "WebSearch",
+      "Bash(composer require *)"
     ]
   }
 }

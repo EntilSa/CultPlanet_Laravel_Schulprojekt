@@ -19,10 +19,10 @@ class SuchfilterTest extends TestCase
     private function produkt(string $name, float $price, int $stock = 10): Product
     {
         return Product::create([
-            'name'        => $name,
-            'description' => 'Testbeschreibung für ' . $name,
-            'price'       => $price,
-            'stock'       => $stock,
+            'name' => $name,
+            'description' => 'Testbeschreibung für '.$name,
+            'price' => $price,
+            'stock' => $stock,
         ]);
     }
 

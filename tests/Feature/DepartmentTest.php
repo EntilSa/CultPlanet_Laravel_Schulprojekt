@@ -18,6 +18,7 @@ class DepartmentTest extends TestCase
     {
         $admin = User::factory()->create();
         $admin->assignRole(Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'web']));
+
         return $admin;
     }
 
@@ -25,6 +26,7 @@ class DepartmentTest extends TestCase
     {
         $ma = User::factory()->create();
         $ma->assignRole(Role::firstOrCreate(['name' => 'mitarbeiter', 'guard_name' => 'web']));
+
         return $ma;
     }
 
@@ -32,6 +34,7 @@ class DepartmentTest extends TestCase
     {
         $kunde = User::factory()->create();
         $kunde->assignRole(Role::firstOrCreate(['name' => 'kunde', 'guard_name' => 'web']));
+
         return $kunde;
     }
 
@@ -97,7 +100,7 @@ class DepartmentTest extends TestCase
 
     public function test_admin_kann_bereich_loeschen(): void
     {
-        $admin   = $this->makeAdmin();
+        $admin = $this->makeAdmin();
         $bereich = Department::create(['name' => 'Altlager']);
 
         $this->actingAs($admin)
@@ -113,8 +116,8 @@ class DepartmentTest extends TestCase
 
     public function test_mitarbeiter_kann_bereich_zugewiesen_werden(): void
     {
-        $admin   = $this->makeAdmin();
-        $ma      = $this->makeMitarbeiter();
+        $admin = $this->makeAdmin();
+        $ma = $this->makeMitarbeiter();
         $bereich = Department::create(['name' => 'Verkauf']);
 
         $this->actingAs($admin)
@@ -126,8 +129,8 @@ class DepartmentTest extends TestCase
 
     public function test_kunde_kann_nicht_bereich_zugewiesen_werden(): void
     {
-        $admin   = $this->makeAdmin();
-        $kunde   = $this->makeKunde();
+        $admin = $this->makeAdmin();
+        $kunde = $this->makeKunde();
         $bereich = Department::create(['name' => 'Verkauf']);
 
         $this->actingAs($admin)
@@ -137,8 +140,8 @@ class DepartmentTest extends TestCase
 
     public function test_mitarbeiter_kann_aus_bereich_entfernt_werden(): void
     {
-        $admin   = $this->makeAdmin();
-        $ma      = $this->makeMitarbeiter();
+        $admin = $this->makeAdmin();
+        $ma = $this->makeMitarbeiter();
         $bereich = Department::create(['name' => 'Lager']);
         $bereich->users()->attach($ma->id);
 
@@ -165,7 +168,7 @@ class DepartmentTest extends TestCase
 
     public function test_keine_warnung_wenn_alle_bereiche_besetzt(): void
     {
-        $ma      = $this->makeMitarbeiter();
+        $ma = $this->makeMitarbeiter();
         $bereich = Department::create(['name' => 'Lager']);
         $bereich->users()->attach($ma->id);
 

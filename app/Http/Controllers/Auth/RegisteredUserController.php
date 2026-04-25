@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
+use Spatie\Permission\Models\Role;
 
 class RegisteredUserController extends Controller
 {
@@ -43,7 +44,7 @@ class RegisteredUserController extends Controller
         ]);
 
         // Rolle "kunde" holen oder anlegen falls noch nicht vorhanden (wichtig für Tests)
-        $rolle = \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'kunde', 'guard_name' => 'web']);
+        $rolle = Role::firstOrCreate(['name' => 'kunde', 'guard_name' => 'web']);
         $user->assignRole($rolle);
 
         event(new Registered($user));

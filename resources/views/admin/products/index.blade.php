@@ -53,7 +53,15 @@
                         <td class="px-6 py-3 text-slate-500 font-mono text-xs">{{ $product->artikel_nr }}</td>
                         <td class="px-6 py-3 font-medium text-slate-800">{{ $product->name }}</td>
                         <td class="px-6 py-3 text-slate-700">€ {{ number_format($product->price, 2, ',', '.') }}</td>
-                        <td class="px-6 py-3 text-slate-700">{{ $product->stock }}</td>
+                        <td class="px-6 py-3">
+                            @if($product->stock === 0)
+                                <span class="px-2 py-1 rounded text-xs bg-red-100 text-red-700 font-semibold">Ausverkauft</span>
+                            @elseif($product->stock < 5)
+                                <span class="px-2 py-1 rounded text-xs bg-red-100 text-red-700 font-semibold">Nur {{ $product->stock }} übrig</span>
+                            @else
+                                <span class="text-green-700 font-semibold">{{ $product->stock }}</span>
+                            @endif
+                        </td>
                         <td class="px-6 py-3">
                             @php $verfuegbar = $product->verfuegbarImShop(); @endphp
                             @if($verfuegbar === 0)

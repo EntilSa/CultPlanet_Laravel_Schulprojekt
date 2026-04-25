@@ -20,6 +20,7 @@ class AdminTest extends TestCase
     {
         $admin = User::factory()->create();
         $admin->assignRole(Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'web']));
+
         return $admin;
     }
 
@@ -28,6 +29,7 @@ class AdminTest extends TestCase
     {
         $ma = User::factory()->create();
         $ma->assignRole(Role::firstOrCreate(['name' => 'mitarbeiter', 'guard_name' => 'web']));
+
         return $ma;
     }
 
@@ -36,6 +38,7 @@ class AdminTest extends TestCase
     {
         $kunde = User::factory()->create();
         $kunde->assignRole(Role::firstOrCreate(['name' => 'kunde', 'guard_name' => 'web']));
+
         return $kunde;
     }
 
@@ -89,15 +92,15 @@ class AdminTest extends TestCase
         $kunde = $this->loginAsKunde();
 
         $order = Order::create([
-            'user_id'        => $kunde->id,
-            'vorname'        => 'Max',
-            'nachname'       => 'Muster',
-            'strasse'        => 'Hauptstraße 1',
-            'plz'            => '12345',
-            'ort'            => 'Berlin',
-            'zahlungsmethode'=> 'paypal',
-            'total'          => 29.99,
-            'status'         => 'bezahlt',
+            'user_id' => $kunde->id,
+            'vorname' => 'Max',
+            'nachname' => 'Muster',
+            'strasse' => 'Hauptstraße 1',
+            'plz' => '12345',
+            'ort' => 'Berlin',
+            'zahlungsmethode' => 'paypal',
+            'total' => 29.99,
+            'status' => 'bezahlt',
         ]);
 
         $this->actingAs($admin)
@@ -113,15 +116,15 @@ class AdminTest extends TestCase
         $kunde = $this->loginAsKunde();
 
         $order = Order::create([
-            'user_id'        => $kunde->id,
-            'vorname'        => 'Max',
-            'nachname'       => 'Muster',
-            'strasse'        => 'Hauptstraße 1',
-            'plz'            => '12345',
-            'ort'            => 'Berlin',
-            'zahlungsmethode'=> 'paypal',
-            'total'          => 10.00,
-            'status'         => 'offen',
+            'user_id' => $kunde->id,
+            'vorname' => 'Max',
+            'nachname' => 'Muster',
+            'strasse' => 'Hauptstraße 1',
+            'plz' => '12345',
+            'ort' => 'Berlin',
+            'zahlungsmethode' => 'paypal',
+            'total' => 10.00,
+            'status' => 'offen',
         ]);
 
         $this->actingAs($admin)
@@ -144,8 +147,8 @@ class AdminTest extends TestCase
 
     public function test_admin_kann_nutzerrolle_aendern(): void
     {
-        $admin  = $this->loginAsAdmin();
-        $kunde  = $this->loginAsKunde();
+        $admin = $this->loginAsAdmin();
+        $kunde = $this->loginAsKunde();
         Role::firstOrCreate(['name' => 'mitarbeiter', 'guard_name' => 'web']);
 
         $this->actingAs($admin)

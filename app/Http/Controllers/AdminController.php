@@ -13,7 +13,7 @@ class AdminController extends Controller
     // prüfen ob eingeloggter nutzer admin ist, sonst 403
     private function nurAdmin(): void
     {
-        if (!auth()->user()->hasRole('admin')) {
+        if (! auth()->user()->hasRole('admin')) {
             abort(403);
         }
     }
@@ -21,7 +21,7 @@ class AdminController extends Controller
     // prüfen ob admin oder mitarbeiter (für verkaufsübersicht)
     private function nurAdminOderMitarbeiter(): void
     {
-        if (!auth()->user()->hasRole('admin') && !auth()->user()->hasRole('mitarbeiter')) {
+        if (! auth()->user()->hasRole('admin') && ! auth()->user()->hasRole('mitarbeiter')) {
             abort(403);
         }
     }
@@ -32,10 +32,10 @@ class AdminController extends Controller
         $this->nurAdmin();
 
         $stats = [
-            'produkte'     => Product::count(),
-            'nutzer'       => User::count(),
+            'produkte' => Product::count(),
+            'nutzer' => User::count(),
             'bestellungen' => Order::count(),
-            'umsatz'       => Order::where('status', 'bezahlt')->sum('total'),
+            'umsatz' => Order::where('status', 'bezahlt')->sum('total'),
         ];
 
         // die letzten 5 bestellungen für die übersichtstabelle

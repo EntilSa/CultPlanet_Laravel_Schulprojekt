@@ -35,6 +35,7 @@ class Product extends Model
         $reserviert = $this->auctions()
             ->whereIn('status', ['geplant', 'aktiv'])
             ->count();
+
         return max(0, $this->stock - $reserviert);
     }
 }

@@ -24,10 +24,10 @@ class KundenreiseTest extends TestCase
     private function makeProduct(string $name = 'LEGO Testset', float $price = 49.99, int $stock = 10): Product
     {
         return Product::create([
-            'name'        => $name,
+            'name' => $name,
             'description' => 'Ein tolles Spielzeug für die ganze Familie.',
-            'price'       => $price,
-            'stock'       => $stock,
+            'price' => $price,
+            'stock' => $stock,
         ]);
     }
 
@@ -42,9 +42,9 @@ class KundenreiseTest extends TestCase
 
         // schritt 1: neuer kunde registriert sich
         $this->post(route('register'), [
-            'name'                  => 'Max Mustermann',
-            'email'                 => 'max@example.com',
-            'password'              => 'geheim123!',
+            'name' => 'Max Mustermann',
+            'email' => 'max@example.com',
+            'password' => 'geheim123!',
             'password_confirmation' => 'geheim123!',
         ])->assertRedirect(route('home'));
 
@@ -73,11 +73,11 @@ class KundenreiseTest extends TestCase
         // schritt 5: bestellung absenden (lieferadresse + zahlungsmethode)
         $antwort = $this->actingAs($kunde)
             ->post(route('checkout.store'), [
-                'vorname'         => 'Max',
-                'nachname'        => 'Mustermann',
-                'strasse'         => 'Musterstraße 12',
-                'plz'             => '12345',
-                'ort'             => 'Musterstadt',
+                'vorname' => 'Max',
+                'nachname' => 'Mustermann',
+                'strasse' => 'Musterstraße 12',
+                'plz' => '12345',
+                'ort' => 'Musterstadt',
                 'zahlungsmethode' => 'paypal',
             ]);
 
@@ -86,20 +86,20 @@ class KundenreiseTest extends TestCase
 
         // schritt 6: bestellung wurde in der datenbank angelegt
         $this->assertDatabaseHas('orders', [
-            'user_id'         => $kunde->id,
-            'vorname'         => 'Max',
-            'nachname'        => 'Mustermann',
+            'user_id' => $kunde->id,
+            'vorname' => 'Max',
+            'nachname' => 'Mustermann',
             'zahlungsmethode' => 'paypal',
-            'status'          => 'offen',
+            'status' => 'offen',
         ]);
 
         $bestellung = Order::where('user_id', $kunde->id)->first();
 
         // schritt 7: bestellposition wurde gespeichert
         $this->assertDatabaseHas('order_items', [
-            'order_id'   => $bestellung->id,
+            'order_id' => $bestellung->id,
             'product_id' => $produkt->id,
-            'quantity'   => 2,
+            'quantity' => 2,
         ]);
 
         // schritt 8: lagerbestand wurde reduziert (10 - 2 = 8)
@@ -126,7 +126,7 @@ class KundenreiseTest extends TestCase
 
     public function test_kunde_kann_warenkorb_verwalten(): void
     {
-        $kunde    = User::factory()->create();
+        $kunde = User::factory()->create();
         $kunde->assignRole(Role::firstOrCreate(['name' => 'kunde', 'guard_name' => 'web']));
 
         $produkt1 = $this->makeProduct('Monopoly Classic', 29.99, 5);
@@ -180,7 +180,7 @@ class KundenreiseTest extends TestCase
 
     public function test_bestellung_schlaegt_fehl_bei_unvollstaendigem_formular(): void
     {
-        $kunde   = User::factory()->create();
+        $kunde = User::factory()->create();
         $kunde->assignRole(Role::firstOrCreate(['name' => 'kunde', 'guard_name' => 'web']));
         $produkt = $this->makeProduct();
 
@@ -201,7 +201,7 @@ class KundenreiseTest extends TestCase
 
     public function test_ausverkauftes_produkt_kann_nicht_in_warenkorb_gelegt_werden(): void
     {
-        $kunde   = User::factory()->create();
+        $kunde = User::factory()->create();
         $kunde->assignRole(Role::firstOrCreate(['name' => 'kunde', 'guard_name' => 'web']));
         $produkt = $this->makeProduct('Ausverkaufter Artikel', 19.99, 0);
 
@@ -216,7 +216,7 @@ class KundenreiseTest extends TestCase
 
     public function test_kunde_kann_produkt_nach_kauf_bewerten(): void
     {
-        $kunde   = User::factory()->create();
+        $kunde = User::factory()->create();
         $kunde->assignRole(Role::firstOrCreate(['name' => 'kunde', 'guard_name' => 'web']));
         $produkt = $this->makeProduct();
 
@@ -224,14 +224,14 @@ class KundenreiseTest extends TestCase
         $this->actingAs($kunde)
             ->post(route('reviews.store', $produkt), [
                 'rating' => 5,
-                'text'   => 'Super Produkt, mein Kind liebt es!',
+                'text' => 'Super Produkt, mein Kind liebt es!',
             ])
             ->assertRedirect();
 
         $this->assertDatabaseHas('reviews', [
-            'user_id'    => $kunde->id,
+            'user_id' => $kunde->id,
             'product_id' => $produkt->id,
-            'rating'     => 5,
+            'rating' => 5,
         ]);
     }
 
@@ -241,21 +241,21 @@ class KundenreiseTest extends TestCase
 
     public function test_kunde_kann_produkt_nicht_zweimal_bewerten(): void
     {
-        $kunde   = User::factory()->create();
+        $kunde = User::factory()->create();
         $kunde->assignRole(Role::firstOrCreate(['name' => 'kunde', 'guard_name' => 'web']));
         $produkt = $this->makeProduct();
 
         // erste bewertung
         $this->actingAs($kunde)->post(route('reviews.store', $produkt), [
             'rating' => 4,
-            'text'   => 'Sehr gut, würde ich empfehlen!',
+            'text' => 'Sehr gut, würde ich empfehlen!',
         ]);
 
         // zweite bewertung – muss fehlschlagen
         $this->actingAs($kunde)
             ->post(route('reviews.store', $produkt), [
                 'rating' => 2,
-                'text'   => 'Doch nicht so gut.',
+                'text' => 'Doch nicht so gut.',
             ])
             ->assertSessionHas('error');
 
@@ -269,8 +269,8 @@ class KundenreiseTest extends TestCase
 
     public function test_lagerbestand_wird_korrekt_reduziert_bei_mehreren_kaeufen(): void
     {
-        $kunde1  = User::factory()->create();
-        $kunde2  = User::factory()->create();
+        $kunde1 = User::factory()->create();
+        $kunde2 = User::factory()->create();
         $kunde1->assignRole(Role::firstOrCreate(['name' => 'kunde', 'guard_name' => 'web']));
         $kunde2->assignRole(Role::firstOrCreate(['name' => 'kunde', 'guard_name' => 'web']));
 

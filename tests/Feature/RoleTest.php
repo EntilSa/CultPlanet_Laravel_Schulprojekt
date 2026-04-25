@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Spatie\Permission\Models\Role;
 use Tests\TestCase;
@@ -27,14 +28,14 @@ class RoleTest extends TestCase
     public function test_neuer_nutzer_bekommt_rolle_kunde(): void
     {
         $this->post('/register', [
-            'name'                  => 'Test Kunde',
-            'email'                 => 'kunde@example.com',
-            'password'              => 'password',
+            'name' => 'Test Kunde',
+            'email' => 'kunde@example.com',
+            'password' => 'password',
             'password_confirmation' => 'password',
         ]);
 
         // den gerade registrierten Nutzer aus der DB holen
-        $nutzer = \App\Models\User::where('email', 'kunde@example.com')->first();
+        $nutzer = User::where('email', 'kunde@example.com')->first();
 
         // prüfen ob er die Rolle "kunde" hat
         $this->assertTrue($nutzer->hasRole('kunde'));
@@ -44,13 +45,13 @@ class RoleTest extends TestCase
     public function test_neuer_nutzer_hat_keine_admin_rolle(): void
     {
         $this->post('/register', [
-            'name'                  => 'Test Nutzer',
-            'email'                 => 'nutzer@example.com',
-            'password'              => 'password',
+            'name' => 'Test Nutzer',
+            'email' => 'nutzer@example.com',
+            'password' => 'password',
             'password_confirmation' => 'password',
         ]);
 
-        $nutzer = \App\Models\User::where('email', 'nutzer@example.com')->first();
+        $nutzer = User::where('email', 'nutzer@example.com')->first();
 
         $this->assertFalse($nutzer->hasRole('admin'));
     }

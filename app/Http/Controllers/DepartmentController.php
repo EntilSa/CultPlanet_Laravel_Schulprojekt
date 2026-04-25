@@ -11,7 +11,7 @@ class DepartmentController extends Controller
     // alle bereiche anzeigen + warnung wenn ein bereich unbesetzt ist
     public function index()
     {
-        if (!auth()->user()->hasRole('admin')) {
+        if (! auth()->user()->hasRole('admin')) {
             abort(403);
         }
 
@@ -27,7 +27,7 @@ class DepartmentController extends Controller
     // neuen bereich anlegen
     public function store(Request $request)
     {
-        if (!auth()->user()->hasRole('admin')) {
+        if (! auth()->user()->hasRole('admin')) {
             abort(403);
         }
 
@@ -35,8 +35,8 @@ class DepartmentController extends Controller
             'name' => ['required', 'string', 'max:100', 'unique:departments,name'],
         ], [
             'name.required' => 'Bitte einen Bereichsnamen eingeben.',
-            'name.unique'   => 'Dieser Bereichsname existiert bereits.',
-            'name.max'      => 'Der Name darf maximal 100 Zeichen lang sein.',
+            'name.unique' => 'Dieser Bereichsname existiert bereits.',
+            'name.max' => 'Der Name darf maximal 100 Zeichen lang sein.',
         ]);
 
         Department::create(['name' => $request->name]);
@@ -47,7 +47,7 @@ class DepartmentController extends Controller
     // bereich löschen (nur wenn keine mitarbeiter mehr drin)
     public function destroy(Department $department)
     {
-        if (!auth()->user()->hasRole('admin')) {
+        if (! auth()->user()->hasRole('admin')) {
             abort(403);
         }
 
@@ -61,7 +61,7 @@ class DepartmentController extends Controller
     // mitarbeiter einem bereich zuweisen
     public function addUser(Request $request, Department $department)
     {
-        if (!auth()->user()->hasRole('admin')) {
+        if (! auth()->user()->hasRole('admin')) {
             abort(403);
         }
 
@@ -72,7 +72,7 @@ class DepartmentController extends Controller
         $user = User::findOrFail($request->user_id);
 
         // prüfen ob dieser nutzer wirklich mitarbeiter ist
-        if (!$user->hasRole('mitarbeiter')) {
+        if (! $user->hasRole('mitarbeiter')) {
             return back()->withErrors(['user_id' => 'Nur Mitarbeiter können Bereichen zugewiesen werden.']);
         }
 
@@ -85,7 +85,7 @@ class DepartmentController extends Controller
     // mitarbeiter aus einem bereich entfernen
     public function removeUser(Department $department, User $user)
     {
-        if (!auth()->user()->hasRole('admin')) {
+        if (! auth()->user()->hasRole('admin')) {
             abort(403);
         }
 

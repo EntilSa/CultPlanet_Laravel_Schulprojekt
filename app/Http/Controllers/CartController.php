@@ -14,7 +14,7 @@ class CartController extends Controller
         $cart = session('cart', []);
 
         // gesamtpreis berechnen
-        $total = array_sum(array_map(fn($item) => $item['price'] * $item['qty'], $cart));
+        $total = array_sum(array_map(fn ($item) => $item['price'] * $item['qty'], $cart));
 
         return view('cart.index', compact('cart', 'total'));
     }
@@ -53,16 +53,16 @@ class CartController extends Controller
         } else {
             // neues produkt in den warenkorb
             $cart[$product->id] = [
-                'name'  => $product->name,
+                'name' => $product->name,
                 'price' => $product->price,
-                'qty'   => $qty,
+                'qty' => $qty,
                 'image' => $product->image,
             ];
         }
 
         session(['cart' => $cart]);
 
-        return back()->with('success', '"' . $product->name . '" wurde in den Warenkorb gelegt.');
+        return back()->with('success', '"'.$product->name.'" wurde in den Warenkorb gelegt.');
     }
 
     // einzelnes produkt aus dem warenkorb entfernen

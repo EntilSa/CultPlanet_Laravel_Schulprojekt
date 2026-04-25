@@ -17,7 +17,7 @@ class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
     // HasRoles kommt von Spatie – damit kann man dem User eine Rolle zuweisen
-    use HasFactory, Notifiable, HasRoles;
+    use HasFactory, HasRoles, Notifiable;
 
     // nach jedem create() wird die kundennummer automatisch gesetzt: id + 20000
     protected static function booted(): void

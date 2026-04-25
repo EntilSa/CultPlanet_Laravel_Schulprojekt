@@ -26,22 +26,22 @@ class SicherheitsTest extends TestCase
         $kunde->assignRole(Role::firstOrCreate(['name' => 'kunde', 'guard_name' => 'web']));
 
         $produkt = Product::create([
-            'name'        => 'Testsprodukt',
+            'name' => 'Testsprodukt',
             'description' => 'Nur für Tests.',
-            'price'       => 9.99,
-            'stock'       => 10,
+            'price' => 9.99,
+            'stock' => 10,
         ]);
 
         $bestellung = Order::create([
-            'user_id'         => $kunde->id,
-            'vorname'         => 'Max',
-            'nachname'        => 'Mustermann',
-            'strasse'         => 'Musterstraße 1',
-            'plz'             => '12345',
-            'ort'             => 'Musterstadt',
+            'user_id' => $kunde->id,
+            'vorname' => 'Max',
+            'nachname' => 'Mustermann',
+            'strasse' => 'Musterstraße 1',
+            'plz' => '12345',
+            'ort' => 'Musterstadt',
             'zahlungsmethode' => 'paypal',
-            'total'           => 9.99,
-            'status'          => 'offen',
+            'total' => 9.99,
+            'status' => 'offen',
         ]);
 
         return [$kunde, $produkt, $bestellung];
@@ -147,10 +147,10 @@ class SicherheitsTest extends TestCase
         $kunde->assignRole(Role::firstOrCreate(['name' => 'kunde', 'guard_name' => 'web']));
 
         $produkt = Product::create([
-            'name'        => 'Testsprodukt',
+            'name' => 'Testsprodukt',
             'description' => 'Nur für Tests.',
-            'price'       => 9.99,
-            'stock'       => 5,
+            'price' => 9.99,
+            'stock' => 5,
         ]);
 
         // warenkorb befüllen
@@ -159,11 +159,11 @@ class SicherheitsTest extends TestCase
         // checkout mit einer zahlungsmethode die nicht erlaubt ist (z.b. bitcoin)
         $this->actingAs($kunde)
             ->post(route('checkout.store'), [
-                'vorname'         => 'Max',
-                'nachname'        => 'Mustermann',
-                'strasse'         => 'Straße 1',
-                'plz'             => '12345',
-                'ort'             => 'Stadt',
+                'vorname' => 'Max',
+                'nachname' => 'Mustermann',
+                'strasse' => 'Straße 1',
+                'plz' => '12345',
+                'ort' => 'Stadt',
                 'zahlungsmethode' => 'bitcoin',
             ])
             ->assertSessionHasErrors('zahlungsmethode');
@@ -183,9 +183,9 @@ class SicherheitsTest extends TestCase
 
         // zweiter versuch mit derselben email
         $this->post(route('register'), [
-            'name'                  => 'Zweiter Nutzer',
-            'email'                 => 'doppelt@example.com',
-            'password'              => 'geheim123!',
+            'name' => 'Zweiter Nutzer',
+            'email' => 'doppelt@example.com',
+            'password' => 'geheim123!',
             'password_confirmation' => 'geheim123!',
         ])->assertSessionHasErrors('email');
 

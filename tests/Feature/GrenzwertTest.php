@@ -25,10 +25,10 @@ class GrenzwertTest extends TestCase
         $kunde->assignRole(Role::firstOrCreate(['name' => 'kunde', 'guard_name' => 'web']));
 
         $produkt = Product::create([
-            'name'        => 'Grenzwert-Testprodukt',
+            'name' => 'Grenzwert-Testprodukt',
             'description' => 'Wird nur in Tests verwendet.',
-            'price'       => 19.99,
-            'stock'       => $stock,
+            'price' => 19.99,
+            'stock' => $stock,
         ]);
 
         return [$kunde, $produkt];
@@ -108,11 +108,11 @@ class GrenzwertTest extends TestCase
         // 101 zeichen langer vorname
         $this->actingAs($kunde)
             ->post(route('checkout.store'), [
-                'vorname'         => str_repeat('A', 101),
-                'nachname'        => 'Mustermann',
-                'strasse'         => 'Musterstraße 1',
-                'plz'             => '12345',
-                'ort'             => 'Stadt',
+                'vorname' => str_repeat('A', 101),
+                'nachname' => 'Mustermann',
+                'strasse' => 'Musterstraße 1',
+                'plz' => '12345',
+                'ort' => 'Stadt',
                 'zahlungsmethode' => 'paypal',
             ])
             ->assertSessionHasErrors('vorname');
@@ -125,11 +125,11 @@ class GrenzwertTest extends TestCase
 
         $this->actingAs($kunde)
             ->post(route('checkout.store'), [
-                'vorname'         => 'Max',
-                'nachname'        => 'Mustermann',
-                'strasse'         => 'Musterstraße 1',
-                'plz'             => '123456789012', // 12 zeichen, max ist 10
-                'ort'             => 'Stadt',
+                'vorname' => 'Max',
+                'nachname' => 'Mustermann',
+                'strasse' => 'Musterstraße 1',
+                'plz' => '123456789012', // 12 zeichen, max ist 10
+                'ort' => 'Stadt',
                 'zahlungsmethode' => 'paypal',
             ])
             ->assertSessionHasErrors('plz');
@@ -146,7 +146,7 @@ class GrenzwertTest extends TestCase
         $this->actingAs($kunde)
             ->post(route('reviews.store', $produkt), [
                 'rating' => 0,
-                'text'   => 'Geht leider gar nicht, bin sehr enttäuscht.',
+                'text' => 'Geht leider gar nicht, bin sehr enttäuscht.',
             ])
             ->assertSessionHasErrors('rating');
     }
@@ -158,7 +158,7 @@ class GrenzwertTest extends TestCase
         $this->actingAs($kunde)
             ->post(route('reviews.store', $produkt), [
                 'rating' => 6,
-                'text'   => 'Absolut fantastisch, mehr als 5 Sterne verdient!',
+                'text' => 'Absolut fantastisch, mehr als 5 Sterne verdient!',
             ])
             ->assertSessionHasErrors('rating');
     }
@@ -170,14 +170,14 @@ class GrenzwertTest extends TestCase
         $this->actingAs($kunde)
             ->post(route('reviews.store', $produkt), [
                 'rating' => 1,
-                'text'   => 'Leider sehr enttäuschend, würde es nicht empfehlen.',
+                'text' => 'Leider sehr enttäuschend, würde es nicht empfehlen.',
             ])
             ->assertRedirect();
 
         $this->assertDatabaseHas('reviews', [
-            'user_id'    => $kunde->id,
+            'user_id' => $kunde->id,
             'product_id' => $produkt->id,
-            'rating'     => 1,
+            'rating' => 1,
         ]);
     }
 
@@ -188,14 +188,14 @@ class GrenzwertTest extends TestCase
         $this->actingAs($kunde)
             ->post(route('reviews.store', $produkt), [
                 'rating' => 5,
-                'text'   => 'Absolut perfekt, kann ich nur wärmstens empfehlen!',
+                'text' => 'Absolut perfekt, kann ich nur wärmstens empfehlen!',
             ])
             ->assertRedirect();
 
         $this->assertDatabaseHas('reviews', [
-            'user_id'    => $kunde->id,
+            'user_id' => $kunde->id,
             'product_id' => $produkt->id,
-            'rating'     => 5,
+            'rating' => 5,
         ]);
     }
 
@@ -206,7 +206,7 @@ class GrenzwertTest extends TestCase
         $this->actingAs($kunde)
             ->post(route('reviews.store', $produkt), [
                 'rating' => 3,
-                'text'   => 'Kurz', // nur 4 zeichen, min:10
+                'text' => 'Kurz', // nur 4 zeichen, min:10
             ])
             ->assertSessionHasErrors('text');
     }

@@ -2,36 +2,38 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\AuktionGewonnenMail;
 use App\Models\Auction;
 use App\Models\Bid;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class AuctionController extends Controller
 {
     // neue auktion für ein produkt anlegen (nur admin)
     public function store(Request $request, Product $product)
     {
-        if (!auth()->user()->hasRole('admin')) {
+        if (! auth()->user()->hasRole('admin')) {
             abort(403);
         }
 
         $request->validate([
             'start_price' => ['required', 'numeric', 'min:0.01'],
-            'start_time'  => ['required', 'date', 'after:now'],
-            'end_time'    => ['required', 'date', 'after:start_time'],
+            'start_time' => ['required', 'date', 'after:now'],
+            'end_time' => ['required', 'date', 'after:start_time'],
         ], [
             'start_price.required' => 'Bitte einen Startpreis eingeben.',
-            'start_price.numeric'  => 'Der Startpreis muss eine Zahl sein.',
-            'start_price.min'      => 'Der Startpreis muss mindestens 0,01 € betragen.',
-            'start_time.required'  => 'Bitte ein Startdatum eingeben.',
-            'start_time.date'      => 'Das Startdatum muss ein gültiges Datum sein.',
-            'start_time.after'     => 'Das Startdatum muss in der Zukunft liegen.',
-            'end_time.required'    => 'Bitte ein Enddatum eingeben.',
-            'end_time.date'        => 'Das Enddatum muss ein gültiges Datum sein.',
-            'end_time.after'       => 'Das Enddatum muss nach dem Startdatum liegen.',
+            'start_price.numeric' => 'Der Startpreis muss eine Zahl sein.',
+            'start_price.min' => 'Der Startpreis muss mindestens 0,01 € betragen.',
+            'start_time.required' => 'Bitte ein Startdatum eingeben.',
+            'start_time.date' => 'Das Startdatum muss ein gültiges Datum sein.',
+            'start_time.after' => 'Das Startdatum muss in der Zukunft liegen.',
+            'end_time.required' => 'Bitte ein Enddatum eingeben.',
+            'end_time.date' => 'Das Enddatum muss ein gültiges Datum sein.',
+            'end_time.after' => 'Das Enddatum muss nach dem Startdatum liegen.',
         ]);
 
         // prüfen ob noch genug lagerbestand für eine weitere auktion vorhanden ist
@@ -43,18 +45,18 @@ class AuctionController extends Controller
             return back()
                 ->withInput()
                 ->withErrors([
-                    'auction' => "Nicht genug Lagerbestand für eine weitere Auktion. " .
-                                 "Maximal {$product->stock} Auktion(en) möglich, " .
+                    'auction' => 'Nicht genug Lagerbestand für eine weitere Auktion. '.
+                                 "Maximal {$product->stock} Auktion(en) möglich, ".
                                  "aktuell bereits {$bereitsGeplant} geplant.",
                 ]);
         }
 
         Auction::create([
-            'product_id'  => $product->id,
+            'product_id' => $product->id,
             'start_price' => $request->start_price,
-            'start_time'  => $request->start_time,
-            'end_time'    => $request->end_time,
-            'status'      => 'geplant',
+            'start_time' => $request->start_time,
+            'end_time' => $request->end_time,
+            'status' => 'geplant',
         ]);
 
         return redirect()
@@ -65,7 +67,7 @@ class AuctionController extends Controller
     // geplante auktion löschen (nur admin, nur wenn noch nicht gestartet)
     public function destroy(Auction $auction)
     {
-        if (!auth()->user()->hasRole('admin')) {
+        if (! auth()->user()->hasRole('admin')) {
             abort(403);
         }
 
@@ -107,7 +109,7 @@ class AuctionController extends Controller
         $this->statusAktualisieren();
         $auction->refresh();
 
-        $auction->load(['product', 'bids' => fn($q) => $q->with('user')->orderByDesc('amount'), 'winner']);
+        $auction->load(['product', 'bids' => fn ($q) => $q->with('user')->orderByDesc('amount'), 'winner']);
 
         return view('auction.show', compact('auction'));
     }
@@ -119,8 +121,8 @@ class AuctionController extends Controller
             'amount' => ['required', 'numeric', 'min:0.01'],
         ], [
             'amount.required' => 'Bitte gib einen Betrag ein.',
-            'amount.numeric'  => 'Der Betrag muss eine Zahl sein – keine Buchstaben erlaubt.',
-            'amount.min'      => 'Der Betrag muss mindestens 0,01 € betragen.',
+            'amount.numeric' => 'Der Betrag muss eine Zahl sein – keine Buchstaben erlaubt.',
+            'amount.min' => 'Der Betrag muss mindestens 0,01 € betragen.',
         ]);
 
         // auktion muss aktiv und noch nicht abgelaufen sein
@@ -131,9 +133,8 @@ class AuctionController extends Controller
         // mindestgebot: aktuelles höchstgebot + 1,00 €
         $mindest = $auction->hoechstGebot() + 1.00;
         if ($request->amount < $mindest) {
-            return back()->withErrors(['amount' =>
-                'Dein Gebot muss mindestens € ' . number_format($mindest, 2, ',', '.') .
-                ' betragen (aktuelles Höchstgebot + 1,00 €).'
+            return back()->withErrors(['amount' => 'Dein Gebot muss mindestens € '.number_format($mindest, 2, ',', '.').
+                ' betragen (aktuelles Höchstgebot + 1,00 €).',
             ]);
         }
 
@@ -144,11 +145,11 @@ class AuctionController extends Controller
 
         Bid::create([
             'auction_id' => $auction->id,
-            'user_id'    => auth()->id(),
-            'amount'     => $request->amount,
+            'user_id' => auth()->id(),
+            'amount' => $request->amount,
         ]);
 
-        return back()->with('success', 'Dein Gebot über € ' . number_format($request->amount, 2, ',', '.') . ' wurde abgegeben.');
+        return back()->with('success', 'Dein Gebot über € '.number_format($request->amount, 2, ',', '.').' wurde abgegeben.');
     }
 
     // hilfsmethode: geplante auktionen starten, abgelaufene schließen
@@ -175,13 +176,13 @@ class AuctionController extends Controller
         $hoechstesBid = $auction->bids()->orderByDesc('amount')->first();
 
         $auction->update([
-            'status'      => 'beendet',
-            'winner_id'   => $hoechstesBid?->user_id,
+            'status' => 'beendet',
+            'winner_id' => $hoechstesBid?->user_id,
             'winning_bid' => $hoechstesBid?->amount,
         ]);
 
         // nur wenn jemand geboten hat eine bestellung anlegen
-        if (!$hoechstesBid) {
+        if (! $hoechstesBid) {
             return;
         }
 
@@ -189,27 +190,32 @@ class AuctionController extends Controller
         $nameParts = explode(' ', $winner->name, 2);
 
         $order = Order::create([
-            'user_id'         => $winner->id,
-            'vorname'         => $nameParts[0],
-            'nachname'        => $nameParts[1] ?? '-',
+            'user_id' => $winner->id,
+            'vorname' => $nameParts[0],
+            'nachname' => $nameParts[1] ?? '-',
             // platzhalter – gewinner muss adresse noch ergänzen
-            'strasse'         => 'Bitte Lieferadresse eintragen',
-            'plz'             => '00000',
-            'ort'             => 'Bitte ergänzen',
+            'strasse' => 'Bitte Lieferadresse eintragen',
+            'plz' => '00000',
+            'ort' => 'Bitte ergänzen',
             'zahlungsmethode' => 'auktion',
-            'total'           => $hoechstesBid->amount,
-            'status'          => 'bezahlt',
+            'total' => $hoechstesBid->amount,
+            'status' => 'bezahlt',
         ]);
 
         OrderItem::create([
-            'order_id'   => $order->id,
+            'order_id' => $order->id,
             'product_id' => $auction->product_id,
-            'name'       => $auction->product->name,
-            'price'      => $hoechstesBid->amount,
-            'quantity'   => 1,
+            'name' => $auction->product->name,
+            'price' => $hoechstesBid->amount,
+            'quantity' => 1,
         ]);
 
         // lagerbestand um 1 reduzieren
         $auction->product->decrement('stock');
+
+        // gewinner per mail benachrichtigen (mit pdf-rechnung)
+        $order->load('items'); // items nachladen
+        Mail::to($winner->email)
+            ->send(new AuktionGewonnenMail($order));
     }
 }

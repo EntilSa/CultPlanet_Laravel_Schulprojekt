@@ -24,11 +24,11 @@ class OrderTest extends TestCase
     private function checkoutDaten(): array
     {
         return [
-            'vorname'         => 'Max',
-            'nachname'        => 'Mustermann',
-            'strasse'         => 'Musterstraße 1',
-            'plz'             => '12345',
-            'ort'             => 'Musterstadt',
+            'vorname' => 'Max',
+            'nachname' => 'Mustermann',
+            'strasse' => 'Musterstraße 1',
+            'plz' => '12345',
+            'ort' => 'Musterstadt',
             'zahlungsmethode' => 'paypal',
         ];
     }
@@ -57,9 +57,9 @@ class OrderTest extends TestCase
         $this->actingAs($user)->post(route('checkout.store'), $this->checkoutDaten());
 
         $this->assertDatabaseHas('orders', [
-            'user_id'  => $user->id,
-            'vorname'  => 'Max',
-            'status'   => 'offen',
+            'user_id' => $user->id,
+            'vorname' => 'Max',
+            'status' => 'offen',
         ]);
         $this->assertDatabaseHas('order_items', ['name' => 'Test Produkt']);
     }

@@ -54,6 +54,12 @@
                     </a>
                 @endif
 
+                {{-- Meine Bestellungen – nur für eingeloggte Kunden --}}
+                <a href="{{ route('orders.my') }}"
+                   class="text-white hover:text-orange-400 text-sm font-medium transition-colors">
+                    Bestellungen
+                </a>
+
                 {{-- Mein Konto – funktioniert bereits (Breeze) --}}
                 <a href="{{ route('profile.edit') }}"
                    class="text-white hover:text-orange-400 text-sm font-medium transition-colors">

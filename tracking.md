@@ -19,9 +19,10 @@
 | 13 | 2026-04-24 | – | 437 | 2 | Sicherheits- & Grenzwerttests | 23 neue Tests nach Branchenstandard (fremde Bestellung, Mengen-Grenzwerte, Bewertungs-Grenzen) – 116 Tests grün |
 | 14 | 2026-04-24 | – | 356 | 3 | Suche & Filter | Textsuche, Preisbereich, Verfügbarkeit, Sortierung im Shop – 16 neue Tests, 132 Tests grün |
 | 15 | 2026-04-25 | – | 262 | 10 | QoL-Verbesserungen | Shop-Redirect, Auktions-Banner, klickbare Karten, Hover-Effekte, Deutsche Auth-Views, ExampleTest fix – 132 Tests grün |
+| 16 | 2026-04-25 | – | 1473 | 50 | Neue Features | PDF-Rechnungen (dompdf), Mailpit, 2 Mail-Klassen, Meine Bestellungen, Lagerbestand-Warnung, Pint – 132 Tests grün |
 
 ## Gesamt
 
 | Zeilen Code gesamt | Dateien gesamt | Anzahl Sessions |
 |--------------------|----------------|-----------------|
-| 9426 | 127 | 15 |
+| 10899 | 177 | 16 |
