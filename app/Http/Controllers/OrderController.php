@@ -12,88 +12,97 @@ use Illuminate\Support\Facades\Mail;
 
 class OrderController extends Controller
 {
-    // checkout-formular anzeigen
+    // checkout-formular anzeigen (lieferadresse + zahlungswahl)
     public function index()
     {
+        // warenkorb aus der session holen
         $cart = session('cart', []);
 
-        // wenn warenkorb leer ist, zurück zum warenkorb
+        // wenn der warenkorb leer ist hat der checkout keinen sinn – zurückleiten
         if (empty($cart)) {
             return redirect()->route('cart.index')->with('error', 'Dein Warenkorb ist leer.');
         }
 
+        // gesamtpreis für die anzeige berechnen
         $total = array_sum(array_map(fn ($item) => $item['price'] * $item['qty'], $cart));
 
         return view('checkout.index', compact('cart', 'total'));
     }
 
-    // bestellung speichern
+    // bestellung in der datenbank speichern (formular wird abgesendet)
     public function store(Request $request)
     {
         $cart = session('cart', []);
 
+        // nochmal prüfen ob der warenkorb noch gefüllt ist (könnte in der zwischenzeit geleert worden sein)
         if (empty($cart)) {
             return redirect()->route('cart.index')->with('error', 'Dein Warenkorb ist leer.');
         }
 
+        // alle felder des checkout-formulars validieren
         $request->validate([
-            'vorname' => ['required', 'string', 'max:100'],
-            'nachname' => ['required', 'string', 'max:100'],
-            'strasse' => ['required', 'string', 'max:255'],
-            'plz' => ['required', 'string', 'max:10'],
-            'ort' => ['required', 'string', 'max:100'],
-            'zahlungsmethode' => ['required', 'in:paypal,sofortueberweisung'],
+            'vorname'          => ['required', 'string', 'max:100'],
+            'nachname'         => ['required', 'string', 'max:100'],
+            'strasse'          => ['required', 'string', 'max:255'],
+            'plz'              => ['required', 'string', 'max:10'],
+            'ort'              => ['required', 'string', 'max:100'],
+            // nur diese zwei zahlungsmethoden sind erlaubt (attrappen-buttons)
+            'zahlungsmethode'  => ['required', 'in:paypal,sofortueberweisung'],
         ]);
 
+        // gesamtpreis aus dem warenkorb berechnen – nicht aus dem formular übernehmen
+        // (formular-werte könnten manipuliert sein)
         $total = array_sum(array_map(fn ($item) => $item['price'] * $item['qty'], $cart));
 
-        // bestellung anlegen
+        // bestellung als ganzes in der datenbank anlegen
         $order = Order::create([
-            'user_id' => auth()->id(),
-            'vorname' => $request->vorname,
-            'nachname' => $request->nachname,
-            'strasse' => $request->strasse,
-            'plz' => $request->plz,
-            'ort' => $request->ort,
-            'zahlungsmethode' => $request->zahlungsmethode,
-            'total' => $total,
-            'status' => 'offen',
+            'user_id'          => auth()->id(),
+            'vorname'          => $request->vorname,
+            'nachname'         => $request->nachname,
+            'strasse'          => $request->strasse,
+            'plz'              => $request->plz,
+            'ort'              => $request->ort,
+            'zahlungsmethode'  => $request->zahlungsmethode,
+            'total'            => $total,
+            'status'           => 'offen', // status startet als 'offen', wird nach zahlung 'bezahlt'
         ]);
 
-        // jede position der bestellung speichern und lagerbestand reduzieren
+        // jede warenkorb-position als einzelne order_item zeile speichern
         foreach ($cart as $productId => $item) {
             OrderItem::create([
-                'order_id' => $order->id,
+                'order_id'   => $order->id,
                 'product_id' => $productId,
-                'name' => $item['name'],
-                'price' => $item['price'],
-                'quantity' => $item['qty'],
+                'name'       => $item['name'],  // name wird hier festgehalten – falls produkt später umbenannt wird
+                'price'      => $item['price'], // preis ebenfalls einfrieren zum zeitpunkt der bestellung
+                'quantity'   => $item['qty'],
             ]);
 
-            // lagerbestand um die bestellte menge reduzieren
+            // lagerbestand des produkts um die bestellte menge reduzieren
             Product::where('id', $productId)->decrement('stock', $item['qty']);
         }
 
-        // bestellbestaetigung per mail schicken (mit pdf-rechnung als anhang)
-        $order->load('items'); // items nachladen damit sie im pdf vorhanden sind
+        // bestellbestätigung per mail mit pdf-rechnung als anhang verschicken
+        // items vorher nachladen damit sie in der mail-klasse verfügbar sind
+        $order->load('items');
         Mail::to($request->user()->email)
             ->send(new BestellbestaetigungMail($order));
 
-        // warenkorb leeren – bestellung ist gespeichert
+        // warenkorb leeren – die bestellung ist jetzt gespeichert
         session()->forget('cart');
 
-        // zur fake-zahlungsseite weiterleiten (schritt 10: attrappen-zahlung)
+        // zur fake-zahlungsseite weiterleiten (nutzer wählt paypal oder sofortüberweisung)
         return redirect()->route('orders.payment', $order);
     }
 
-    // fake-zahlungsseite anzeigen (attrappen-button für paypal / sofortüberweisung)
+    // fake-zahlungsseite anzeigen (attrappen-buttons – keine echte transaktion)
     public function payment(Order $order)
     {
+        // sicherheitscheck: nur der eigentümer darf seine zahlungsseite sehen
         if ($order->user_id !== auth()->id()) {
             abort(403);
         }
 
-        // nur bestellungen mit status 'offen' kommen auf diese seite
+        // wenn die bestellung schon bezahlt ist, direkt zur bestätigungsseite
         if ($order->status !== 'offen') {
             return redirect()->route('orders.success', $order);
         }
@@ -101,13 +110,16 @@ class OrderController extends Controller
         return view('checkout.payment', compact('order'));
     }
 
-    // zahlung "abschließen" – status auf bezahlt setzen und zur bestätigung
+    // zahlung "abschließen" – status auf bezahlt setzen (attrappe)
     public function completePayment(Order $order)
     {
+        // sicherheitscheck: nur der eigentümer kann zahlen
         if ($order->user_id !== auth()->id()) {
             abort(403);
         }
 
+        // in einem echten shop würde hier die zahlungs-api antworten
+        // bei uns reicht es den status zu ändern
         $order->update(['status' => 'bezahlt']);
 
         return redirect()->route('orders.success', $order)->with('success', 'Zahlung erfolgreich!');
@@ -116,32 +128,37 @@ class OrderController extends Controller
     // alle bestellungen des eingeloggten kunden anzeigen
     public function myOrders()
     {
+        // nur bestellungen des aktuell eingeloggten nutzers laden
         $orders = Order::where('user_id', auth()->id())
-            ->with('items')
-            ->orderByDesc('created_at')
+            ->with('items')          // positionen gleich mitleiden für die detailansicht
+            ->orderByDesc('created_at') // neueste bestellung zuerst
             ->get();
 
         return view('orders.my-orders', compact('orders'));
     }
 
-    // pdf für eine bestellung herunterladen (nur eigene bestellungen!)
+    // pdf-rechnung für eine bestellung herunterladen
     public function downloadPdf(Order $order)
     {
-        // sicherstellen dass der kunde nur seine eigenen bestellungen herunterladen kann
+        // sicherheitscheck: nutzer darf nur seine eigenen rechnungen herunterladen
         if ($order->user_id !== auth()->id()) {
             abort(403);
         }
 
+        // bestellpositionen laden damit sie im pdf vorhanden sind
         $order->load('items');
+
+        // pdf aus dem blade-template 'pdf.rechnung' generieren (dompdf-paket)
         $pdf = Pdf::loadView('pdf.rechnung', ['order' => $order]);
 
+        // pdf als download senden – dateiname enthält die bestellnummer
         return $pdf->download('Rechnung-'.$order->id.'.pdf');
     }
 
-    // bestellbestätigung anzeigen
+    // bestellbestätigung anzeigen (danke-seite nach erfolgreicher zahlung)
     public function success(Order $order)
     {
-        // sicherheitscheck: nur der eigene nutzer darf seine bestellung sehen
+        // sicherheitscheck: nur der eigene nutzer darf seine bestätigung sehen
         if ($order->user_id !== auth()->id()) {
             abort(403);
         }

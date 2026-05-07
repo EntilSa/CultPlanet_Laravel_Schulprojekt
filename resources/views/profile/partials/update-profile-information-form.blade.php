@@ -23,6 +23,15 @@
             <x-input-error class="mt-2" :messages="$errors->get('name')" />
         </div>
 
+        {{-- kundennummer – nur anzeigen, nicht editierbar --}}
+        <div>
+            <x-input-label :value="'Ihre Kundennummer'" />
+            <p class="mt-1 block w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-md text-slate-600 text-sm">
+                {{ auth()->user()->kundennummer ?? '–' }}
+            </p>
+            <p class="text-xs text-slate-400 mt-1">Die Kundennummer wird automatisch vergeben und kann nicht geändert werden.</p>
+        </div>
+
         <div>
             <x-input-label for="email" :value="__('Email')" />
             <x-text-input id="email" name="email" type="email" class="mt-1 block w-full" :value="old('email', $user->email)" required autocomplete="username" />

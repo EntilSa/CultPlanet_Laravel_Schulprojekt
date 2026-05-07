@@ -4,7 +4,7 @@
 @section('title', 'Datenschutz – CultPlanet')
 
 @section('content')
-    <h1 class="text-2xl font-bold text-purple-700 mb-6">Datenschutzerklärung</h1>
+    <h1 class="text-2xl font-bold text-slate-900 mb-6">Datenschutzerklärung</h1>
 
     <div class="bg-white rounded-lg shadow p-6 space-y-4 text-gray-700">
         <div>
